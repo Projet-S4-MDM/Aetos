@@ -8,8 +8,8 @@
       "USERNAME": "vscode"
     }
   },
-  "workspaceFolder": "/home/vscode/ws",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/home/vscode/ws,type=bind",
+  "workspaceFolder": "/home/vscode/ros2_ws",
+  "workspaceMount": "source=${localWorkspaceFolder}/ros2_ws,target=/home/vscode/ros2_ws,type=bind",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -32,10 +32,11 @@
     "--net=host",
     "--pid=host",
     "--ipc=host",
-    "-v", "/tmp/.X11-unix:/tmp/.X11-unix:rw"
+    "-v",
+    "/tmp/.X11-unix:/tmp/.X11-unix:rw"
   ],
   "mounts": [
     "source=/dev/dri,target=/dev/dri,type=bind,consistency=cached"
   ],
-  "postCreateCommand": "sudo chown -R vscode:vscode /home/vscode && rosdep update && rosdep install --from-paths src --ignore-src -y"
+  "postCreateCommand": "bash -c 'mkdir -p ~/ros2_ws/src && source /opt/ros/humble/setup.bash && rosdep update && colcon build'"
 }
