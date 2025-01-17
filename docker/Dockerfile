@@ -28,14 +28,6 @@ RUN apt-get update && apt-get install -q -y --no-install-recommends \
     python3-transforms3d \
     && rm -rf /var/lib/apt/lists/*
 
-# Set up ROS environment
-RUN rosdep fix-permissions && rosdep update --rosdistro=$ROS_DISTRO
-
-# Set up workspace
-ENV WORKSPACE=/home/${USERNAME}/ws
-RUN mkdir -p ${WORKSPACE}/src \
-    && chown -R ${USERNAME}:${USERNAME} ${WORKSPACE}
-
 # Switch to user
 USER $USERNAME
 
