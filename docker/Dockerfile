@@ -3,6 +3,10 @@ FROM osrf/ros:humble-desktop-full
 ENV DEBIAN_FRONTEND=noninteractive
 ENV ROS_DISTRO=humble
 
+# Define the workspace path
+ARG WORKSPACE_PATH=/home/${USERNAME}/workspace
+ENV WORKSPACE=${WORKSPACE_PATH}
+
 # Create the user
 ARG USERNAME=vscode
 ARG USER_UID=1000
@@ -31,11 +35,13 @@ RUN apt-get update && apt-get install -q -y --no-install-recommends \
 # Switch to user
 USER $USERNAME
 
+# Set workspace as the working directory
+WORKDIR ${WORKSPACE}
+
 # Source ROS in bashrc
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /home/${USERNAME}/.bashrc
 
 # Default shell to bash
 SHELL ["/bin/bash", "-c"]
 
-# Set workspace as working directory
-WORKDIR ${WORKSPACE}
+# You can add additional commands that will run inside the workspace if needed

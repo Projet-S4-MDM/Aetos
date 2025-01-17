@@ -1,0 +1,42 @@
+# ROS2 specific
+**/install/
+**/log/
+**/build/
+**/devel/
+**/rosinstall/
+*.mo
+*.pyc
+*.pyo
+*.swp
+*.bak
+*.tmp
+
+# ROS2 Python specific
+__pycache__/
+*.py[cod]
+*.so
+*.d
+
+# CMake specific
+CMakeFiles/
+CMakeCache.txt
+Makefile
+*.cmake
+*.d
+
+# Visual Studio Code
+.vscode/
+
+# IDE files
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln
+*.swm
+*.swn
+
+# Backup files
+*~
+*.bak
+*.swp

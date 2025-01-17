@@ -37,6 +37,5 @@
   ],
   "mounts": [
     "source=/dev/dri,target=/dev/dri,type=bind,consistency=cached"
-  ],
-  "postCreateCommand": "bash -c 'mkdir -p ~/ros2_ws/src && source /opt/ros/humble/setup.bash && rosdep update && colcon build'"
+  ]
 }
