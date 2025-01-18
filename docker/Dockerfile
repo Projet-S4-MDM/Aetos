@@ -39,4 +39,3 @@ WORKDIR ${WORKSPACE}
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /home/${USERNAME}/.bashrc
 
 SHELL ["/bin/bash", "-c"]
-
