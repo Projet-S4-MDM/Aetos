@@ -45,22 +45,34 @@ code --install-extension ms-azuretools.vscode-docker
 code --install-extension ms-vscode-remote.remote-ssh
 ```
 
-
-
-
 ## Getting Started
 
 When VS Code detects the devcontainer configuration, you'll see a notification in the bottom-right corner. Click "Reopen in Container" to start the devcontainer.
 
    Alternatively, you can:
-   - Press `F1` or `Ctrl/Cmd + Shift + P`
+   - Press `Ctrl + Shift + P`
    - Type "Dev Containers: Reopen in Container"
    - Press Enter
 
-## What Happens Next
+## Development Inside the Container
 
-- VS Code will build the Docker container based on the configuration in `.devcontainer/devcontainer.json`
-- The container will include all necessary dependencies and extensions
-- Your workspace will reload inside the container
-- You can start developing with a consistent environment
+Once inside the container, you'll have access to all dependencies specified in the Dockerfile. Here's what you need to know for development:
+
+### Terminal Setup
+
+To access the terminal in VSCode:
+1. Press `Ctrl + Shift + '`
+2. In the terminal, run:
+   ```bash
+   terminator
+   ```
+
+      to have access to the terminal multiplier. This facilitates development in the ros2 environment
+
+     > **Note** The script that launches terminator currently runs into some issues. This does not affect usage
+
+2. ROS2 development
+   - The main branch currently contains a test_pgk which only serves as a template for git. Delete this package and replace it with your own. 
+   > **Note** This will be removed as features will be merged
+   - A ros2 package should be created for every different features. For example: there would be a ros2 package for vision recognition and another for a GUI.
 
