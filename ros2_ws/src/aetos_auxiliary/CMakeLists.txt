@@ -7,6 +7,7 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclpy REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(aetos_msgs REQUIRED)
 
@@ -19,6 +20,11 @@ ament_target_dependencies(serial_com
 install(TARGETS
           serial_com
 DESTINATION lib/${PROJECT_NAME})
+
+install(PROGRAMS
+  scripts/receiver.py
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 install(DIRECTORY launch DESTINATION share/${PROJECT_NAME}/)
 
