@@ -33,8 +33,10 @@ RUN apt-get update && apt-get install -q -y --no-install-recommends \
     python3-notify2 \  
     && rm -rf /var/lib/apt/lists/*  
 
-# Install pygame
-RUN python3 -m pip install --no-cache-dir pygame  
+
+# Install pygame and setuptools 58.2.0
+RUN python3 -m pip install --no-cache-dir pygame setuptools==58.2.0  
+
 
 USER $USERNAME  
 
