@@ -7,7 +7,6 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(rclpy REQUIRED)
 find_package(std_msgs REQUIRED)
 
 add_executable(test_pub src/test_publisher.cpp)
@@ -19,11 +18,6 @@ ament_target_dependencies(test_pub
 install(TARGETS
           test_pub
 DESTINATION lib/${PROJECT_NAME})
-
-install(PROGRAMS
-  scripts/receiver.py
-  DESTINATION lib/${PROJECT_NAME}
-)
 
 install(DIRECTORY launch DESTINATION share/${PROJECT_NAME}/)
 
