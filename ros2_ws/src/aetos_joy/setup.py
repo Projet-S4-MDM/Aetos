@@ -15,11 +15,12 @@ setup(
     zip_safe=True,
     maintainer='nikopapi',
     maintainer_email='papn1801@usherbrooke.ca',
-    description='TODO: Package description',
+    description='Joystick input processing and velocity mapping',
     license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'joy_demux = aetos_joy.joy_demux:main',  # This entry point tells ROS2 how to run your node
         ],
     },
 )
