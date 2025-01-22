@@ -15,37 +15,40 @@
 import rclpy
 from rclpy.node import Node
 
-from std_msgs.msg import String
+from aetos_msgs.msg import Joy
 
 
-class MinimalSubscriber(Node):
+class SimulationPython(Node):
 
     def __init__(self):
-        super().__init__('minimal_subscriber')
+        super().__init__('simulation_python')
         self.subscription = self.create_subscription(
-            String,
-            'topic',
+            Joy,
+            'aetos/joy',
             self.listener_callback,
             10)
         self.subscription  # prevent unused variable warning
 
     def listener_callback(self, msg):
-        self.get_logger().info('I heard: "%s"' % msg.data)
+        self.get_logger().info('I heard: "%s"' % msg.vx)
 
 
 def main(args=None):
     rclpy.init(args=args)
 
-    minimal_subscriber = MinimalSubscriber()
+    simulation_python = SimulationPython()
 
-    rclpy.spin(minimal_subscriber)
+    rclpy.spin(simulation_python)
 
     # Destroy the node explicitly
     # (optional - otherwise it will be done automatically
     # when the garbage collector destroys the node object)
-    minimal_subscriber.destroy_node()
+    simulation_python.destroy_node()
     rclpy.shutdown()
 
 
 if __name__ == '__main__':
     main()
+    
+
+# ros2 topic pub /aetos/joy aetos_msgs/msg/Joy "vx: 1.0 vy: 2.0 vz: 3.0"
