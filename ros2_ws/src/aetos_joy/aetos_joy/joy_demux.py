@@ -1,5 +1,1 @@
-import pygame
-import math
-import numpy
-
-print("renceur")
+# MAC ADRESS XBOX CONTROLLER : 44:16:22:20:FB:5E
