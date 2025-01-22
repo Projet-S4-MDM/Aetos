@@ -36,9 +36,9 @@ sudo groupadd docker
 
 Add your user to the Docker group:
 
-```bash
-sudo usermod -aG docker $USER
-```
+ Once this is done, reboot your computer to enable changes to groups
+
+### VSCode setup
 
 Reboot your computer to enable changes to groups.
 
