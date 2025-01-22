@@ -39,7 +39,11 @@
     ],
     "mounts": [
         "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
-        "source=/dev/dri,target=/dev/dri,type=bind,consistency=cached"
+        "source=/dev/dri,target=/dev/dri,type=bind,consistency=cached",
+        "source=/dev/bus/usb,target=/dev/bus/usb,type=bind",
+        "source=/dev,target=/dev,type=bind",
+        "source=/sys,target=/sys,type=bind",
+        "source=/run/udev,target=/run/udev,type=bind"
     ],
     "postCreateCommand": "bash -c 'source /opt/ros/humble/setup.bash && rosdep update'"
 }
