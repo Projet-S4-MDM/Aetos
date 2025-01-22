@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
+<<<<<<<< HEAD:ros2_ws/src/aetos_auxiliary/package.xml
   <name>aetos_auxiliary</name>
   <version>0.0.0</version>
   <description>This package contains all auxiliary nodes to the aetos robot</description>
@@ -15,8 +16,20 @@
   <depend>rclcpp</depend>
   <depend>aetos_msgs</depend>
   <depend>std_msgs</depend>
+========
+  <name>aetos_joy</name>
+  <version>0.0.0</version>
+  <description>TODO: Package description</description>
+  <maintainer email="papn1801@usherbrooke.ca">nikopapi</maintainer>
+  <license>TODO: License declaration</license>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+>>>>>>>> 67f10c8 (tested pkg aetos_joy + imported pygame into Docker):ros2_ws/src/aetos_joy/package.xml
 
   <export>
-    <build_type>ament_cmake</build_type>
+    <build_type>ament_python</build_type>
   </export>
 </package>
