@@ -20,7 +20,8 @@
                 "eamodio.gitlens",
                 "ms-iot.vscode-ros",
                 "ms-azuretools.vscode-docker",
-                "ms-vscode.cpptools-extension-pack"
+                "ms-vscode.cpptools-extension-pack",
+                "platformio.platformio-ide"
             ]
         }
     },
