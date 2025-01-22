@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'joy_demux'
+package_name = 'aetos_joy'
 
 setup(
     name=package_name,
@@ -13,7 +13,7 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='Aetos',
+    maintainer='nikopapi',
     maintainer_email='papn1801@usherbrooke.ca',
     description='TODO: Package description',
     license='TODO: License declaration',
