@@ -1,5 +1,5 @@
 #include <rclcpp/rclcpp.hpp>
-#include <std_msgs/msg/string.hpp>
+#include "std_msgs/msg/float32.hpp"
 
 #include <boost/asio.hpp>
 #include <iostream>
@@ -11,14 +11,13 @@ public:
     SerialCom();
 
 private:
-    void topicCallback(const std_msgs::msg::String::SharedPtr msg)
+    void topicCallback(const std_msgs::msg::Float32::SharedPtr msg)
     {
-        std::string data = msg->data + "\n";
+        std::string data = msg->data;
 
         try
         {
             boost::asio::write(serial_, boost::asio::buffer(data));
-            RCLCPP_INFO(this->get_logger(), "Sent data: %s", data.c_str());
         }
         catch (const std::exception &e)
         {
@@ -29,7 +28,7 @@ private:
     boost::asio::io_service io_service_;
     boost::asio::serial_port serial_;
 
-    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr _testSub;
+    rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr _motorVelSub;
 };
 
 SerialCom::SerialCom() : Node("serial_comm"), serial_(io_service_)
@@ -49,7 +48,7 @@ SerialCom::SerialCom() : Node("serial_comm"), serial_(io_service_)
         rclcpp::shutdown();
     }
 
-    _testSub = this->create_subscription<std_msgs::msg::String>(
+    _motorVelSub = this->create_subscription<std_msgs::msg::Float32>(
         "topic", 10, std::bind(&SerialCom::topicCallback, this, std::placeholders::_1));
 }
 

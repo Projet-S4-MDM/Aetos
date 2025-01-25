@@ -17,7 +17,12 @@ void loop()
         // Check for end of message (newline character)
         if (incomingChar == '\n') 
         {
-            Serial.println("Received message: " + receivedMessage);
+            // Convert the received string to a float
+            float receivedFloat = receivedMessage.toFloat();
+            
+            // Print the received float value
+            Serial.println("Received float: " + String(receivedFloat));
+            
             receivedMessage = ""; // Clear the buffer
         }
         else 

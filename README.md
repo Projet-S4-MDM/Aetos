@@ -78,3 +78,4 @@ To access the terminal in VSCode:
    > **Note** This will be removed as features will be merged
    - A ros2 package should be created for every different features. For example: there would be a ros2 package for vision recognition and another for a GUI.
 
+## Developping in aetos_micro
