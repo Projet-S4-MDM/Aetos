@@ -51,6 +51,14 @@ RUN python3 -m pip install --no-cache-dir pygame setuptools==58.2.0
 # Install evdev Python package
 RUN python3 -m pip install evdev
 
+# SDL2 libraries required by pygame
+RUN apt-get update && apt-get install -y \
+    libsdl2-dev \
+    libsdl2-image-dev \
+    libsdl2-mixer-dev \
+    libsdl2-ttf-dev
+
+
 
 USER $USERNAME  
 
