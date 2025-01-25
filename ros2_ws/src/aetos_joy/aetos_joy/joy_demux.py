@@ -6,61 +6,75 @@ import pygame
 import os
 import time
 
+# *** Joystick input info *** 
+
+#Left : Controls X and Y velocities. 
+#       +X right direction
+#       +Y down direction
+
+#Right : Controls Z velocities
+#       +Z down direction
+
 os.environ["SDL_JOYSTICK_DEVICE"] = "/dev/input/js0"
 
-class JoyRawPrinter(Node):
+class JoyDemux(Node):
     def __init__(self):
-        super().__init__('joy_raw_printer')
+        super().__init__('joy_demux')
 
-        # Initialize pygame for Xbox controller handling
+        # Check for controller
         pygame.init()
         pygame.joystick.init()
 
-        # Ensure at least one controller is connected
+        
         if pygame.joystick.get_count() == 0:
-            print("No Xbox controller connected!")  # Use print for direct output
+            print("No Xbox controller connected!")  
             raise RuntimeError("No Xbox controller found. Please connect one and try again.")
 
-        # Initialize the first connected controller
+        
         self.controller = pygame.joystick.Joystick(0)
         self.controller.init()
         print(f"Connected to Xbox Controller: {self.controller.get_name()}")
 
-        # Timer for reading controller input
+        
         self.timer = self.create_timer(0.1, self.print_raw_inputs)
 
-        # Store previous joystick values for comparison
+        # Value storage for comparison
         self.prev_left_joystick = None
         self.prev_right_joystick = None
         self.last_print_time = time.time()
 
     def print_raw_inputs(self):
         """Reads and prints the raw joystick values from the controller."""
-        pygame.event.pump()  # Process controller events
+        pygame.event.pump()  
 
-        # Get raw joystick values (left and right thumbsticks)
+        # Raw joystick values 
         left_joystick = [
             self.controller.get_axis(0),  # Left stick X-axis
             self.controller.get_axis(1)   # Left stick Y-axis
         ]
         
         right_joystick = [
-            self.controller.get_axis(2),  # Right stick X-axis
             self.controller.get_axis(3)   # Right stick Y-axis
         ]
+        
+        velocity_x = left_joystick[0]
+        velocity_y = left_joystick[1]
+        velocity_z = right_joystick[0]
+        
 
-        # Only print if the values change or after every second
+        
         current_time = time.time()
         if (left_joystick != self.prev_left_joystick or
             right_joystick != self.prev_right_joystick or
             current_time - self.last_print_time > 1.0):
             
-            # Clear the terminal for a clean look
-            print("\033c", end="")  # This is an ANSI escape code to clear the terminal screen
+             
+            print("\033c", end="")
+            
+            print(f"Velocity (X, Y, Z): ({velocity_x:.2f}, {velocity_y:.2f}, {velocity_z:.2f})") 
 
-            # Print only the joystick values without the extra info
-            print(f"Left Joystick (X, Y): {left_joystick}")
-            print(f"Right Joystick (X, Y): {right_joystick}")
+            # print(f"Left Joystick (X, Y): {left_joystick}")
+            # print(f"Right Joystick (X, Y): {right_joystick}")
 
             # Update the previous joystick values and last print time
             self.prev_left_joystick = left_joystick
@@ -69,7 +83,7 @@ class JoyRawPrinter(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    node = JoyRawPrinter()
+    node = JoyDemux()
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
