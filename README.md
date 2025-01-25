@@ -133,3 +133,4 @@ code .
 
 This will open the entire development environment in the same devcontainer but in a separate VS Code window.
 
+## Developping in aetos_micro
