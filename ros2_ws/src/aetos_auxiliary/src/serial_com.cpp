@@ -32,12 +32,12 @@ private:
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr _testSub;
 };
 
-SerialCom::SerialCom() : Node("serial comm"), serial_(io_service_)
+SerialCom::SerialCom() : Node("serial_comm"), serial_(io_service_)
 {
     try
     {
         serial_.open("/dev/ttyUSB0");
-        serial_.set_option(boost::asio::serial_port_base::baud_rate(9600));
+        serial_.set_option(boost::asio::serial_port_base::baud_rate(460800));
         serial_.set_option(boost::asio::serial_port_base::character_size(8));
         serial_.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none));
         serial_.set_option(boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
