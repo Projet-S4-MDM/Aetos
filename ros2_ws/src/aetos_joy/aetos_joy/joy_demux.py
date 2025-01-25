@@ -4,9 +4,9 @@ import rclpy
 from rclpy.node import Node
 import pygame
 import os
+import time
 
 os.environ["SDL_JOYSTICK_DEVICE"] = "/dev/input/js0"
-
 
 class JoyRawPrinter(Node):
     def __init__(self):
@@ -18,35 +18,54 @@ class JoyRawPrinter(Node):
 
         # Ensure at least one controller is connected
         if pygame.joystick.get_count() == 0:
-            self.get_logger().error("No Xbox controller connected!")
+            print("No Xbox controller connected!")  # Use print for direct output
             raise RuntimeError("No Xbox controller found. Please connect one and try again.")
 
         # Initialize the first connected controller
         self.controller = pygame.joystick.Joystick(0)
         self.controller.init()
-        self.get_logger().info(f"Connected to Xbox Controller: {self.controller.get_name()}")
+        print(f"Connected to Xbox Controller: {self.controller.get_name()}")
 
         # Timer for reading controller input
         self.timer = self.create_timer(0.1, self.print_raw_inputs)
 
+        # Store previous joystick values for comparison
+        self.prev_left_joystick = None
+        self.prev_right_joystick = None
+        self.last_print_time = time.time()
+
     def print_raw_inputs(self):
-        """Reads and prints raw Xbox controller inputs."""
+        """Reads and prints the raw joystick values from the controller."""
         pygame.event.pump()  # Process controller events
 
-        # Get raw axis values
-        axes = [self.controller.get_axis(i) for i in range(self.controller.get_numaxes())]
+        # Get raw joystick values (left and right thumbsticks)
+        left_joystick = [
+            self.controller.get_axis(0),  # Left stick X-axis
+            self.controller.get_axis(1)   # Left stick Y-axis
+        ]
+        
+        right_joystick = [
+            self.controller.get_axis(2),  # Right stick X-axis
+            self.controller.get_axis(3)   # Right stick Y-axis
+        ]
 
-        # Get raw button values
-        buttons = [self.controller.get_button(i) for i in range(self.controller.get_numbuttons())]
+        # Only print if the values change or after every second
+        current_time = time.time()
+        if (left_joystick != self.prev_left_joystick or
+            right_joystick != self.prev_right_joystick or
+            current_time - self.last_print_time > 1.0):
+            
+            # Clear the terminal for a clean look
+            print("\033c", end="")  # This is an ANSI escape code to clear the terminal screen
 
-        # Get D-pad (hat) values
-        hats = [self.controller.get_hat(i) for i in range(self.controller.get_numhats())]
+            # Print only the joystick values without the extra info
+            print(f"Left Joystick (X, Y): {left_joystick}")
+            print(f"Right Joystick (X, Y): {right_joystick}")
 
-        # Print the raw inputs
-        self.get_logger().info(f"Axes: {axes}")
-        self.get_logger().info(f"Buttons: {buttons}")
-        self.get_logger().info(f"Hats (D-pad): {hats}")
-
+            # Update the previous joystick values and last print time
+            self.prev_left_joystick = left_joystick
+            self.prev_right_joystick = right_joystick
+            self.last_print_time = current_time
 
 def main(args=None):
     rclpy.init(args=args)
