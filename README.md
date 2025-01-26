@@ -36,9 +36,11 @@ sudo groupadd docker
 
 Add your user to the Docker group:
 
- Once this is done, reboot your computer to enable changes to groups
+```bash
+sudo usermod -aG docker $USER
+```
 
-### VSCode setup
+Reboot your computer to enable changes to groups.
 
 Reboot your computer to enable changes to groups.
 
@@ -89,7 +91,7 @@ This gives you access to the terminal multiplier, which facilitates development 
 
 > **Note:** The script that launches Terminator currently has some issues, but this does not affect usage.
 
-## Developping in aetos_micro
+---
 
 ### ROS2 Development
 
