@@ -1,34 +1,35 @@
 #include <Arduino.h>
-
-String receivedMessage = ""; // Buffer to store the incoming message
+struct VelocityData
+{
+    float vx;
+    float vy;
+    float vz;
+};
 
 void setup()
 {
-    Serial.begin(460800); // Initialize serial communication
+    Serial.begin(460800);
     Serial.println("Serial port ready. Send a message:");
 }
 
 void loop()
 {
-    while(Serial.available() > 0)
+    if (Serial.available() >= sizeof(VelocityData))
     {
-        char incomingChar = Serial.read();
-        
-        // Check for end of message (newline character)
-        if (incomingChar == '\n') 
+        VelocityData velocityData;
+
+        byte *dataPtr = reinterpret_cast<byte *>(&velocityData);
+        for (size_t i = 0; i < sizeof(VelocityData); i++)
         {
-            // Convert the received string to a float
-            float receivedFloat = receivedMessage.toFloat();
-            
-            // Print the received float value
-            Serial.println("Received float: " + String(receivedFloat));
-            
-            receivedMessage = ""; // Clear the buffer
+            dataPtr[i] = Serial.read();
         }
-        else 
-        {
-            // Append incoming character to the message
-            receivedMessage += incomingChar;
-        }
+
+        Serial.println("Received Velocity Data:");
+        Serial.print("VX: ");
+        Serial.println(velocityData.vx);
+        Serial.print("VY: ");
+        Serial.println(velocityData.vy);
+        Serial.print("VZ: ");
+        Serial.println(velocityData.vz);
     }
 }

@@ -46,7 +46,6 @@ RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /home/${USERNAME}/.bashrc
     echo "alias b='pushd . > /dev/null && cd /home/ws/ros2_ws && colcon build --symlink-install && popd > /dev/null'" >> /home/${USERNAME}/.bashrc && \
     echo "export RCUTILS_COLORIZED_OUTPUT=1" >> /home/${USERNAME}/.bashrc
 
-# Add PlatformIO udev rules and reload udev in one command
 RUN curl -fsSL https://raw.githubusercontent.com/platformio/platformio-core/develop/platformio/assets/system/99-platformio-udev.rules | sudo tee /etc/udev/rules.d/99-platformio-udev.rules
 
 SHELL ["/bin/bash", "-c"]

@@ -8,12 +8,14 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(aetos_msgs REQUIRED)
 
 add_executable(serial_com src/serial_com.cpp)
                           
 ament_target_dependencies(serial_com 
                           rclcpp 
-                          std_msgs)
+                          std_msgs
+                          aetos_msgs)
 
 install(TARGETS
           serial_com
