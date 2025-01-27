@@ -15,9 +15,9 @@ private:
     {
         try
         {
-            boost::asio::write(serial_, boost::asio::buffer(&msg->data[msg->VX], sizeof(float)));
-            boost::asio::write(serial_, boost::asio::buffer(&msg->data[msg->VY], sizeof(float)));
-            boost::asio::write(serial_, boost::asio::buffer(&msg->data[msg->VZ], sizeof(float)));
+            boost::asio::write(_serial, boost::asio::buffer(&msg->data[msg->VX], sizeof(float)));
+            boost::asio::write(_serial, boost::asio::buffer(&msg->data[msg->VY], sizeof(float)));
+            boost::asio::write(_serial, boost::asio::buffer(&msg->data[msg->VZ], sizeof(float)));
         }
         catch (const std::exception &e)
         {
@@ -25,22 +25,22 @@ private:
         }
     }
 
-    boost::asio::io_service io_service_;
-    boost::asio::serial_port serial_;
+    boost::asio::io_service _io_service;
+    boost::asio::serial_port _serial;
 
     rclcpp::Subscription<aetos_msgs::msg::Velocity>::SharedPtr _motorVelSub;
 };
 
-SerialCom::SerialCom() : Node("serial_comm"), serial_(io_service_)
+SerialCom::SerialCom() : Node("serial_comm"), _serial(_io_service)
 {
     try
     {
-        serial_.open("/dev/ttyUSB0");
-        serial_.set_option(boost::asio::serial_port_base::baud_rate(460800));
-        serial_.set_option(boost::asio::serial_port_base::character_size(8));
-        serial_.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none));
-        serial_.set_option(boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
-        serial_.set_option(boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none));
+        _serial.open("/dev/ttyUSB0");
+        _serial.set_option(boost::asio::serial_port_base::baud_rate(460800));
+        _serial.set_option(boost::asio::serial_port_base::character_size(8));
+        _serial.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none));
+        _serial.set_option(boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
+        _serial.set_option(boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none));
     }
     catch (const std::exception &e)
     {
