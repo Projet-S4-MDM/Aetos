@@ -18,10 +18,11 @@ void loop()
     {
         VelocityData velocityData;
 
-        byte *dataPtr = reinterpret_cast<byte *>(&velocityData);
-        for (size_t i = 0; i < sizeof(VelocityData); i++)
+        size_t bytesRead = Serial.readBytes(reinterpret_cast<char *>(&velocityData), sizeof(VelocityData));
+
+        if (bytesRead < sizeof(VelocityData))
         {
-            dataPtr[i] = Serial.read();
+            Serial.println("Error: Incomplete data received");
         }
 
         Serial.println("Received Velocity Data:");
