@@ -24,7 +24,7 @@ class MinimalSubscriber : public rclcpp::Node
 {
 public:
   MinimalSubscriber()
-  : Node("subscriber_to_velocity")  // Change node name to a valid one
+  : Node("subscriber_to_velocity")
   {
     subscription_ = this->create_subscription<aetos_msgs::msg::Velocity>(
       "topic", 10, std::bind(&MinimalSubscriber::topic_callback, this, _1));
