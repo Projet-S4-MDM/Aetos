@@ -21,7 +21,8 @@
                 "ms-iot.vscode-ros",
                 "ms-azuretools.vscode-docker",
                 "ms-vscode.cpptools-extension-pack",
-                "platformio.platformio-ide"
+                "platformio.platformio-ide",
+                "hediet.vscode-drawio"
             ]
         }
     },
