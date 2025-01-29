@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'joy_demux = aetos_joy.joy_demux:main',  # This entry point tells ROS2 how to run your node
+            'joy_demux = aetos_joy.joy_demux:main',
+            "velocity_subscriber = aetos_joy.velocity_subscriber:main",
         ],
     },
 )
