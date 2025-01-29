@@ -29,14 +29,14 @@
         "DISPLAY": "unix:0",
         "ROS_LOCALHOST_ONLY": "1",
         "ROS_DOMAIN_ID": "69",
-        "SDL_JOYSTICK_DEVICE": "/dev/input/js0",
+        "SDL_JOYSTICK_DEVICE": "/dev/input/js0", //detects joystick to use in joystick teleop
         "SDL_AUDIODRIVER": "dummy"
     },
     "runArgs": [
         "--net=host",
         "--pid=host",
         "--ipc=host",
-        "--device-cgroup-rule=c 13:* rmw", 
+        "--device-cgroup-rule=c 13:* rmw", //detects devices 
         "-e",
         "DISPLAY=${env:DISPLAY}"
     ],

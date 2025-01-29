@@ -21,7 +21,6 @@ setup(
     entry_points={
         'console_scripts': [
             'joy_demux = aetos_joy.joy_demux:main',
-            "velocity_subscriber = aetos_joy.velocity_subscriber:main",
         ],
     },
 )

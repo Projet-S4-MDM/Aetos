@@ -5,6 +5,8 @@ import os
 import time
 from aetos_msgs.msg import Velocity 
 
+# This node takes input from a Xbox controller and publishes it as a Velocity vector for x, y, and z on 
+
 os.environ["SDL_JOYSTICK_DEVICE"] = "/dev/input/js0"
 
 class JoyDemux(Node):
@@ -26,7 +28,7 @@ class JoyDemux(Node):
         self.controller.init()
         self.get_logger().info(f"Connected to Xbox Controller: {self.controller.get_name()}")
 
-        # Create timer to read joystick input
+        # Create timer to read joystick input, reading at 10Hz
         self.timer = self.create_timer(0.1, self.process_joystick_input)
 
         # Value storage for comparison
@@ -47,7 +49,7 @@ class JoyDemux(Node):
         
         velocity_x = float(dpad_x)
         velocity_y = float(dpad_y)
-        velocity_z = float(button_x - button_a)  #Y positif, A negatif
+        velocity_z = float(button_x - button_a)  # Y positif, A negatif
 
        
         velocity_msg = Velocity()
