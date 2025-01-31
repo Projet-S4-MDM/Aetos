@@ -21,14 +21,14 @@
 
 using std::placeholders::_1;
 
-class MinimalSubscriber : public rclcpp::Node
+class VelocityConversion : public rclcpp::Node
 {
 public:
-  MinimalSubscriber()
+  VelocityConversionSubscriber()
   : Node("VelocityConversion")
   {
     subscription_ = this->create_subscription<aetos_msgs::msg::Velocity>(
-      "aetos/joy/velocity", 10, std::bind(&MinimalSubscriber::topic_callback, this, _1));
+      "aetos/joy/velocity", 10, std::bind(&VelocityConversionSubscriber::topic_callback, this, _1));
   }
 
 private:
@@ -43,7 +43,11 @@ private:
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<MinimalSubscriber>());
+  rclcpp::spin(std::make_shared<VelocityConversion>());
+  
+  
   rclcpp::shutdown();
+
+
   return 0;
 }
