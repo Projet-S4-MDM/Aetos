@@ -31,7 +31,7 @@ public:
   MinimalPublisher()
   : Node("minimal_publisher"), count_(0)
   {
-    publisher_ = this->create_publisher<aetos_msgs::msg::Velocity>("topic", 10);  // Use the generated message type
+    publisher_ = this->create_publisher<aetos_msgs::msg::Velocity>("aetos/joy/velocity", 10);  // Use the generated message type
     timer_ = this->create_wall_timer(
       500ms, std::bind(&MinimalPublisher::timer_callback, this));
   }
