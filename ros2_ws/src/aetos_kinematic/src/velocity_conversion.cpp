@@ -14,6 +14,7 @@
 
 #include <functional>
 #include <memory>
+#include <Eigen/Dense>
 
 #include "rclcpp/rclcpp.hpp"
 #include "aetos_msgs/msg/velocity.hpp"  // Include the generated header

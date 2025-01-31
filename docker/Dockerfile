@@ -31,6 +31,7 @@ RUN apt-get update && apt-get install -q -y --no-install-recommends \
     dbus-x11 \
     at-spi2-core \
     python3-notify2 \
+    libeigen3-dev \  
     && rm -rf /var/lib/apt/lists/*
 
 USER $USERNAME

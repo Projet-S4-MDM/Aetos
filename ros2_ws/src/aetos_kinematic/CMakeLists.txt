@@ -19,7 +19,9 @@ ament_target_dependencies(velocity_conversion rclcpp aetos_msgs)
 
 target_include_directories(velocity_conversion PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
+  $<INSTALL_INTERFACE:include>
+  /usr/include/eigen3)  # Add this line to include Eigen headers
+
 target_compile_features(velocity_conversion PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
 install(TARGETS velocity_conversion
