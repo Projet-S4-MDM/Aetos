@@ -31,16 +31,13 @@ RUN apt-get update && apt-get install -q -y --no-install-recommends \
     dbus-x11 \  
     at-spi2-core \  
     python3-notify2 \  
-    && rm -rf /var/lib/apt/lists/*  
-
-# Install Bluetooth tools and dependencies
-RUN apt-get update && apt-get install -y \
     bluez \
     bluez-tools \
     bluetooth \
     dbus \
     libbluetooth-dev \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*  
+
 
 # Create DBus directory and set permissions
 RUN mkdir -p /var/run/dbus && chmod 755 /var/run/dbus

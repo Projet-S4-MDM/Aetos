@@ -3,35 +3,32 @@ from rclpy.node import Node
 import pygame
 import os
 import time
+import sys
 from aetos_msgs.msg import Velocity 
-
-# This node takes input from a Xbox controller and publishes it as a Velocity vector for x, y, and z on 
-
-os.environ["SDL_JOYSTICK_DEVICE"] = "/dev/input/js0"
 
 class JoyDemux(Node):
     def __init__(self):
         super().__init__('joy_demux')
+        
+        os.environ["SDL_JOYSTICK_DEVICE"] = "/dev/input/js0"
 
-        # Initialize publisher
         self.velocity_publisher = self.create_publisher(Velocity, 'velocity_topic', 10)
 
-        # Check for controller
         pygame.init()
         pygame.joystick.init()
 
         if pygame.joystick.get_count() == 0:
             self.get_logger().error("No Xbox controller connected!")
-            raise RuntimeError("No Xbox controller found. Please connect one and try again.")
-
+            rclpy.shutdown()
+            pygame.quit()
+            sys.exit(1)
+            
         self.controller = pygame.joystick.Joystick(0)
         self.controller.init()
         self.get_logger().info(f"Connected to Xbox Controller: {self.controller.get_name()}")
 
-        # Create timer to read joystick input, reading at 10Hz
         self.timer = self.create_timer(0.1, self.process_joystick_input)
 
-        # Value storage for comparison
         self.prev_velocity = None
         self.last_print_time = time.time()
         
@@ -49,7 +46,7 @@ class JoyDemux(Node):
         
         velocity_x = float(dpad_x)
         velocity_y = float(dpad_y)
-        velocity_z = float(button_x - button_a)  # Y positif, A negatif
+        velocity_z = float(button_x - button_a) 
 
        
         velocity_msg = Velocity()
@@ -74,7 +71,7 @@ def main(args=None):
     finally:
         node.destroy_node()
         rclpy.shutdown()
-        pygame.quit()  # Properly shut down pygame
+        pygame.quit()  
 
 if __name__ == '__main__':
     main()

@@ -3,7 +3,7 @@
 <package format="3">
   <name>aetos_joy</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>TODO: takes input from a Xbox controller and publishes it as a Velocity vector for x, y, and z on </description>
   <maintainer email="papn1801@usherbrooke.ca">nikopapi</maintainer>
   <license>TODO: License declaration</license>
 
