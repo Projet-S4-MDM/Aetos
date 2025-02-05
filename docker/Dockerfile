@@ -45,4 +45,7 @@ RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /home/${USERNAME}/.bashrc
     echo "alias b='pushd . > /dev/null && cd /home/ws/ros2_ws && colcon build --symlink-install && popd > /dev/null'" >> /home/${USERNAME}/.bashrc && \
     echo "export RCUTILS_COLORIZED_OUTPUT=1" >> /home/${USERNAME}/.bashrc
 
+RUN python3 -m pip install --upgrade pip \
+    && python3 -m pip install pybullet matplotlib pygame
+
 SHELL ["/bin/bash", "-c"]
