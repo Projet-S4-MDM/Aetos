@@ -93,22 +93,38 @@ private:
 
   void updateLength(const aetos_msgs::msg::EncoderValues & msg);
 
-  struct sPosition getCameraPosition();
+  // struct sPosition getCameraPosition();
 
-  struct sMotorVelocity getMotorVelociity();
+  // struct sMotorVelocity getMotorVelocity();
 
   void forwardKinematics();
 
   void inverseKinematics();
 
-  void velocity_callback(const aetos_msgs::msg::Velocity & msg) const
+  void velocity_callback(const aetos_msgs::msg::Velocity & msg)
   {
     RCLCPP_INFO(this->get_logger(), "I heard: velocity x: '%f', y: '%f', z: '%f'", msg.vx, msg.vy, msg.vz);
+    VelocityConversion::updateVelocity(msg);
+    VelocityConversion::forwardKinematics();
+    VelocityConversion::inverseKinematics();
+    VelocityConversion::publish_motor_velocity(_MotorVelocity);
+
   }
 
-  void encoder_callback(const aetos_msgs::msg::EncoderValues & msg) const
+  void encoder_callback(const aetos_msgs::msg::EncoderValues & msg)
   {
     RCLCPP_INFO(this->get_logger(), "I heard: encoder angle1: '%f', angle2: '%f', angle3: '%f', angle4: '%f'", msg.angle1, msg.angle2, msg.angle3, msg.angle4);
+    VelocityConversion::updateLength(msg);
+  }
+
+  void publish_motor_velocity(const sMotorVelocity & _MotorVelocity)
+  {
+    auto message = aetos_msgs::msg::MotorVelocity();
+    message.w1=_MotorVelocity.w1;
+    message.w2=_MotorVelocity.w2;
+    message.w3=_MotorVelocity.w3;
+    message.w4=_MotorVelocity.w4;
+    pub_motor_velocity->publish(message);
   }
 
   rclcpp::Subscription<aetos_msgs::msg::Velocity>::SharedPtr sub_velocity;
@@ -165,12 +181,12 @@ void VelocityConversion:: inverseKinematics(){
 
 }
 
-struct sPosition VelocityConversion::getCameraPosition(){
-  return _CameraPosition;
-}
-struct sMotorVelocity VelocityConversion:: getMotorVelociity(){
-  return _MotorVelocity;
-}
+// struct sPosition VelocityConversion::getCameraPosition(){
+//   return _CameraPosition;
+// }
+// struct sMotorVelocity VelocityConversion:: getMotorVelocity(){
+//   return _MotorVelocity;
+// }
 void VelocityConversion::forwardKinematics(){
   _CameraPosition.x = (_CableLength.l1 * _CableLength.l1 + _ArenaLength * _ArenaLength - _CableLength.l4 * _CableLength.l4) / (2 * _ArenaLength);
   _CameraPosition.y = (_CableLength.l1 * _CableLength.l1 + _ArenaHeight * _ArenaHeight - _CableLength.l2 * _CableLength.l2) / (2 * _ArenaHeight);
