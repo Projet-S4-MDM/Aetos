@@ -79,15 +79,18 @@ private:
   const sPosition _Pole2={0.0, 1.0, 0.0};
   const sPosition _Pole3={1.0, 1.0, 0.0};
   const sPosition _Pole4={1.0, 0.0, 0.0};
+
+  const _Float64 _ArenaLength = 1.0;
+  const _Float64 _ArenaHeight = 1.0;
   
 
   void updateVelocity(const aetos_msgs::msg::Velocity & msg);
 
   void updateLength(const aetos_msgs::msg::EncoderValues & msg);
 
-  void getCameraPosition();
+  struct sPosition getCameraPosition();
 
-  void getMotorVelociity();
+  struct sMotorVelocity getMotorVelociity();
 
   void forwardKinematics();
 
@@ -127,6 +130,19 @@ void VelocityConversion::updateLength(const aetos_msgs::msg::EncoderValues & msg
 
 
 }
+
+struct sPosition VelocityConversion::getCameraPosition(){
+  return _CameraPosition;
+}
+struct sMotorVelocity VelocityConversion:: getMotorVelociity(){
+  return _MotorVelocity;
+}
+void VelocityConversion::forwardKinematics(){
+  _CameraPosition.x = (_CableLength.l1 * _CableLength.l1 + _ArenaLength * _ArenaLength - _CableLength.l4 * _CableLength.l4) / (2 * _ArenaLength);
+  _CameraPosition.y = (_CableLength.l1 * _CableLength.l1 + _ArenaHeight * _ArenaHeight - _CableLength.l2 * _CableLength.l2) / (2 * _ArenaHeight);
+  _CameraPosition.z = sqrt(_CableLength.l1 * _CableLength.l1 - _CameraPosition.x * _CameraPosition.x - _CameraPosition.y * _CameraPosition.y);
+}
+
 
 int main(int argc, char * argv[])
 {
