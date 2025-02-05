@@ -6,7 +6,7 @@
 class PID
 {
 public:
-    static constexpr unsigned long PERIOD_SPEED_CALC_US = 10'000ul;
+    // static constexpr unsigned long PERIOD_SPEED_CALC_US = 10'000ul;
 
     PID(float kp_, float ki_, float kd_, float integralLimit_);
     ~PID() {}
@@ -75,12 +75,13 @@ float PID::computeCommand(float error_)
 
     float cmdD = 0.0f;
     float currentTime = micros();
-    if (currentTime - _lastMeasureTime > PERIOD_SPEED_CALC_US)
+    // if (currentTime - _lastMeasureTime > PERIOD_SPEED_CALC_US)
+    if (currentTime - _lastMeasureTime > 10)
     {
         float dt = currentTime - _lastMeasureTime;
         _lastMeasureTime = currentTime;
 
-        cmdD = _kd * (error_ - _previousError) / (dt / 1'000'000.0f);
+        // cmdD = _kd * (error_ - _previousError) / (dt / 1'000'000.0f);
         _lastcmdD = cmdD;
     }
     else
