@@ -33,13 +33,13 @@ public:
         pinMode(_encoderPin, OUTPUT);
     }
 
-    sInputVelocity getDesiredVelocity()
+    void getDesiredVelocity()
     {
         if (Serial.available() >= sizeof(sInputVelocity))
         {
             size_t bytesRead = Serial.readBytes(reinterpret_cast<char *>(&_inputVelocityData), sizeof(sInputVelocity));
         }
-        return _inputVelocityData;
+        // return _inputVelocityData;
     }
 
     sOutputEncoderData sendEncoderData()
