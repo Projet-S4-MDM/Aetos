@@ -2,56 +2,69 @@
 #define __SERIALINTERFACE_HPP__
 
 #include <Arduino.h>
+#include "joint.hpp"
 
-struct sInputVelocity
+struct sJoints
 {
-    float _xVelocity;
-    float _yVelocity;
-    float _zVelocity;
+    Joint joint1;
+    Joint joint2;
+    Joint joint3;
+    Joint joint4;
 };
 
-struct sOutputEncoderData
+struct sRequestedVelocity
 {
-    uint8_t _motor0EncoderData;
-    uint8_t _motor1EncoderData;
-    uint8_t _motor2EncoderData;
-    uint8_t _motor3EncoderData;
+    float xVelocity;
+    float yVelocity;
+    float zVelocity;
 };
 
 class SerialCom
 {
 public:
-    SerialCom(gpio_num_t encoderPin)
-    {
-        _encoderPin = encoderPin;
-    }
-
-    ~SerialCom() {}
-
-    void init()
-    {
-        pinMode(_encoderPin, OUTPUT);
-    }
-
-    void getDesiredVelocity()
-    {
-        if (Serial.available() >= sizeof(sInputVelocity))
-        {
-            size_t bytesRead = Serial.readBytes(reinterpret_cast<char *>(&_inputVelocityData), sizeof(sInputVelocity));
-        }
-        // return _inputVelocityData;
-    }
-
-    sOutputEncoderData sendEncoderData()
-    {
-        Serial.write(reinterpret_cast<uint8_t *>(&_outputEncoderData), sizeof(sOutputEncoderData));
-    }
+    SerialCom(Joint joint1, Joint joint2, Joint joint3, Joint joint4);
+    ~SerialCom();
 
 private:
-    sInputVelocity _inputVelocityData;
-    sOutputEncoderData _outputEncoderData;
+    void init();
+    void getVelocityData();
+    void sendEncoderData();
 
-    gpio_num_t _encoderPin;
+    sJoints _joints;
+    sRequestedVelocity _requestedVelocity;
 };
+
+void SerialCom::init()
+{
+}
+
+void SerialCom::getVelocityData()
+{
+    if (Serial.available() >= sizeof(sRequestedVelocity))
+    {
+        size_t bytesRead = Serial.readBytes(reinterpret_cast<char *>(&_requestedVelocity), sizeof(sRequestedVelocity));
+    }
+}
+
+void SerialCom::sendEncoderData()
+{
+}
+
+SerialCom::SerialCom(Joint joint1_, Joint joint2_, Joint joint3_, Joint joint4_)
+{
+    _joints.joint1 = joint1_;
+    _joints.joint2 = joint2_;
+    _joints.joint3 = joint3_;
+    _joints.joint4 = joint4_;
+}
+
+// sInputVelocity getDesiredVelocity()
+// {
+// if (Serial.available() >= sizeof(sInputVelocity))
+// {
+// size_t bytesRead = Serial.readBytes(reinterpret_cast<char *>(&_inputVelocityData), sizeof(sInputVelocity));
+// }
+// return _inputVelocityData;
+// }
 
 #endif
