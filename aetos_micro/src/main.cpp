@@ -1,41 +1,25 @@
 #include <Arduino.h>
 #include "config.hpp"
 #include "FIT0186.hpp"
+#include "encoder.hpp"
 
 void setup()
 {
     FIT0186 motor1 = FIT0186(PIN_PWM_1, PIN_DIR_1, false);
+    Encoder encoder1 = Encoder(PIN_ENCODER_A1, PIN_ENCODER_B1);
+
 
     Serial.begin(115200);
-    pinMode(PIN_DIR_1, OUTPUT);
-    pinMode(PIN_PWM_1, OUTPUT);
 
     motor1.init();
+    encoder1.init();
 
     for (;;)
     {
-        float start = -100.0f;
-        float end = 100.0f;
-        unsigned long startTime = millis();
-        unsigned long duration = 5000;
+        motor1.setCmd(-30.0f);
 
-        while (true)
-        {
-            for (unsigned long startTime = millis(); millis() - startTime < duration;)
-            {
-                float elapsedTime = float(millis() - startTime) / float(duration);
-                float currentCmd = start + (end - start) * elapsedTime;
-
-                motor1.setCmd(currentCmd);
-
-                delay(10);
-            }
-            float temp = start;
-            start = end;
-            end = temp;
-
-            delay(100);
-        }
+        Serial.println(encoder1.getPulses());
+        delay(100);
     }
 }
 
