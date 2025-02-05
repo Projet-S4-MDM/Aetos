@@ -61,7 +61,6 @@ public:
     {
 
         uint32_t duty = PERCENT_TO_DUTY(abs(cmd_));
-        Serial.println(duty);
 
         if (cmd_ > 0)
         {
