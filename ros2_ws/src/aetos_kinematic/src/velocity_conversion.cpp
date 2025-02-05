@@ -70,10 +70,15 @@ public:
 
 private:
 
+  const _Float64 _radius = 0.1;
+  const _Float64 PI = 3.14159265359;
+
   sVelocity _Velocity;
   sPosition _CameraPosition;
   sMotorVelocity _MotorVelocity;
   sCableLength _CableLength;
+
+  const sCableLength _InitialCableLength={0.0, 1.0, 2.0, 1.0};
 
   const sPosition _Pole1={0.0, 0.0, 0.0};
   const sPosition _Pole2={0.0, 1.0, 0.0};
@@ -85,9 +90,9 @@ private:
 
   void updateLength(const aetos_msgs::msg::EncoderValues & msg);
 
-  void getCameraPosition();
+  _Float64 getCameraPosition();
 
-  void getMotorVelociity();
+  _Float64 getMotorVelociity();
 
   void forwardKinematics();
 
@@ -100,7 +105,7 @@ private:
 
   void encoder_callback(const aetos_msgs::msg::EncoderValues & msg) const
   {
-    RCLCPP_INFO(this->get_logger(), "I heard: encoder values");
+    RCLCPP_INFO(this->get_logger(), "I heard: encoder angle1: '%f', angle2: '%f', angle3: '%f', angle4: '%f'", msg.angle1, msg.angle2, msg.angle3, msg.angle4);
   }
 
   rclcpp::Subscription<aetos_msgs::msg::Velocity>::SharedPtr sub_velocity;
@@ -109,21 +114,50 @@ private:
 };
 
 void VelocityConversion::updateVelocity(const aetos_msgs::msg::Velocity & msg){
-  // velocity.vx = msg.vx;
-  // velocity.vy = msg.vy;
-  // velocity.vz = msg.vz;
+  _Velocity.vx = msg.vx;
+  _Velocity.vy = msg.vy;
+  _Velocity.vz = msg.vz;
   
 }
 
 void VelocityConversion::updateLength(const aetos_msgs::msg::EncoderValues & msg){
-  // float xOrigin = 0;
-  // float yOrigin = 0;
-  // float zOrigin = 0;
-  
-  
-  // sPosition.x = msg.x;
-  // sPosition.y = msg.y;
-  // sPosition.z = msg.z;
+  _CableLength.l1 = msg.angle1 + _InitialCableLength.l1*_radius;
+  _CableLength.l2 = msg.angle2 + _InitialCableLength.l2*_radius;
+  _CableLength.l3 = msg.angle3 + _InitialCableLength.l3*_radius;
+  _CableLength.l4 = msg.angle4 + _InitialCableLength.l4*_radius; 
+}
+
+void VelocityConversion:: inverseKinematics(){
+  Eigen::MatrixXf J(3,4);
+  Eigen::VectorXf V(3);
+  Eigen::VectorXf Lv(4);
+
+  J(0,0) = (_CameraPosition.x - _Pole1.x)/_CableLength.l1;
+  J(1,0) = (_CameraPosition.y - _Pole1.y)/_CableLength.l1;
+  J(2,0) = (_CameraPosition.z - _Pole1.z)/_CableLength.l1;
+
+  J(0,1) = (_CameraPosition.x - _Pole2.x)/_CableLength.l2;
+  J(1,1) = (_CameraPosition.y - _Pole2.y)/_CableLength.l2;
+  J(2,1) = (_CameraPosition.z - _Pole2.z)/_CableLength.l2;
+
+  J(0,2) = (_CameraPosition.x - _Pole3.x)/_CableLength.l3;
+  J(1,2) = (_CameraPosition.y - _Pole3.y)/_CableLength.l3;
+  J(2,2) = (_CameraPosition.z - _Pole3.z)/_CableLength.l3;
+
+  J(0,3) = (_CameraPosition.x - _Pole4.x)/_CableLength.l4;
+  J(1,3) = (_CameraPosition.y - _Pole4.y)/_CableLength.l4;
+  J(2,3) = (_CameraPosition.z - _Pole4.z)/_CableLength.l4;
+
+  V(0) = _Velocity.vx;
+  V(1) = _Velocity.vy;
+  V(2) = _Velocity.vz;
+
+  Lv = J*V;
+
+  _MotorVelocity.w1 = Lv(0)/(2*PI*_radius);
+  _MotorVelocity.w2 = Lv(1)/(2*PI*_radius);
+  _MotorVelocity.w3 = Lv(2)/(2*PI*_radius);
+  _MotorVelocity.w4 = Lv(3)/(2*PI*_radius);
 
 
 }
