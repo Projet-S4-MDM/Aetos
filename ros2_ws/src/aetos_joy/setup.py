@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'joy_demux = aetos_joy.joy_demux:main',
+            'joy_demux = aetos_joy.joy_demux:main'
         ],
     },
 )

@@ -52,15 +52,7 @@ class JoyDemux(Node):
         velocity_msg = Velocity()
         velocity_msg.data = [velocity_x, velocity_y, velocity_z]
         self.velocity_publisher.publish(velocity_msg)
-
-       
-        current_time = time.time()
-        if self.prev_velocity != (velocity_x, velocity_y, velocity_z) or current_time - self.last_print_time > 1.0:
-            print("\033c", end="")
-            print(f"Velocity (X, Y, Z): ({velocity_x:.2f}, {velocity_y:.2f}, {velocity_z:.2f})")
-            self.prev_velocity = (velocity_x, velocity_y, velocity_z)
-            self.last_print_time = current_time
-
+        
 def main(args=None):
     rclpy.init(args=args)
     node = JoyDemux()
