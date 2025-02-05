@@ -8,9 +8,9 @@ void setup()
     Serial.begin(460800);
 
     SerialCom motor0 = SerialCom(PIN_ENCODER_1);
+    int test;
 }
 
 void loop()
 {
-    
 }
