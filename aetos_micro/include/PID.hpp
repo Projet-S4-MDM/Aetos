@@ -8,7 +8,7 @@ class PID
 public:
     static constexpr unsigned long PERIOD_SPEED_CALC_US = 10'000ul;
 
-    PID(float kp_, float ki_, float kd_, float intergalLimit_);
+    PID(float kp_, float ki_, float kd_, float integralLimit_);
     ~PID() {}
     void init(void);
     void setGains(float kp_, float ki_, float kd_);
@@ -32,10 +32,10 @@ private:
     float _lastMeasureTime = 0.0f;
 };
 
-PID::PID(float kp_, float ki_, float kd_, float intergalLimit_)
+PID::PID(float kp_, float ki_, float kd_, float integralLimit_)
 {
     this->setGains(kp_, ki_, kd_);
-    this->setIntLimit(intergalLimit_);
+    this->setIntLimit(integralLimit_);
     this->reset();
     _lastMeasureTime = micros();
 }
