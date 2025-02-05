@@ -23,6 +23,36 @@
 
 using std::placeholders::_1;
 
+struct sVelocity{
+  _Float64 vx;
+  _Float64 vy;
+  _Float64 vz;
+};
+
+struct sPosition{
+  _Float64 x;
+  _Float64 y;
+  _Float64 z;
+};
+
+struct sMotorVelocity{
+  _Float64 w1;
+  _Float64 w2;
+  _Float64 w3;
+  _Float64 w4;
+};
+
+struct sCableLength{
+  _Float64 l1;
+  _Float64 l2;
+  _Float64 l3;
+  _Float64 l4;
+};
+
+
+
+
+
 class VelocityConversion : public rclcpp::Node
 {
 public:
@@ -39,12 +69,29 @@ public:
   }
 
 private:
-  float vx, vy, vz; // Vitesse
-  float x, y, z; // Position
 
-  void update_velocity(const aetos_msgs::msg::Velocity & msg);
+  sVelocity _Velocity;
+  sPosition _CameraPosition;
+  sMotorVelocity _MotorVelocity;
+  sCableLength _CableLength;
 
-  void update_position();
+  const sPosition _Pole1={0.0, 0.0, 0.0};
+  const sPosition _Pole2={0.0, 1.0, 0.0};
+  const sPosition _Pole3={1.0, 1.0, 0.0};
+  const sPosition _Pole4={1.0, 0.0, 0.0};
+  
+
+  void updateVelocity(const aetos_msgs::msg::Velocity & msg);
+
+  void updateLength(const aetos_msgs::msg::EncoderValues & msg);
+
+  void getCameraPosition();
+
+  void getMotorVelociity();
+
+  void forwardKinematics();
+
+  void inverseKinematics();
 
   void velocity_callback(const aetos_msgs::msg::Velocity & msg) const
   {
@@ -61,10 +108,24 @@ private:
   rclcpp::Publisher<aetos_msgs::msg::MotorVelocity>::SharedPtr pub_motor_velocity;
 };
 
-void VelocityConversion::update_velocity(const aetos_msgs::msg::Velocity & msg){
-  vx = msg.vx;
-  vy = msg.vy;
-  vz = msg.vz;
+void VelocityConversion::updateVelocity(const aetos_msgs::msg::Velocity & msg){
+  // velocity.vx = msg.vx;
+  // velocity.vy = msg.vy;
+  // velocity.vz = msg.vz;
+  
+}
+
+void VelocityConversion::updateLength(const aetos_msgs::msg::EncoderValues & msg){
+  // float xOrigin = 0;
+  // float yOrigin = 0;
+  // float zOrigin = 0;
+  
+  
+  // sPosition.x = msg.x;
+  // sPosition.y = msg.y;
+  // sPosition.z = msg.z;
+
+
 }
 
 int main(int argc, char * argv[])
