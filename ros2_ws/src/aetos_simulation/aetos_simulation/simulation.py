@@ -19,7 +19,6 @@ radius = 2
 center_x, center_y, center_z = 0, 0, 5
 num_frames = 100  
 
-
 beams = [
     (-square_size / 2, -square_size / 2, 0, square_size, beam_thickness, beam_height),  
     (-square_size / 2, square_size / 2 - beam_thickness, 0, square_size, beam_thickness, beam_height),  
