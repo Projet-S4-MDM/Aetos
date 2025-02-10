@@ -14,8 +14,11 @@ add_executable(serial_com src/serial_com.cpp)
                           
 ament_target_dependencies(serial_com 
                           rclcpp 
-                          std_msgs
-                          aetos_msgs)
+                          std_msgs)
+                          
+ament_target_dependencies(serial_com 
+                          rclcpp 
+                          std_msgs)
 
 install(TARGETS
           serial_com

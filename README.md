@@ -42,6 +42,8 @@ sudo usermod -aG docker $USER
 
 Reboot your computer to enable changes to groups.
 
+Reboot your computer to enable changes to groups.
+
 ---
 
 ### VS Code Setup
@@ -133,3 +135,4 @@ code .
 
 This will open the entire development environment in the same devcontainer but in a separate VS Code window.
 
+## Developping in aetos_micro
