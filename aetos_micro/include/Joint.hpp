@@ -12,11 +12,26 @@ public:
     Joint(const Encoder encoder, const PID pid, const FIT0186 fit0186);
     ~Joint() {};
 
-    void init();
+    // INIT
+    void init(void);
 
-    void resetEncoder();
-    void updateEncoder();
-    float getSpeed();
+    // ENCODER METHODS
+    void resetEncoder(void);
+    void updateEncoder(void);
+    long getPulses(void);
+
+    // TODO: VERIFY VALIDITY
+    // void updateEncoder(void);
+
+    // MOTOR METHODS
+    float getSpeed(void);
+    void setCmd(float cmd_);
+
+    // PID METHODS
+    void setGains(float kp_, float ki_, float kd_);
+    void setIntLimit(float limit_);
+    float computeCommand(float error_);
+    void resetPID(void);
 
 private:
     Encoder _encoder;
@@ -24,19 +39,49 @@ private:
     FIT0186 _fit0186;
 };
 
-float Joint::getSpeed()
+long Joint::getPulses(void)
 {
-    _encoder.getSpeed();
+    return _encoder.getPulses();
 }
 
-void Joint::updateEncoder()
+float Joint::getSpeed(void)
+{
+    return _encoder.getSpeed();
+}
+
+void Joint::setCmd(float cmd_)
+{
+     _fit0186.setCmd(cmd_);
+}
+
+void Joint::updateEncoder(void)
 {
     _encoder.update();
 }
 
-void Joint::resetEncoder()
+void Joint::resetEncoder(void)
 {
     _encoder.reset();
+}
+
+void Joint::setGains(float kp_, float ki_, float kd_)
+{
+    _pid.setGains(kp_, ki_, kd_);
+}
+
+void Joint::setIntLimit(float limit_)
+{
+    _pid.setIntLimit(limit_);
+}
+
+float Joint::computeCommand(float error_)
+{
+    return _pid.computeCommand(error_);
+}
+
+void Joint::resetPID(void)
+{
+    _pid.reset();
 }
 
 void Joint::init()
@@ -46,9 +91,7 @@ void Joint::init()
     _fit0186.init();
 }
 
-Joint::Joint(const Encoder encoder, const PID pid, const FIT0186 fit0186)
-    : _encoder(encoder), _pid(pid), _fit0186(fit0186) {}
-
-
+Joint::Joint(const Encoder encoder_, const PID pid_, const FIT0186 fit0186_)
+    : _encoder(encoder_), _pid(pid_), _fit0186(fit0186_) {}
 
 #endif

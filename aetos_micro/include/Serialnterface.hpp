@@ -3,15 +3,6 @@
 
 #include <Arduino.h>
 #include "Joint.hpp"
-// #include "joint.hpp"
-
-struct sJoints
-{
-    Joint joint1;
-    Joint joint2;
-    Joint joint3;
-    Joint joint4;
-};
 
 struct sRequestedVelocity
 {
@@ -20,52 +11,55 @@ struct sRequestedVelocity
     float zVelocity;
 };
 
+struct sEncoderData
+{
+    long encoder1;
+    long encoder2;
+    long encoder3;
+    long encoder4;
+};
+
 class SerialCom
 {
 public:
     SerialCom(Joint joint1, Joint joint2, Joint joint3, Joint joint4);
-    ~SerialCom();
+    ~SerialCom() {};
+
+    sRequestedVelocity getVelocityData();
+    void sendEncoderData(sEncoderData _encoderData);
 
 private:
-    void init();
-    void getVelocityData();
-    void sendEncoderData();
+    Joint _joint1;
+    Joint _joint2;
+    Joint _joint3;
+    Joint _joint4;
 
-    sJoints _joints;
     sRequestedVelocity _requestedVelocity;
+    sEncoderData _encoderData;
 };
 
-void SerialCom::init()
-{
-}
-
-void SerialCom::getVelocityData()
+sRequestedVelocity SerialCom::getVelocityData()
 {
     if (Serial.available() >= sizeof(sRequestedVelocity))
     {
         size_t bytesRead = Serial.readBytes(reinterpret_cast<char *>(&_requestedVelocity), sizeof(sRequestedVelocity));
+
+        return _requestedVelocity;
     }
 }
 
-void SerialCom::sendEncoderData()
+void SerialCom::sendEncoderData(sEncoderData encoderData_)
 {
+    Serial.print(encoderData_.encoder1);
+    Serial.print(",");
+    Serial.print(encoderData_.encoder2);
+    Serial.print(",");
+    Serial.print(encoderData_.encoder3);
+    Serial.print(",");
+    Serial.println(encoderData_.encoder4);
 }
 
-SerialCom::SerialCom(Joint joint1_, Joint joint2_, Joint joint3_, Joint joint4_)
-{
-    _joints.joint1 = joint1_;
-    _joints.joint2 = joint2_;
-    _joints.joint3 = joint3_;
-    _joints.joint4 = joint4_;
-}
-
-// sInputVelocity getDesiredVelocity()
-// {
-// if (Serial.available() >= sizeof(sInputVelocity))
-// {
-// size_t bytesRead = Serial.readBytes(reinterpret_cast<char *>(&_inputVelocityData), sizeof(sInputVelocity));
-// }
-// return _inputVelocityData;
-// }
+SerialCom::SerialCom(const Joint joint1_, const Joint joint2_, const Joint joint3_, const Joint joint4_)
+    : _joint1(joint1_), _joint2(joint2_), _joint3(joint3_), _joint4(joint4_) {}
 
 #endif

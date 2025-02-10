@@ -24,7 +24,6 @@ public:
     void reset() { totalPulses = 0; };
     float getSpeed() { return 0.0; };
     void update() {};
-
     long getPulses() { return totalPulses; }
 
 private:
