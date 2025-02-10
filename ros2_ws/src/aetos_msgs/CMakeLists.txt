@@ -18,6 +18,7 @@ endif()
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Example.msg"
+  "msg/Velocity.msg"
 )
 
 ament_package()

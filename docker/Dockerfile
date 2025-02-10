@@ -12,6 +12,8 @@ ARG USER_GID=$USER_UID
 
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    && usermod -aG plugdev $USERNAME \
+    && usermod -aG dialout $USERNAME \
     && apt-get update \
     && apt-get install -y sudo \
     && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME \
@@ -25,6 +27,7 @@ RUN apt-get update && apt-get install -q -y --no-install-recommends \
     terminator \
     pipx \
     nano \
+    udev \
     python3-pip \
     python3-transforms3d \
     libnotify-bin \
@@ -37,12 +40,12 @@ USER $USERNAME
 
 WORKDIR ${WORKSPACE}
 
-RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /home/${USERNAME}/.bashrc
-
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /home/${USERNAME}/.bashrc && \ 
     echo "source /home/ws/ros2_ws/install/local_setup.bash" >> /home/${USERNAME}/.bashrc && \
     echo "export ROS_DOMAIN_ID=69" >> /home/${USERNAME}/.bashrc && \
     echo "alias b='pushd . > /dev/null && cd /home/ws/ros2_ws && colcon build --symlink-install && popd > /dev/null'" >> /home/${USERNAME}/.bashrc && \
     echo "export RCUTILS_COLORIZED_OUTPUT=1" >> /home/${USERNAME}/.bashrc
+
+RUN curl -fsSL https://raw.githubusercontent.com/platformio/platformio-core/develop/platformio/assets/system/99-platformio-udev.rules | sudo tee /etc/udev/rules.d/99-platformio-udev.rules
 
 SHELL ["/bin/bash", "-c"]
