@@ -11,6 +11,8 @@ class SerialCom : public rclcpp::Node
 public:
     SerialCom();
 
+    
+
 private:
     void topicCallback(const aetos_msgs::msg::Velocity::SharedPtr msg);
     std::string usbMonitorCallback();
