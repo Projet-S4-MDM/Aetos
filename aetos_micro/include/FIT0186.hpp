@@ -12,11 +12,15 @@ public:
 
     static constexpr uint32_t PERCENT_TO_DUTY(float percent_)
     {
-        return (uint32_t)round(abs(percent_) / 100.0f * (float)(1u << LEDC_TIMER_RESOLUTION) - 1.0f);
+        return (uint32_t)round(abs(percent_) / 100.0f * (float)((1u << LEDC_TIMER_RESOLUTION) - 1));
     }
 
     FIT0186(gpio_num_t pwm_pin_, gpio_num_t dir_pin_, bool reversed_, ledc_timer_t timerNumber_ = LEDC_TIMER_0, ledc_channel_t channelNumber1_ = LEDC_CHANNEL_0)
-        : _pwm_pin(pwm_pin_), _dir_pin(dir_pin_), _reversed(reversed_), _currentSpeed(0.0f)
+        : _pwm_pin(pwm_pin_), 
+          _dir_pin(dir_pin_), 
+          _reversed(reversed_), 
+          _currentSpeed(0.0f),
+          _frequencePWM(PWM_FREQUENCY)  // Initialize _frequencePWM
     {
         _ledc_motorTimer = timerNumber_;
         _ledc_motorChannel_1 = channelNumber1_;
@@ -24,22 +28,26 @@ public:
 
     ~FIT0186()
     {
-        ledc_stop(LEDC_LOW_SPEED_MODE, _ledc_motorChannel_1, 0u);
+        if (ledc_fade_func_install(0) == ESP_OK) {  // Install LEDC fade function first
+            ledc_stop(LEDC_LOW_SPEED_MODE, _ledc_motorChannel_1, 0);
+            ledc_fade_func_uninstall();  // Clean up
+        }
     }
 
     void init(void)
     {
-        pinMode(_pwm_pin, OUTPUT);
+        // Configure GPIO pins
         pinMode(_dir_pin, OUTPUT);
 
+        // Configure LEDC timer
         ledc_timer_config_t timer_config = {
             .speed_mode = LEDC_LOW_SPEED_MODE,
             .duty_resolution = LEDC_TIMER_RESOLUTION,
             .timer_num = _ledc_motorTimer,
-            .freq_hz = PWM_FREQUENCY,
+            .freq_hz = _frequencePWM,
             .clk_cfg = LEDC_AUTO_CLK
         };
-        ledc_timer_config(&timer_config);
+        ESP_ERROR_CHECK(ledc_timer_config(&timer_config));
 
         // Configure LEDC channel
         ledc_channel_config_t channel_config = {
@@ -48,21 +56,23 @@ public:
             .channel = _ledc_motorChannel_1,
             .timer_sel = _ledc_motorTimer,
             .duty = 0,
-            .hpoint = 0
+            .hpoint = 0,
+            .flags = {
+                .output_invert = 0
+            }
         };
-        ledc_channel_config(&channel_config);
+        ESP_ERROR_CHECK(ledc_channel_config(&channel_config));
 
-        ledc_set_freq(LEDC_LOW_SPEED_MODE, _ledc_motorTimer, _frequencePWM);
+        // Install LEDC fade function
+        ESP_ERROR_CHECK(ledc_fade_func_install(0));
 
         this->setCmd(0.0f);
     }
 
     void setCmd(float cmd_)
     {
-
         uint32_t duty = PERCENT_TO_DUTY(abs(cmd_));
-        Serial.println(duty);
-
+        
         if (cmd_ > 0)
         {
             digitalWrite(_dir_pin, _reversed ? LOW : HIGH);
@@ -72,8 +82,10 @@ public:
             digitalWrite(_dir_pin, _reversed ? HIGH : LOW);
         }
 
-        ledc_set_duty(LEDC_LOW_SPEED_MODE, _ledc_motorChannel_1, duty);
-        ledc_update_duty(LEDC_LOW_SPEED_MODE, _ledc_motorChannel_1);
+        ESP_ERROR_CHECK(ledc_set_duty(LEDC_LOW_SPEED_MODE, _ledc_motorChannel_1, duty));
+        ESP_ERROR_CHECK(ledc_update_duty(LEDC_LOW_SPEED_MODE, _ledc_motorChannel_1));
+        
+        _currentSpeed = cmd_;
     }
 
 private:
