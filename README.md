@@ -42,6 +42,7 @@ sudo usermod -aG docker $USER
 
 Reboot your computer to enable changes to groups.
 
+
 Reboot your computer to enable changes to groups.
 
 ---
