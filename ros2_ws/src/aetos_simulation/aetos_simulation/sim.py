@@ -4,6 +4,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.animation as animation
 import rclpy
 from rclpy.node import Node
+from aetos_msgs.msg import EffectorPosition, EncoderValues
 
 class CableDrivenRobot(Node):
     def __init__(self):
