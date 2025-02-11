@@ -20,6 +20,7 @@
 #include "aetos_msgs/msg/velocity.hpp"
 #include "aetos_msgs/msg/encoder_values.hpp"  // Include the generated header for EncoderValues
 #include "aetos_msgs/msg/motor_velocity.hpp"  // Include the generated header for MotorVelocity
+#include "aetos_msgs/msg/effector_position.hpp"  // Include the generated header for EffectorPosition
 
 using std::placeholders::_1;
 
@@ -65,7 +66,9 @@ public:
     sub_encoder = this->create_subscription<aetos_msgs::msg::EncoderValues>(
       "aetos/control/encoder", 10, std::bind(&VelocityConversion::encoder_callback, this, _1));
 
-    pub_motor_velocity = this->create_publisher<aetos_msgs::msg::MotorVelocity>("aetos/control/velocity", 10);  // Use the generated message type
+    pub_motor_velocity = this->create_publisher<aetos_msgs::msg::MotorVelocity>("aetos/control/velocity", 10);  
+
+    pub_position = this->create_publisher<aetos_msgs::msg::EffectorPosition>("aetos/control/position", 10);// Use the generated message type
   }
 
 private:
@@ -105,17 +108,18 @@ private:
   void velocity_callback(const aetos_msgs::msg::Velocity & msg)
   {
     RCLCPP_INFO(this->get_logger(), "I heard: velocity vx: '%f', vy: '%f', vz: '%f'", msg.vx, msg.vy, msg.vz);
-    VelocityConversion::updateVelocity(msg);
-    VelocityConversion::forwardKinematics();
-    VelocityConversion::inverseKinematics();
-    VelocityConversion::publish_motor_velocity(_MotorVelocity);
+    this->updateVelocity(msg);
+    this->forwardKinematics();
+    this->inverseKinematics();
+    this->publish_motor_velocity(_MotorVelocity);
+    this->publish_position(_CameraPosition);
 
   }
 
   void encoder_callback(const aetos_msgs::msg::EncoderValues & msg)
   {
     RCLCPP_INFO(this->get_logger(), "I heard: encoder angle1: '%f', angle2: '%f', angle3: '%f', angle4: '%f'", msg.angle1, msg.angle2, msg.angle3, msg.angle4);
-    VelocityConversion::updateLength(msg);
+    this->updateLength(msg);
   }
 
   void publish_motor_velocity(const sMotorVelocity & _MotorVelocity)
@@ -129,9 +133,19 @@ private:
     pub_motor_velocity->publish(message);
   }
 
+  void publish_position(const sPosition & _CameraPosition)
+  {
+    auto message = aetos_msgs::msg::EffectorPosition();
+    message.position_x =_CameraPosition.x;
+    message.position_y=_CameraPosition.y;
+    message.position_z=_CameraPosition.z;
+    pub_position->publish(message);
+  }
+
   rclcpp::Subscription<aetos_msgs::msg::Velocity>::SharedPtr sub_velocity;
   rclcpp::Subscription<aetos_msgs::msg::EncoderValues>::SharedPtr sub_encoder;
   rclcpp::Publisher<aetos_msgs::msg::MotorVelocity>::SharedPtr pub_motor_velocity;
+  rclcpp::Publisher<aetos_msgs::msg::EffectorPosition>::SharedPtr pub_position;
 };
 
 void VelocityConversion::updateVelocity(const aetos_msgs::msg::Velocity & msg){
@@ -139,7 +153,7 @@ void VelocityConversion::updateVelocity(const aetos_msgs::msg::Velocity & msg){
   _Velocity.vy = msg.vy;
   _Velocity.vz = msg.vz;
 
-  uavInBoundSecurityCheck();
+  this->uavInBoundSecurityCheck();
 }
 
 void VelocityConversion::uavInBoundSecurityCheck(){
@@ -161,7 +175,7 @@ void VelocityConversion::updateLength(const aetos_msgs::msg::EncoderValues & msg
   _CableLength.l4 = msg.angle4*_radius + _InitialCableLength.l4; 
 }
 
-void VelocityConversion:: inverseKinematics(){
+void VelocityConversion::inverseKinematics(){
   Eigen::MatrixXf J(4,3);
   Eigen::VectorXf V(3);
   Eigen::VectorXf Lv(4);
