@@ -25,6 +25,7 @@ public:
     float getSpeed() { return 0.0; };
     void update() {};
     long getPulses() { return totalPulses; }
+    long getAngle() { return 0.0; };
 
 private:
     static void isrHandler()

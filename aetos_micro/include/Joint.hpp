@@ -5,93 +5,65 @@
 #include "encoder.hpp"
 #include "PID.hpp"
 #include "FIT0186.hpp"
+#include "timer.hpp"
 
 class Joint
 {
 public:
-    Joint(const Encoder encoder, const PID pid, const FIT0186 fit0186);
-    ~Joint() {};
+    static constexpr unsigned long PID_LOOP_FREQ_US = 1000ul;
 
-    // INIT
+    Joint(Encoder *encoder,
+          PID *pid,
+          FIT0186 *fit0186);
+
+    ~Joint(void) {};
+
     void init(void);
-
-    // ENCODER METHODS
-    void resetEncoder(void);
-    void updateEncoder(void);
-    long getPulses(void);
-
-    // TODO: VERIFY VALIDITY
-    // void updateEncoder(void);
-
-    // MOTOR METHODS
-    float getSpeed(void);
-    void setCmd(float cmd_);
-
-    // PID METHODS
-    void setGains(float kp_, float ki_, float kd_);
-    void setIntLimit(float limit_);
-    float computeCommand(float error_);
-    void resetPID(void);
+    void setSpeed(float speed_);
+    void updateInternal(void);
+    long getAngle(void);
 
 private:
-    Encoder _encoder;
-    PID _pid;
-    FIT0186 _fit0186;
+    Encoder *_encoder = NULL;
+    PID *_pid = NULL;
+    FIT0186 *_fit0186 = NULL;
+
+    Helpers::Timer<unsigned long, micros> _timerPidLoop =
+        Helpers::Timer<unsigned long, micros>(1000000.0f / (float)PID_LOOP_FREQ_US);
+
+    float _goalSpeed = 0.0f;
 };
 
-long Joint::getPulses(void)
+void Joint::updateInternal(void)
 {
-    return _encoder.getPulses();
+    _encoder->update();
+    float cmd = 0.0f;
+
+    if(_timerPidLoop.isDone())
+    {
+        cmd = _pid->computeCommand(_goalSpeed);
+        _fit0186->setCmd(cmd);
+    }
 }
 
-float Joint::getSpeed(void)
+long Joint::getAngle(void)
 {
-    return _encoder.getSpeed();
+    return _encoder->getAngle();
 }
 
-void Joint::setCmd(float cmd_)
+void Joint::setSpeed(float speed_)
 {
-     _fit0186.setCmd(cmd_);
-}
-
-void Joint::updateEncoder(void)
-{
-    _encoder.update();
-}
-
-void Joint::resetEncoder(void)
-{
-    _encoder.reset();
-}
-
-void Joint::setGains(float kp_, float ki_, float kd_)
-{
-    _pid.setGains(kp_, ki_, kd_);
-}
-
-void Joint::setIntLimit(float limit_)
-{
-    _pid.setIntLimit(limit_);
-}
-
-float Joint::computeCommand(float error_)
-{
-    return _pid.computeCommand(error_);
-}
-
-void Joint::resetPID(void)
-{
-    _pid.reset();
+    _goalSpeed = speed_;
 }
 
 void Joint::init()
 {
-    _encoder.init();
-    _pid.init();
-    _fit0186.init();
+    _encoder->init();
+    _pid->init();
+    _fit0186->init();
 }
 
-Joint::Joint(const Encoder encoder_, const PID pid_, const FIT0186 fit0186_)
+Joint::Joint(Encoder *encoder_, PID *pid_, FIT0186 *fit0186_)
     : _encoder(encoder_), _pid(pid_), _fit0186(fit0186_) {}
 
 #endif
