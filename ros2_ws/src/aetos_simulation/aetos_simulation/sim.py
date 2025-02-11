@@ -5,24 +5,27 @@ import matplotlib.animation as animation
 import rclpy
 import threading
 from rclpy.node import Node
-from aetos_msgs.msg import EffectorPosition
+from aetos_msgs.msg import EffectorPosition, MotorVelocity, EncoderValues
+import time
 
 class CableDrivenRobot(Node):
     def __init__(self):
         super().__init__('cable_robot_node')
         self.subscription = self.create_subscription(EffectorPosition, 'effector_position', self.effector_position_callback, 10)
-        self.position = [0.0, 0.0, 5.0] 
+        self.velocity_subscription = self.create_subscription(MotorVelocity, 'motor_velocity', self.motor_velocity_callback, 10)
+        self.encoder_publisher = self.create_publisher(EncoderValues, 'encoder_values', 10)
         
+        self.position = [0.0, 0.0, 5.0] 
+        self.last_velocity_time = time.time()
+        self.last_motor_velocities = [0.0, 0.0, 0.0, 0.0]
+
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111, projection='3d')
         self.init_plot()
         self.ani = animation.FuncAnimation(self.fig, self.update, interval=50, blit=False)
-        
-       
-        
         self.ros_thread = threading.Thread(target=rclpy.spin, args=(self,), daemon=True)
         self.ros_thread.start()
-        
+
         plt.show()
 
     def init_plot(self):
@@ -71,6 +74,27 @@ class CableDrivenRobot(Node):
         """Handles incoming effector position messages."""
         self.get_logger().info(f"Received effector position: x={msg.position_x}, y={msg.position_y}, z={msg.position_z}")
         self.position = [msg.position_x, msg.position_y, msg.position_z]
+
+    def motor_velocity_callback(self, msg):
+        """Handles incoming motor velocity messages and calculates encoder values."""
+        current_time = time.time()
+        time_diff = current_time - self.last_velocity_time
+        encoder_values = EncoderValues()
+
+        
+        encoder_values.angle1 = msg.w1 * time_diff  
+        encoder_values.angle2 = msg.w2 * time_diff
+        encoder_values.angle3 = msg.w3 * time_diff
+        encoder_values.angle4 = msg.w4 * time_diff
+
+        
+        self.encoder_publisher.publish(encoder_values)
+
+        self.get_logger().info(f"Publishing Encoder Values: angle1={encoder_values.angle1:.2f}, angle2={encoder_values.angle2:.2f}, angle3={encoder_values.angle3:.2f}, angle4={encoder_values.angle4:.2f}")
+
+       
+        self.last_motor_velocities = [msg.w1, msg.w2, msg.w3, msg.w4]
+        self.last_velocity_time = current_time
 
     def update(self, frame):
         effector_x, effector_y, effector_z = self.position

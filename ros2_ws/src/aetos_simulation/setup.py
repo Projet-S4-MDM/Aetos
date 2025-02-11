@@ -21,7 +21,8 @@ setup(
     entry_points={
         'console_scripts': [
             'sim = aetos_simulation.sim:main',
-            'test = aetos_simulation.test:main',
+            'publisher = aetos_simulation.publisher:main',
+            'subscriber = aetos_simulation.subscriber:main',
         ],
     },
 )
