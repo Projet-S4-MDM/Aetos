@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'simulation = aetos_simulation.simulation:main',
+            'sim = aetos_simulation.sim:main',
         ],
     },
 )
