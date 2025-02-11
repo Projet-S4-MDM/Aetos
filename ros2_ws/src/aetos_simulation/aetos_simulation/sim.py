@@ -3,16 +3,26 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.animation as animation
 import rclpy
+import threading
 from rclpy.node import Node
-from aetos_msgs.msg import EffectorPosition, EncoderValues
+from aetos_msgs.msg import EffectorPosition
 
 class CableDrivenRobot(Node):
     def __init__(self):
         super().__init__('cable_robot_node')
+        self.subscription = self.create_subscription(EffectorPosition, 'effector_position', self.effector_position_callback, 10)
+        self.position = [0.0, 0.0, 5.0] 
+        
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111, projection='3d')
         self.init_plot()
-        self.ani = animation.FuncAnimation(self.fig, self.update, frames=100, interval=50, blit=False)
+        self.ani = animation.FuncAnimation(self.fig, self.update, interval=50, blit=False)
+        
+       
+        
+        self.ros_thread = threading.Thread(target=rclpy.spin, args=(self,), daemon=True)
+        self.ros_thread.start()
+        
         plt.show()
 
     def init_plot(self):
@@ -57,11 +67,13 @@ class CableDrivenRobot(Node):
         self.effector, = self.ax.plot([0], [0], [5], 'ro', markersize=8)
         self.cables = [self.ax.plot([], [], [], 'gray', linestyle='-', linewidth=1)[0] for _ in range(4)]
 
+    def effector_position_callback(self, msg):
+        """Handles incoming effector position messages."""
+        self.get_logger().info(f"Received effector position: x={msg.position_x}, y={msg.position_y}, z={msg.position_z}")
+        self.position = [msg.position_x, msg.position_y, msg.position_z]
+
     def update(self, frame):
-        theta = 2 * np.pi * frame / 100
-        effector_x = 2 * np.cos(theta)
-        effector_y = 2 * np.sin(theta)
-        effector_z = 5
+        effector_x, effector_y, effector_z = self.position
         self.effector.set_data([effector_x], [effector_y])
         self.effector.set_3d_properties([effector_z])
 
@@ -76,7 +88,8 @@ def main(args=None):
     rclpy.init(args=args)
     node = CableDrivenRobot()
     try:
-        rclpy.spin(node)
+        while rclpy.ok():
+            pass
     except KeyboardInterrupt:
         pass
     node.destroy_node()
