@@ -40,12 +40,12 @@ private:
   void timer_callback()
   {
     auto message = aetos_msgs::msg::Velocity();  // Create a message instance
-    message.vx = 1.0 * count_;
-    message.vy = 2.0 * count_;
+    message.vx = 0.11 * count_;
+    message.vy = -0.1 * count_;
     message.vz = 3.0 * count_;
     RCLCPP_INFO(this->get_logger(), "Publishing: velocity x: '%f', y: '%f', z: '%f'", message.vx, message.vy, message.vz);
     publisher_->publish(message);
-    count_++;
+    count_=1;
   }
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Publisher<aetos_msgs::msg::Velocity>::SharedPtr publisher_;  // Use the generated message type
