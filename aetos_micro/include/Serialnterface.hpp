@@ -11,31 +11,27 @@ struct sRequestedVelocity
     float zVelocity;
 };
 
-struct sEncoderData
-{
-    long encoder1;
-    long encoder2;
-    long encoder3;
-    long encoder4;
-};
-
 class SerialCom
 {
 public:
-    SerialCom(Joint joint1, Joint joint2, Joint joint3, Joint joint4);
+    SerialCom(Joint *joint1,
+              Joint *joint2,
+              Joint *joint3,
+              Joint *joint4);
+
     ~SerialCom() {};
 
     sRequestedVelocity getVelocityData();
-    void sendEncoderData(sEncoderData _encoderData);
+    void sendEncoderData(Joint joint1_, Joint joint2_, Joint joint3_, Joint joint4_);
 
 private:
-    Joint _joint1;
-    Joint _joint2;
-    Joint _joint3;
-    Joint _joint4;
-
     sRequestedVelocity _requestedVelocity;
-    sEncoderData _encoderData;
+     sRequestedVelocity defaultVelocity = {0.0f, 0.0f, 0.0f};
+
+    Joint *_joint1 = nullptr;
+    Joint *_joint2 = nullptr;
+    Joint *_joint3 = nullptr;
+    Joint *_joint4 = nullptr;
 };
 
 sRequestedVelocity SerialCom::getVelocityData()
@@ -46,20 +42,21 @@ sRequestedVelocity SerialCom::getVelocityData()
 
         return _requestedVelocity;
     }
+    return defaultVelocity;
 }
 
-void SerialCom::sendEncoderData(sEncoderData encoderData_)
-{
-    Serial.print(encoderData_.encoder1);
+void SerialCom::sendEncoderData(Joint joint1_, Joint joint2_, Joint joint3_, Joint joint4_)
+{    
+    Serial.print(joint1_.getAngle());
     Serial.print(",");
-    Serial.print(encoderData_.encoder2);
+    Serial.print(joint2_.getAngle());
     Serial.print(",");
-    Serial.print(encoderData_.encoder3);
+    Serial.print(joint3_.getAngle());
     Serial.print(",");
-    Serial.println(encoderData_.encoder4);
+    Serial.println(joint4_.getAngle());
 }
 
-SerialCom::SerialCom(const Joint joint1_, const Joint joint2_, const Joint joint3_, const Joint joint4_)
+SerialCom::SerialCom(Joint *joint1_,Joint *joint2_,Joint *joint3_,Joint *joint4_)
     : _joint1(joint1_), _joint2(joint2_), _joint3(joint3_), _joint4(joint4_) {}
 
 #endif

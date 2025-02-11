@@ -24,9 +24,9 @@ public:
     long getAngle(void);
 
 private:
-    Encoder *_encoder = NULL;
-    PID *_pid = NULL;
-    FIT0186 *_fit0186 = NULL;
+    Encoder *_encoder = nullptr;
+    PID *_pid = nullptr;
+    FIT0186 *_fit0186 = nullptr;
 
     Helpers::Timer<unsigned long, micros> _timerPidLoop =
         Helpers::Timer<unsigned long, micros>(1000000.0f / (float)PID_LOOP_FREQ_US);
