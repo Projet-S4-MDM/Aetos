@@ -1,55 +1,56 @@
-// Copyright 2016 Open Source Robotics Foundation, Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 #include <functional>
 #include <memory>
 #include <Eigen/Dense>
 
 #include "rclcpp/rclcpp.hpp"
 #include "aetos_msgs/msg/velocity.hpp"
-#include "aetos_msgs/msg/encoder_values.hpp"  // Include the generated header for EncoderValues
-#include "aetos_msgs/msg/motor_velocity.hpp"  // Include the generated header for MotorVelocity
-#include "aetos_msgs/msg/effector_position.hpp"  // Include the generated header for EffectorPosition
+#include "aetos_msgs/msg/encoder_values.hpp" 
+#include "aetos_msgs/msg/motor_velocity.hpp"  
+#include "aetos_msgs/msg/effector_position.hpp"
 
 using std::placeholders::_1;
 
 struct sVelocity{
-  _Float64 vx;
-  _Float64 vy;
-  _Float64 vz;
+  float vx;
+  float vy;
+  float vz;
 };
 
 struct sPosition{
-  _Float64 x;
-  _Float64 y;
-  _Float64 z;
+  float x;
+  float y;
+  float z;
 };
 
 struct sMotorVelocity{
-  _Float64 w1;
-  _Float64 w2;
-  _Float64 w3;
-  _Float64 w4;
+  float w1;
+  float w2;
+  float w3;
+  float w4;
 };
 
 struct sCableLength{
-  _Float64 l1;
-  _Float64 l2;
-  _Float64 l3;
-  _Float64 l4;
+  float l1;
+  float l2;
+  float l3;
+  float l4;
 };
 
+  //SETUP
+  constexpr float PI = 3.14159265359;
+
+  constexpr float _radius = 0.05;
+
+  constexpr float _arenaLength = 0.816;
+  constexpr float _arenaWidth = 0.816;
+  constexpr float _arenaHeight = 0.7;
+
+  constexpr sCableLength _initialCableLength = {0.05f, 0.78144487f, 1.10399827f, 0.78144487f};
+
+  constexpr sPosition _pole1 = {0.0f, 0.0f, 0.0f};
+  constexpr sPosition _pole2 = {0.0f, 0.816f, 0.0f};
+  constexpr sPosition _pole3 = {0.816f, 0.816f, 0.0f};
+  constexpr sPosition _pole4 = {0.816f, 0.0f, 0.0f};
 
 
 
@@ -73,28 +74,12 @@ public:
 
 private:
 
-  const _Float64 PI = 3.14159265359;
+  sVelocity _velocity;
+  sPosition _cameraPosition;
+  sMotorVelocity _motorVelocity;
+  sCableLength _cableLength;
 
-  sVelocity _Velocity;
-  sPosition _CameraPosition;
-  sMotorVelocity _MotorVelocity;
-  sCableLength _CableLength;
-
-  //SETUP
-  const _Float64 _radius = 0.05;
-
-  const _Float64 _ArenaLength = 0.816;
-  const _Float64 _ArenaWidth = 0.816;
-  const _Float64 _ArenaHeight = 0.7;
-
-  const sCableLength _InitialCableLength = {0.05, 0.78144487, 1.10399827, 0.78144487};
-
-  const sPosition _Pole1={0.0, 0.0, 0.0};
-  const sPosition _Pole2={0.0, _ArenaWidth, 0.0};
-  const sPosition _Pole3={_ArenaLength, _ArenaWidth, 0.0};
-  const sPosition _Pole4={_ArenaLength, 0.0, 0.0};
   
-
   void updateVelocity(const aetos_msgs::msg::Velocity & msg);
 
   void updateLength(const aetos_msgs::msg::EncoderValues & msg);
@@ -111,8 +96,8 @@ private:
     this->updateVelocity(msg);
     this->forwardKinematics();
     this->inverseKinematics();
-    this->publish_motor_velocity(_MotorVelocity);
-    this->publish_position(_CameraPosition);
+    this->publish_motor_velocity(_motorVelocity);
+    this->publish_position(_cameraPosition);
 
   }
 
@@ -122,23 +107,23 @@ private:
     this->updateLength(msg);
   }
 
-  void publish_motor_velocity(const sMotorVelocity & _MotorVelocity)
+  void publish_motor_velocity(const sMotorVelocity & _motorVelocity)
   {
 
     auto message = aetos_msgs::msg::MotorVelocity();
-    message.w1=_MotorVelocity.w1;
-    message.w2=_MotorVelocity.w2;
-    message.w3=_MotorVelocity.w3;
-    message.w4=_MotorVelocity.w4;
+    message.w1 = _motorVelocity.w1;
+    message.w2 = _motorVelocity.w2;
+    message.w3 = _motorVelocity.w3;
+    message.w4 = _motorVelocity.w4;
     pub_motor_velocity->publish(message);
   }
 
-  void publish_position(const sPosition & _CameraPosition)
+  void publish_position(const sPosition & _cameraPosition)
   {
     auto message = aetos_msgs::msg::EffectorPosition();
-    message.position_x =_CameraPosition.x;
-    message.position_y=_CameraPosition.y;
-    message.position_z=_CameraPosition.z;
+    message.position_x = _cameraPosition.x;
+    message.position_y = _cameraPosition.y;
+    message.position_z = _cameraPosition.z;
     pub_position->publish(message);
   }
 
@@ -149,30 +134,30 @@ private:
 };
 
 void VelocityConversion::updateVelocity(const aetos_msgs::msg::Velocity & msg){
-  _Velocity.vx = msg.vx;
-  _Velocity.vy = msg.vy;
-  _Velocity.vz = msg.vz;
+  _velocity.vx = msg.vx;
+  _velocity.vy = msg.vy;
+  _velocity.vz = msg.vz;
 
   this->uavInBoundSecurityCheck();
 }
 
 void VelocityConversion::uavInBoundSecurityCheck(){
-  if( (_CameraPosition.x <= 0 && _Velocity.vx < 0) || (_CameraPosition.x >= _ArenaLength && _Velocity.vx > 0)){
-    _Velocity.vx = 0;
+  if( (_cameraPosition.x <= 0 && _velocity.vx < 0) || (_cameraPosition.x >= _arenaLength && _velocity.vx > 0)){
+    _velocity.vx = 0;
   }
-  if( (_CameraPosition.y <= 0 && _Velocity.vy < 0) || (_CameraPosition.y >= _ArenaWidth && _Velocity.vy > 0)){
-    _Velocity.vy = 0;
+  if( (_cameraPosition.y <= 0 && _velocity.vy < 0) || (_cameraPosition.y >= _arenaWidth && _velocity.vy > 0)){
+    _velocity.vy = 0;
   }
-  if( (_CameraPosition.z <= 0 && _Velocity.vz < 0) || (_CameraPosition.z >= _ArenaHeight && _Velocity.vz > 0)){
-    _Velocity.vz = 0;
+  if( (_cameraPosition.z <= 0 && _velocity.vz < 0) || (_cameraPosition.z >= _arenaHeight && _velocity.vz > 0)){
+    _velocity.vz = 0;
   }
 };
 
 void VelocityConversion::updateLength(const aetos_msgs::msg::EncoderValues & msg){
-  _CableLength.l1 = msg.angle1*_radius + _InitialCableLength.l1;
-  _CableLength.l2 = msg.angle2*_radius + _InitialCableLength.l2;
-  _CableLength.l3 = msg.angle3*_radius + _InitialCableLength.l3;
-  _CableLength.l4 = msg.angle4*_radius + _InitialCableLength.l4; 
+  _cableLength.l1 = msg.angle1*_radius + _initialCableLength.l1;
+  _cableLength.l2 = msg.angle2*_radius + _initialCableLength.l2;
+  _cableLength.l3 = msg.angle3*_radius + _initialCableLength.l3;
+  _cableLength.l4 = msg.angle4*_radius + _initialCableLength.l4; 
 }
 
 void VelocityConversion::inverseKinematics(){
@@ -180,42 +165,42 @@ void VelocityConversion::inverseKinematics(){
   Eigen::VectorXf V(3);
   Eigen::VectorXf Lv(4);
 
-  J(0,0) = (_CameraPosition.x - _Pole1.x)/_CableLength.l1;
-  J(0,1) = (_CameraPosition.y - _Pole1.y)/_CableLength.l1;
-  J(0,2) = (_CameraPosition.z - _Pole1.z)/_CableLength.l1;
+  J(0,0) = (_cameraPosition.x - _pole1.x)/_cableLength.l1;
+  J(0,1) = (_cameraPosition.y - _pole1.y)/_cableLength.l1;
+  J(0,2) = (_cameraPosition.z - _pole1.z)/_cableLength.l1;
 
-  J(1,0) = (_CameraPosition.x - _Pole2.x)/_CableLength.l2;
-  J(1,1) = (_CameraPosition.y - _Pole2.y)/_CableLength.l2;
-  J(1,2) = (_CameraPosition.z - _Pole2.z)/_CableLength.l2;
+  J(1,0) = (_cameraPosition.x - _pole2.x)/_cableLength.l2;
+  J(1,1) = (_cameraPosition.y - _pole2.y)/_cableLength.l2;
+  J(1,2) = (_cameraPosition.z - _pole2.z)/_cableLength.l2;
 
-  J(2,0) = (_CameraPosition.x - _Pole3.x)/_CableLength.l3;
-  J(2,1) = (_CameraPosition.y - _Pole3.y)/_CableLength.l3;
-  J(2,2) = (_CameraPosition.z - _Pole3.z)/_CableLength.l3;
+  J(2,0) = (_cameraPosition.x - _pole3.x)/_cableLength.l3;
+  J(2,1) = (_cameraPosition.y - _pole3.y)/_cableLength.l3;
+  J(2,2) = (_cameraPosition.z - _pole3.z)/_cableLength.l3;
 
-  J(3,0) = (_CameraPosition.x - _Pole4.x)/_CableLength.l4;
-  J(3,1) = (_CameraPosition.y - _Pole4.y)/_CableLength.l4;
-  J(3,2) = (_CameraPosition.z - _Pole4.z)/_CableLength.l4;
+  J(3,0) = (_cameraPosition.x - _pole4.x)/_cableLength.l4;
+  J(3,1) = (_cameraPosition.y - _pole4.y)/_cableLength.l4;
+  J(3,2) = (_cameraPosition.z - _pole4.z)/_cableLength.l4;
 
-  V(0) = _Velocity.vx;
-  V(1) = _Velocity.vy;
-  V(2) = _Velocity.vz;
+  V(0) = _velocity.vx;
+  V(1) = _velocity.vy;
+  V(2) = _velocity.vz;
 
   Lv = J*V;
   std::cout << "Vitesse en rad/s: " << Lv << std::endl;
 
 
-  _MotorVelocity.w1 = Lv(0)/(_radius);
-  _MotorVelocity.w2 = Lv(1)/(_radius);
-  _MotorVelocity.w3 = Lv(2)/(_radius);
-  _MotorVelocity.w4 = Lv(3)/(_radius);
+  _motorVelocity.w1 = Lv(0)/(_radius);
+  _motorVelocity.w2 = Lv(1)/(_radius);
+  _motorVelocity.w3 = Lv(2)/(_radius);
+  _motorVelocity.w4 = Lv(3)/(_radius);
 
 
 }
 void VelocityConversion::forwardKinematics(){
-  _CameraPosition.x = (_CableLength.l1 * _CableLength.l1 + _ArenaLength * _ArenaLength - _CableLength.l4 * _CableLength.l4) / (2 * _ArenaLength);
-  _CameraPosition.y = (_CableLength.l1 * _CableLength.l1 + _ArenaWidth * _ArenaWidth - _CableLength.l2 * _CableLength.l2) / (2 * _ArenaWidth);
-  _CameraPosition.z = sqrt(abs(_CableLength.l1 * _CableLength.l1 - _CameraPosition.x * _CameraPosition.x - _CameraPosition.y * _CameraPosition.y));
-  std::cout << "Position de la camera: " << _CameraPosition.x << " " << _CameraPosition.y << " " << _CameraPosition.z << std::endl;
+  _cameraPosition.x = (_cableLength.l1 * _cableLength.l1 + _arenaLength * _arenaLength - _cableLength.l4 * _cableLength.l4) / (2 * _arenaLength);
+  _cameraPosition.y = (_cableLength.l1 * _cableLength.l1 + _arenaWidth * _arenaWidth - _cableLength.l2 * _cableLength.l2) / (2 * _arenaWidth);
+  _cameraPosition.z = sqrt(abs(_cableLength.l1 * _cableLength.l1 - _cameraPosition.x * _cameraPosition.x - _cameraPosition.y * _cameraPosition.y));
+  std::cout << "Position de la camera: " << _cameraPosition.x << " " << _cameraPosition.y << " " << _cameraPosition.z << std::endl;
 }
 
 
