@@ -48,7 +48,8 @@ void Joint::updateInternal(void)
 
 long Joint::getAngle(void)
 {
-    return _encoder->getAngle();
+    // return _encoder->getAngle();
+    return _encoder->getPulses();
 }
 
 void Joint::setSpeed(float speed_)
