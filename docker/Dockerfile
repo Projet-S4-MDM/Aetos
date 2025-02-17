@@ -37,6 +37,7 @@ RUN apt-get update && apt-get install -q -y --no-install-recommends \
     dbus \
     libbluetooth-dev \
     && rm -rf /var/lib/apt/lists/*  
+    libeigen3-dev \  
 
 
 # Create DBus directory and set permissions
