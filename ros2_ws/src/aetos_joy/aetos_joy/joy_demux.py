@@ -12,7 +12,7 @@ class JoyDemux(Node):
         
         os.environ["SDL_JOYSTICK_DEVICE"] = "/dev/input/js0"
 
-        self.velocity_publisher = self.create_publisher(Velocity, 'velocity_topic', 10)
+        self.velocity_publisher = self.create_publisher(Velocity, 'aetos/joy/velocity', 10)
 
         pygame.init()
         pygame.joystick.init()
