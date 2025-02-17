@@ -21,6 +21,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/EffectorPosition.msg"
   "msg/MotorVelocity.msg"
   "msg/EncoderValues.msg"
+  "msg/Velocity.msg"
 )
 
 ament_package()
