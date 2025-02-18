@@ -1,7 +1,6 @@
 #include <functional>
 #include <memory>
 #include <Eigen/Dense>
-
 #include "rclcpp/rclcpp.hpp"
 #include "aetos_msgs/msg/velocity.hpp"
 #include "aetos_msgs/msg/encoder_values.hpp" 
@@ -92,7 +91,7 @@ private:
 
   void velocity_callback(const aetos_msgs::msg::Velocity & msg)
   {
-    RCLCPP_INFO(this->get_logger(), "I heard: velocity vx: '%f', vy: '%f', vz: '%f'", msg.vx, msg.vy, msg.vz);
+    RCLCPP_INFO(this->get_logger(), "I heard: velocity vx: '%d', vy: '%d', vz: '%d'", msg.VX, msg.VY, msg.VZ);
     this->updateVelocity(msg);
     this->forwardKinematics();
     this->inverseKinematics();
@@ -134,9 +133,9 @@ private:
 };
 
 void VelocityConversion::updateVelocity(const aetos_msgs::msg::Velocity & msg){
-  _velocity.vx = msg.vx;
-  _velocity.vy = msg.vy;
-  _velocity.vz = msg.vz;
+  _velocity.vx = msg.VX;
+  _velocity.vy = msg.VY;
+  _velocity.vz = msg.VZ;
 
   this->uavInBoundSecurityCheck();
 }
