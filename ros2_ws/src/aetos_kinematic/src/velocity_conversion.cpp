@@ -192,13 +192,14 @@ void VelocityConversion::inverseKinematics(){
   V(2) = _velocity.vz;
 
   Lv = J*V;
-  std::cout << "Vitesse en rad/s: " << Lv << std::endl;
+
 
 
   _motorVelocity.w1 = Lv(0)/(_radius);
   _motorVelocity.w2 = Lv(1)/(_radius);
   _motorVelocity.w3 = Lv(2)/(_radius);
   _motorVelocity.w4 = Lv(3)/(_radius);
+  std::cout << "Vitesse en rad/s: " << _motorVelocity.w1 << ""<< _motorVelocity.w2 << "" << _motorVelocity.w3 << ""<< _motorVelocity.w4 << std::endl;
 
 
 }

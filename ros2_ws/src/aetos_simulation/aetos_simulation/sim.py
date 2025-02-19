@@ -1,4 +1,5 @@
 import numpy as np
+import math
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.animation as animation
@@ -15,9 +16,10 @@ class CableDrivenRobot(Node):
         self.velocity_subscription = self.create_subscription(MotorVelocity, 'aetos/control/velocity', self.motor_velocity_callback, 10)
         self.encoder_publisher = self.create_publisher(EncoderValues, 'aetos/control/encoder', 10)
         
-        self.position = [0.0, 0.0, 5.0] 
+        self.position = [0.0, 0.0, 0.0] 
         self.last_velocity_time = time.time()
         self.last_motor_velocities = [0.0, 0.0, 0.0, 0.0]
+        self.encoder_values = EncoderValues()
 
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111, projection='3d')
@@ -29,45 +31,46 @@ class CableDrivenRobot(Node):
         plt.show()
 
     def init_plot(self):
-        size = 10  
-        beam_thickness = 0.2
-        beam_height = 0.2
-        square_size = 10  
-        vertical_height = 10  
+        size = 1.5
+        beam_thickness = 0.01
+        beam_height = 0.01
+        square_size = 1  
+        vertical_height = 1  
 
         beams = [
-            (-square_size / 2, -square_size / 2, 0, square_size, beam_thickness, beam_height),  
-            (-square_size / 2, square_size / 2 - beam_thickness, 0, square_size, beam_thickness, beam_height),  
-            (-square_size / 2, -square_size / 2, 0, beam_thickness, square_size, beam_height),  
-            (square_size / 2 - beam_thickness, -square_size / 2, 0, beam_thickness, square_size, beam_height),  
+            (0, 0, 1, square_size, beam_thickness, beam_height),  
+            (0, square_size - beam_thickness, 1, square_size, beam_thickness, beam_height),  
+            (0, 0, 1, beam_thickness, square_size, beam_height),  
+            (square_size - beam_thickness, 0, 1, beam_thickness, square_size, beam_height),  
         ]
 
         vertical_beams = [
-            (-square_size / 2, -square_size / 2, 0, beam_thickness, beam_thickness, vertical_height),  
-            (-square_size / 2, square_size / 2 - beam_thickness, 0, beam_thickness, beam_thickness, vertical_height),  
-            (square_size / 2 - beam_thickness, -square_size / 2, 0, beam_thickness, beam_thickness, vertical_height),  
-            (square_size / 2 - beam_thickness, square_size / 2 - beam_thickness, 0, beam_thickness, beam_thickness, vertical_height),  
+            (0, 0, 0, beam_thickness, beam_thickness, vertical_height),  
+            (0, square_size, 0, beam_thickness, beam_thickness, vertical_height),  
+            (square_size, square_size, 0, beam_thickness, beam_thickness, vertical_height),  
+            (square_size, 0, 0, beam_thickness, beam_thickness, vertical_height),  
         ]
 
         self.anchor_points = [
-            (-square_size / 2, -square_size / 2, vertical_height),  
-            (-square_size / 2, square_size / 2 - beam_thickness, vertical_height),  
-            (square_size / 2 - beam_thickness, -square_size / 2, vertical_height),  
-            (square_size / 2 - beam_thickness, square_size / 2 - beam_thickness, vertical_height),  
-        ]
+            (0, 0, 0),  
+            (1, 0, 0),  
+            (0, 1, 0),  
+            (1, 1, 0),  
+    ]
+
 
         for x, y, z, dx, dy, dz in beams:
             self.ax.bar3d(x, y, z, dx, dy, dz, color='black')
         for x, y, z, dx, dy, dz in vertical_beams:
             self.ax.bar3d(x, y, z, dx, dy, dz, color='black')
 
-        self.ax.set_xlim([-size, size])
-        self.ax.set_ylim([-size, size])
+        self.ax.set_xlim([0, size])
+        self.ax.set_ylim([0, size])
         self.ax.set_zlim([0, size])
         self.ax.set_xlabel("X")
         self.ax.set_ylabel("Y")
         self.ax.set_zlabel("Z")
-        self.effector, = self.ax.plot([0], [0], [5], 'ro', markersize=8)
+        self.effector, = self.ax.plot([0], [0], [5], 'ro', markersize=4)
         self.cables = [self.ax.plot([], [], [], 'gray', linestyle='-', linewidth=1)[0] for _ in range(4)]
 
     def effector_position_callback(self, msg):
@@ -79,21 +82,33 @@ class CableDrivenRobot(Node):
         """Handles incoming motor velocity messages and calculates encoder values."""
         current_time = time.time()
         time_diff = current_time - self.last_velocity_time
-        encoder_values = EncoderValues()
-
         
-        encoder_values.angle1 = msg.w1 * time_diff  
-        encoder_values.angle2 = msg.w2 * time_diff
-        encoder_values.angle3 = msg.w3 * time_diff
-        encoder_values.angle4 = msg.w4 * time_diff
-
+        variable_temp1 = msg.w1 * time_diff
+        varuable_temp2 = msg.w2 * time_diff
+        variable_temp3 = msg.w3 * time_diff 
+        variable_temp4 = msg.w4 * time_diff
         
-        self.encoder_publisher.publish(encoder_values)
+        if math.isnan(variable_temp1) | math.isnan(varuable_temp2) | math.isnan(variable_temp3) | math.isnan(variable_temp4):
+            self.encoder_values.angle1 = self.encoder_values.angle1
+            self.encoder_values.angle2 = self.encoder_values.angle2
+            self.encoder_values.angle3 = self.encoder_values.angle3
+            self.encoder_values.angle4 = self.encoder_values.angle4
+            
+        else:
+            self.encoder_values.angle1 += msg.w1 * time_diff
+            self.encoder_values.angle2 += msg.w2 * time_diff
+            self.encoder_values.angle3 += msg.w3 * time_diff
+            self.encoder_values.angle4 += msg.w4 * time_diff
+        
+        
+        self.encoder_publisher.publish(self.encoder_values)
 
-        self.get_logger().info(f"Publishing Encoder Values: angle1={encoder_values.angle1:.2f}, angle2={encoder_values.angle2:.2f}, angle3={encoder_values.angle3:.2f}, angle4={encoder_values.angle4:.2f}")
+        self.get_logger().info(f"Publishing Encoder Values: angle1={self.encoder_values.angle1:.2f}, angle2={self.encoder_values.angle2:.2f}, angle3={self.encoder_values.angle3:.2f}, angle4={self.encoder_values.angle4:.2f}")
 
-       
         self.last_motor_velocities = [msg.w1, msg.w2, msg.w3, msg.w4]
+        
+        self.get_logger().info(f"Received motor velocities: w1={msg.w1}, w2={msg.w2}, w3={msg.w3}, w4={msg.w4}")
+        
         self.last_velocity_time = current_time
 
     def update(self, frame):

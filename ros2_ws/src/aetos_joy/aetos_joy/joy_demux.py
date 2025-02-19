@@ -27,7 +27,7 @@ class JoyDemux(Node):
         self.controller.init()
         self.get_logger().info(f"Connected to Xbox Controller: {self.controller.get_name()}")
 
-        self.timer = self.create_timer(0.1, self.process_joystick_input)
+        self.timer = self.create_timer(0.2, self.process_joystick_input)
 
         self.prev_velocity = None
         self.last_print_time = time.time()
