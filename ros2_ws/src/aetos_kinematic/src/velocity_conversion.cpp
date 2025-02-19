@@ -52,8 +52,6 @@ struct sCableLength{
   constexpr sPosition _pole4 = {0.816f, 0.0f, 0.0f};
 
 
-
-
 class VelocityConversion : public rclcpp::Node
 {
 public:
@@ -91,8 +89,17 @@ private:
 
   void velocity_callback(const aetos_msgs::msg::Velocity & msg)
   {
-    RCLCPP_INFO(this->get_logger(), "I heard: velocity vx: '%d', vy: '%d', vz: '%d'", msg.VX, msg.VY, msg.VZ);
-    this->updateVelocity(msg);
+
+    float vx = msg.data[0];
+    float vy = msg.data[1];
+    float vz = msg.data[2];
+
+    RCLCPP_INFO(this->get_logger(), "I heard: velocity vx: '%f', vy: '%f', vz: '%f'", msg.data[0], msg.data[1], msg.data[2]);
+
+    _velocity.vx = vx;
+    _velocity.vy = vy;
+    _velocity.vz = vz;
+
     this->forwardKinematics();
     this->inverseKinematics();
     this->publish_motor_velocity(_motorVelocity);
@@ -133,9 +140,9 @@ private:
 };
 
 void VelocityConversion::updateVelocity(const aetos_msgs::msg::Velocity & msg){
-  _velocity.vx = msg.VX;
-  _velocity.vy = msg.VY;
-  _velocity.vz = msg.VZ;
+  _velocity.vx = msg.data[0];
+  _velocity.vy = msg.data[1];
+  _velocity.vz = msg.data[2];
 
   this->uavInBoundSecurityCheck();
 }
