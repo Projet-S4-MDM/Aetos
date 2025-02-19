@@ -6,9 +6,10 @@
 
 struct sRequestedVelocity
 {
-    float xVelocity;
-    float yVelocity;
-    float zVelocity;
+    float motor1Velocity;
+    float motor2Velocity;
+    float motor3Velocity;
+    float motor3Velocity;
 };
 
 class SerialCom
@@ -44,20 +45,13 @@ sRequestedVelocity SerialCom::getVelocityData()
 
 void SerialCom::sendEncoderData(Joint joint1_, Joint joint2_, Joint joint3_, Joint joint4_)
 {
-    // Serial.print(joint1_.getAngle());
-    // Serial.print(",");
-    // Serial.print(joint2_.getAngle());
-    // Serial.print(",");
-    // Serial.print(joint3_.getAngle());
-    // Serial.print(",");
-    // Serial.println(joint4_.getAngle());
-    Serial.print("1.23");
+    Serial.print(joint1_.getAngle());
     Serial.print(",");
-    Serial.print("-0.56");
+    Serial.print(joint2_.getAngle());
     Serial.print(",");
-    Serial.print("2.78");
+    Serial.print(joint3_.getAngle());
     Serial.print(",");
-    Serial.println("18.05");
+    Serial.println(joint4_.getAngle());
 }
 
 SerialCom::SerialCom(Joint *joint1_, Joint *joint2_, Joint *joint3_, Joint *joint4_)
