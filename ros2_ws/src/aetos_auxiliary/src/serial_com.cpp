@@ -11,7 +11,7 @@
 
 constexpr uint16_t USB_MONITOR_FREQ = 500;   // 2Hz
 constexpr uint16_t SERIAL_MONITOR_FREQ = 10; // 100 hZ
-constexpr uint32_t BAUD_RATE = 115200; // 100 hZ
+constexpr uint32_t BAUD_RATE = 115200;
 
 class SerialCom : public rclcpp::Node
 {
