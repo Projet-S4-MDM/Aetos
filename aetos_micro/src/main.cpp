@@ -25,16 +25,14 @@ void setup()
 
     for (;;)
     {
-        joint1.updateInternal();
-        serialCom.sendEncoderData(joint1, joint2, joint3, joint4);
-        // requestedVelocity = serialCom.getVelocityData();
+        joint1.update();
 
-        // motor1.setCmd(30.0f);
-        // requestedVelocity = serialCom.getVelocityData();
+        // serialCom.sendEncoderData(joint1, joint2, joint3, joint4);
+        requestedVelocity = serialCom.getVelocityData();
 
-        // Serial.println(requestedVelocity.xVelocity);
-        // Serial.println(requestedVelocity.yVelocity);
-        // Serial.println(requestedVelocity.zVelocity);
+        Serial.println(requestedVelocity.xVelocity);
+        Serial.println(requestedVelocity.yVelocity);
+        Serial.println(requestedVelocity.zVelocity);
     }
 }
 

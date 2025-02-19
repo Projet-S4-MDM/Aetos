@@ -9,7 +9,7 @@ class SerialCom : public rclcpp::Node
 {
 public:
     SerialCom();
-    ~SerialCom();
+    ~SerialCom() {};
 
 private:
     void topicCallback(const aetos_msgs::msg::Velocity::SharedPtr msg)
@@ -37,7 +37,7 @@ SerialCom::SerialCom() : Node("serial_comm"), serial_(io_service_)
     try
     {
         serial_.open("/dev/ttyUSB0");
-        serial_.set_option(boost::asio::serial_port_base::baud_rate(460800));
+        serial_.set_option(boost::asio::serial_port_base::baud_rate(115200));
         serial_.set_option(boost::asio::serial_port_base::character_size(8));
         serial_.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none));
         serial_.set_option(boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));

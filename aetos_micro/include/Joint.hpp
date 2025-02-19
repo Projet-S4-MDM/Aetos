@@ -20,7 +20,7 @@ public:
 
     void init(void);
     void setSpeed(float speed_);
-    void updateInternal(void);
+    void update(void);
     long getAngle(void);
 
 private:
@@ -34,7 +34,7 @@ private:
     float _goalSpeed = 0.0f;
 };
 
-void Joint::updateInternal(void)
+void Joint::update(void)
 {
     _encoder->update();
     float cmd = 0.0f;
