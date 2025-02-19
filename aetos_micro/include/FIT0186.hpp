@@ -20,7 +20,7 @@ public:
           _dir_pin(dir_pin_), 
           _reversed(reversed_), 
           _currentSpeed(0.0f),
-          _frequencePWM(PWM_FREQUENCY)  // Initialize _frequencePWM
+          _frequencePWM(PWM_FREQUENCY)
     {
         _ledc_motorTimer = timerNumber_;
         _ledc_motorChannel_1 = channelNumber1_;
@@ -28,15 +28,11 @@ public:
 
     ~FIT0186()
     {
-        if (ledc_fade_func_install(0) == ESP_OK) {  // Install LEDC fade function first
-            ledc_stop(LEDC_LOW_SPEED_MODE, _ledc_motorChannel_1, 0);
-            ledc_fade_func_uninstall();  // Clean up
-        }
     }
 
     void init(void)
     {
-        // Configure GPIO pins
+        pinMode(_pwm_pin, OUTPUT);
         pinMode(_dir_pin, OUTPUT);
 
         // Configure LEDC timer
@@ -63,9 +59,6 @@ public:
         };
         ESP_ERROR_CHECK(ledc_channel_config(&channel_config));
 
-        // Install LEDC fade function
-        ESP_ERROR_CHECK(ledc_fade_func_install(0));
-
         this->setCmd(0.0f);
     }
 
@@ -86,6 +79,11 @@ public:
         ESP_ERROR_CHECK(ledc_update_duty(LEDC_LOW_SPEED_MODE, _ledc_motorChannel_1));
         
         _currentSpeed = cmd_;
+    }
+
+    float getCmd(void)
+    {
+        return _currentSpeed;
     }
 
 private:
