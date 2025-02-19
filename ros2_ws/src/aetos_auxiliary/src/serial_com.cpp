@@ -110,15 +110,20 @@ void SerialCom::serialMonitor(void)
     {
         std::array<char, sizeof(float) * 4> buffer;
         boost::system::error_code error;
+        size_t bytes_read = 0;
 
-        size_t bytes_transferred = _serial.read_some(boost::asio::buffer(buffer), error);
-
-        if (error && error != boost::asio::error::would_block)
+        while (bytes_read < sizeof(float) * 4)
         {
-            throw boost::system::system_error(error);
+            size_t bytes_transferred = _serial.read_some(boost::asio::buffer(buffer.data() + bytes_read, buffer.size() - bytes_read), error);
+            bytes_read += bytes_transferred;
+
+            if (error && error != boost::asio::error::would_block)
+            {
+                throw boost::system::system_error(error);
+            }
         }
 
-        if (bytes_transferred == sizeof(float) * 4)
+        if (bytes_read == sizeof(float) * 4)
         {
             aetos_msgs::msg::EncoderValues encoderMsg;
             std::memcpy(&encoderMsg.data[encoderMsg.ANGLE_1], &buffer[0], sizeof(float));
@@ -130,7 +135,7 @@ void SerialCom::serialMonitor(void)
         }
         else
         {
-            RCLCPP_WARN(this->get_logger(), "Received unexpected number of bytes: %zu", bytes_transferred);
+            RCLCPP_WARN(this->get_logger(), "Received unexpected number of bytes: %zu", bytes_read);
         }
     }
     catch (const boost::system::system_error &e)
@@ -139,7 +144,6 @@ void SerialCom::serialMonitor(void)
         _serialConnected = false;
     }
 }
-
 
 void SerialCom::usbMonitor(void)
 {
