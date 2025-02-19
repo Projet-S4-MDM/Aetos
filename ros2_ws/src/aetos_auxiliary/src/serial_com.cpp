@@ -127,8 +127,8 @@ void SerialCom::serialMonitor(void)
         if (bytesRead == sizeof(float) * 4)
         {
             aetos_msgs::msg::EncoderValues encoderMsg;
-            std::memcpy(&encoderMsg.data[encoderMsg.ANGLE_1], &buffer[0], sizeof(float));
-            std::memcpy(&encoderMsg.data[encoderMsg.ANGLE_2], &buffer[sizeof(float)], sizeof(float));
+            std::memcpy(&encoderMsg.data[encoderMsg.ANGLE_1], &buffer[0 * sizeof(float)], sizeof(float));
+            std::memcpy(&encoderMsg.data[encoderMsg.ANGLE_2], &buffer[1 * sizeof(float)], sizeof(float));
             std::memcpy(&encoderMsg.data[encoderMsg.ANGLE_3], &buffer[2 * sizeof(float)], sizeof(float));
             std::memcpy(&encoderMsg.data[encoderMsg.ANGLE_4], &buffer[3 * sizeof(float)], sizeof(float));
 
