@@ -11,6 +11,7 @@
 
 constexpr uint16_t USB_MONITOR_FREQ = 500;   // 2Hz
 constexpr uint16_t SERIAL_MONITOR_FREQ = 10; // 100 hZ
+constexpr uint32_t BAUD_RATE = 115200; // 100 hZ
 
 class SerialCom : public rclcpp::Node
 {
@@ -41,7 +42,7 @@ private:
     rclcpp::Publisher<aetos_msgs::msg::EncoderValues>::SharedPtr _encoderPub;
 };
 
-void SerialCom::velocityMsgCallbcak(const aetos_msgs::msg::MotorVelocity::SharedPtr velocityMsg)
+void SerialCom::velocityMsgCallbcak(const aetos_msgs::msg::MotorVelocity::SharedPtr velocityMsg_)
 {
     std::lock_guard<std::mutex> lock(_serialMutex);
     if (!_serialConnected)
@@ -51,10 +52,10 @@ void SerialCom::velocityMsgCallbcak(const aetos_msgs::msg::MotorVelocity::Shared
     }
     try
     {
-        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg->data[velocityMsg->W_1], sizeof(float)));
-        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg->data[velocityMsg->W_2], sizeof(float)));
-        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg->data[velocityMsg->W_3], sizeof(float)));
-        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg->data[velocityMsg->W_4], sizeof(float)));
+        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->data[velocityMsg_->W_1], sizeof(float)));
+        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->data[velocityMsg_->W_2], sizeof(float)));
+        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->data[velocityMsg_->W_3], sizeof(float)));
+        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->data[velocityMsg_->W_4], sizeof(float)));
     }
     catch (const std::exception &e)
     {
@@ -78,17 +79,17 @@ void SerialCom::closeSerialPort(void)
     _serialConnected = false;
 }
 
-bool SerialCom::openSerialPort(const std::string &port)
+bool SerialCom::openSerialPort(const std::string &port_)
 {
     try
     {
-        _serial.open(port);
-        _serial.set_option(boost::asio::serial_port_base::baud_rate(115200));
+        _serial.open(port_);
+        _serial.set_option(boost::asio::serial_port_base::baud_rate(BAUD_RATE));
         _serial.set_option(boost::asio::serial_port_base::character_size(8));
         _serial.set_option(boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
         _serial.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none));
         _serial.set_option(boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none));
-        RCLCPP_INFO(this->get_logger(), "Opened port: %s", port.c_str());
+        RCLCPP_INFO(this->get_logger(), "Opened port: %s", port_.c_str());
         return true;
     }
     catch (const std::exception &e)
@@ -110,12 +111,12 @@ void SerialCom::serialMonitor(void)
     {
         std::array<char, sizeof(float) * 4> buffer;
         boost::system::error_code error;
-        size_t bytes_read = 0;
+        size_t bytesRead = 0;
 
-        while (bytes_read < sizeof(float) * 4)
+        while (bytesRead < sizeof(float) * 4)
         {
-            size_t bytes_transferred = _serial.read_some(boost::asio::buffer(buffer.data() + bytes_read, buffer.size() - bytes_read), error);
-            bytes_read += bytes_transferred;
+            size_t bytesTransfered = _serial.read_some(boost::asio::buffer(buffer.data() + bytesRead, buffer.size() - bytesRead), error);
+            bytesRead += bytesTransfered;
 
             if (error && error != boost::asio::error::would_block)
             {
@@ -123,7 +124,7 @@ void SerialCom::serialMonitor(void)
             }
         }
 
-        if (bytes_read == sizeof(float) * 4)
+        if (bytesRead == sizeof(float) * 4)
         {
             aetos_msgs::msg::EncoderValues encoderMsg;
             std::memcpy(&encoderMsg.data[encoderMsg.ANGLE_1], &buffer[0], sizeof(float));
@@ -135,7 +136,7 @@ void SerialCom::serialMonitor(void)
         }
         else
         {
-            RCLCPP_WARN(this->get_logger(), "Received unexpected number of bytes: %zu", bytes_read);
+            RCLCPP_WARN(this->get_logger(), "Received unexpected number of bytes: %zu", bytesRead);
         }
     }
     catch (const boost::system::system_error &e)
@@ -147,9 +148,9 @@ void SerialCom::serialMonitor(void)
 
 void SerialCom::usbMonitor(void)
 {
-    std::string detected_port = findSerialPort();
+    std::string detectedPort = findSerialPort();
 
-    if (detected_port.empty())
+    if (detectedPort.empty())
     {
         if (_serialConnected)
         {
@@ -159,15 +160,15 @@ void SerialCom::usbMonitor(void)
         return;
     }
 
-    if (!_serialConnected || _serialPort != detected_port)
+    if (!_serialConnected || _serialPort != detectedPort)
     {
         std::lock_guard<std::mutex> lock(_serialMutex);
         closeSerialPort();
-        if (openSerialPort(detected_port))
+        if (openSerialPort(detectedPort))
         {
-            _serialPort = detected_port;
+            _serialPort = detectedPort;
             _serialConnected = true;
-            RCLCPP_INFO(this->get_logger(), "Connected to %s", detected_port.c_str());
+            RCLCPP_INFO(this->get_logger(), "Connected to %s", detectedPort.c_str());
         }
     }
 }
@@ -181,11 +182,12 @@ std::string SerialCom::findSerialPort(void)
         return "";
     }
 
-    std::string detected_port;
+    std::string detectedPort;
     struct udev_enumerate *enumerate = udev_enumerate_new(udev);
     udev_enumerate_add_match_subsystem(enumerate, "tty");
     udev_enumerate_scan_devices(enumerate);
 
+    // These stucts are native to the udev libs, thus why they do not comply with naming conventions
     struct udev_list_entry *devices = udev_enumerate_get_list_entry(enumerate);
     struct udev_list_entry *dev_list_entry;
 
@@ -200,7 +202,7 @@ std::string SerialCom::findSerialPort(void)
             if (devnode && (std::string(devnode).find("/dev/ttyUSB") != std::string::npos ||
                             std::string(devnode).find("/dev/ttyACM") != std::string::npos))
             {
-                detected_port = devnode;
+                detectedPort = devnode;
                 udev_device_unref(dev);
                 break;
             }
@@ -210,7 +212,7 @@ std::string SerialCom::findSerialPort(void)
 
     udev_enumerate_unref(enumerate);
     udev_unref(udev);
-    return detected_port;
+    return detectedPort;
 }
 
 SerialCom::SerialCom() : Node("serial_comm"), _serial(_io_service)
@@ -231,21 +233,27 @@ SerialCom::SerialCom() : Node("serial_comm"), _serial(_io_service)
         std::bind(&SerialCom::serialMonitor, this));
 
     _ioThread = std::thread([this]()
-                            {
-            while (rclcpp::ok()) {
-                try {
+        {
+            while (rclcpp::ok()) 
+            {
+                try 
+                {
                     _io_service.poll();
                     _io_service.reset();
-                } catch (const std::exception& e) {
+                } 
+                catch (const std::exception& e) 
+                {
                     RCLCPP_ERROR(this->get_logger(), "IO Service error: %s", e.what());
                 }
-            } });
+            }
+        });
 }
 
 SerialCom::~SerialCom()
 {
     closeSerialPort();
     _io_service.stop();
+
     if (_ioThread.joinable())
     {
         _ioThread.join();
