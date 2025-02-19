@@ -12,6 +12,14 @@ struct sRequestedVelocity
     float motor4Velocity;
 };
 
+struct sEncoderData
+{
+    float encoder1Data;
+    float encoder2Data;
+    float encoder3Data;
+    float encoder4Data;
+};
+
 class SerialCom
 {
 public:
@@ -27,6 +35,7 @@ public:
 
 private:
     sRequestedVelocity _requestedVelocity;
+    sEncoderData _encoderData;
 
     Joint *_joint1 = nullptr;
     Joint *_joint2 = nullptr;
@@ -45,30 +54,14 @@ sRequestedVelocity SerialCom::getVelocityData()
 
 void SerialCom::sendEncoderData(Joint joint1_, Joint joint2_, Joint joint3_, Joint joint4_)
 {
-    // Serial.print(joint1_.getAngle());
-    // Serial.print(",");
-    // Serial.print(joint2_.getAngle());
-    // Serial.print(",");
-    // Serial.print(joint3_.getAngle());
-    // Serial.print(",");
-    // Serial.println(joint4_.getAngle());
-    float value1 = 3.14;
-    float value2 = 0.01;
-    float value3 = 0.21;
-    float value4 = 4.01;
-    
-    Serial.write(reinterpret_cast<uint8_t *>(&value1), sizeof(value1));
-    Serial.write(reinterpret_cast<uint8_t *>(&value2), sizeof(value2));
-    Serial.write(reinterpret_cast<uint8_t *>(&value3), sizeof(value3));
-    Serial.write(reinterpret_cast<uint8_t *>(&value4), sizeof(value4));
+    _encoderData = {
+        static_cast<float>(joint1_.getAngle()),
+        static_cast<float>(joint2_.getAngle()),
+        static_cast<float>(joint3_.getAngle()),
+        static_cast<float>(joint4_.getAngle()),
+    };
 
-    // Serial.print("1.05");
-    // Serial.print(",");
-    // Serial.print("-3.41");
-    // Serial.print(",");
-    // Serial.print("18.2");
-    // Serial.print(",");
-    // Serial.println("-0.02");
+    Serial.write(reinterpret_cast<uint8_t *>(&_encoderData), sizeof(_encoderData));
 }
 
 SerialCom::SerialCom(Joint *joint1_, Joint *joint2_, Joint *joint3_, Joint *joint4_)
