@@ -20,7 +20,7 @@ public:
 
     void init(void);
     void setSpeed(float speed_);
-    void updateInternal(void);
+    void update(void);
     long getAngle(void);
 
 private:
@@ -31,17 +31,33 @@ private:
     Helpers::Timer<unsigned long, micros> _timerPidLoop =
         Helpers::Timer<unsigned long, micros>(1000000.0f / (float)PID_LOOP_FREQ_US);
 
+    Helpers::Timer<unsigned long, micros> _printTimer =
+        Helpers::Timer<unsigned long, micros>(1000000.0f / 100ul);
+
     float _goalSpeed = 0.0f;
 };
 
-void Joint::updateInternal(void)
+void Joint::update(void)
 {
     _encoder->update();
-    float cmd = 0.0f;
 
-    if(_timerPidLoop.isDone())
+    if (_printTimer.isDone())
     {
-        cmd = _pid->computeCommand(_goalSpeed);
+        Serial.println(_encoder->getAngularVelocity());
+    }
+
+    if (_timerPidLoop.isDone())
+    {
+        float cmd = 0.0f;
+
+        float error = _encoder->getAngularVelocity() - _goalSpeed;
+
+        cmd = _pid->computeCommand(error);
+
+        // Serial.println(_encoder->getAngularVelocity());
+        // Serial.print("Computed command");
+        // Serial.println(cmd);
+
         _fit0186->setCmd(cmd);
     }
 }

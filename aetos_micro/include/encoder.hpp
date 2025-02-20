@@ -3,12 +3,12 @@
 
 #include <Arduino.h>
 #include "timer.hpp"
+#include "moving_average.hpp"
 
 class Encoder
 {
 public:
     Encoder(gpio_num_t encoder_pin_A_, gpio_num_t encoder_pin_B_)
-        : updateTimer(50)
     {
         _encoder_pin_A = encoder_pin_A_;
         _encoder_pin_B = encoder_pin_B_;
@@ -21,8 +21,8 @@ public:
         pinMode(_encoder_pin_B, INPUT);
         totalPulses = 0;
         lastPulses = 0;
-        angularVelocity = 0.0f;
-        updateTimer.init(50); // 50ms -> 20Hz
+        _angularVelocity = 0.0f;
+        _updateTimer.init(20); // 50ms -> 20Hz
         attachInterrupt(digitalPinToInterrupt(_encoder_pin_A), isrHandler, RISING);
     }
 
@@ -30,8 +30,8 @@ public:
     {
         totalPulses = 0;
         lastPulses = 0;
-        angularVelocity = 0.0f;
-        updateTimer.reset();
+        _angularVelocity = 0.0f;
+        _updateTimer.reset();
     }
 
     long getPulses()
@@ -42,33 +42,31 @@ public:
     float getAngle()
     {
         // A quadrature encoder has two channels (A and B) that are 90° out of phase
-        return (totalPulses * 8.0f * PI) / 2797.0f; // Adjusting for 4x pulse counting
+        return (totalPulses * 8.0f * PI) / countsPerRevolution; // Adjusting for 4x pulse counting
     }
 
     float getAngularVelocity()
     {
-        return angularVelocity;
+        return _angularVelocity;
     }
 
     void update()
     {
-        if (updateTimer.isDone())
+        if (_updateTimer.isDone())
         {
             long pulseChange = totalPulses - lastPulses;
-            float dTheta = (pulseChange * 2.0f * PI) / 2797.0f; // Convert pulses to radians
-            angularVelocity = dTheta / (updateTimer.getInterval() / 1000.0f);
+            float dTheta = ((float)pulseChange * 8.0f * PI) / countsPerRevolution;    // Convert pulses to radians
+            _angularVelocity = _speedAvg.addValue(dTheta / (_updateTimer.getInterval() / 1000.0f)); // Convert ms to s
+            //Serial.println(_angularVelocity);
+
             lastPulses = totalPulses;
         }
     }
 
 private:
-    static void isrHandler()
-    {
-        if (instance)
-        {
-            instance->countPulse();
-        }
-    }
+    static constexpr float countsPerRevolution = 2797.0f;
+
+    static void isrHandler() { instance->countPulse(); }
 
     void countPulse()
     {
@@ -86,10 +84,11 @@ private:
 
     long totalPulses;
     long lastPulses;
-    float angularVelocity;
+    float _angularVelocity;
     gpio_num_t _encoder_pin_A;
     gpio_num_t _encoder_pin_B;
-    Helpers::Timer<unsigned long, millis> updateTimer;
+    Helpers::Timer<unsigned long, millis> _updateTimer;
+    Helpers::MovingAverage<float, 10> _speedAvg = Helpers::MovingAverage<float, 10>(0.0f);
 };
 
 Encoder *Encoder::instance = nullptr;

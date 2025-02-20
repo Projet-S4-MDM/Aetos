@@ -81,7 +81,7 @@ float PID::computeCommand(float error_)
         float dt = currentTime - _lastMeasureTime;
         _lastMeasureTime = currentTime;
 
-        // cmdD = _kd * (error_ - _previousError) / (dt / 1'000'000.0f);
+        cmdD = _kd * (error_ - _previousError) / (dt / 1'000'000.0f);
         _lastcmdD = cmdD;
     }
     else
