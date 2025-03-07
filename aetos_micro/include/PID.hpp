@@ -6,16 +6,16 @@
 class PID
 {
 public:
-    // static constexpr unsigned long PERIOD_SPEED_CALC_US = 10'000ul;
+    static constexpr unsigned long PERIOD_SPEED_CALC_US = 10'000ul;
 
-    PID(float kp_, float ki_, float kd_, float integralLimit_);
+    PID(float kp_, float ki_, float kd_, float intergalLimit_);
     ~PID() {}
     void init(void);
     void setGains(float kp_, float ki_, float kd_);
     void setIntLimit(float limit_);
     /// @brief
     /// @param error_ Error between goal and actual position
-    /// @return New command 
+    /// @return New command
     float computeCommand(float error_);
     /// @brief Resets integral counter and derivative last value to zero
     void reset(void);
@@ -32,10 +32,10 @@ private:
     float _lastMeasureTime = 0.0f;
 };
 
-PID::PID(float kp_, float ki_, float kd_, float integralLimit_)
+PID::PID(float kp_, float ki_, float kd_, float intergalLimit_)
 {
     this->setGains(kp_, ki_, kd_);
-    this->setIntLimit(integralLimit_);
+    this->setIntLimit(intergalLimit_);
     this->reset();
     _lastMeasureTime = micros();
 }
@@ -75,8 +75,7 @@ float PID::computeCommand(float error_)
 
     float cmdD = 0.0f;
     float currentTime = micros();
-    // if (currentTime - _lastMeasureTime > PERIOD_SPEED_CALC_US)
-    if (currentTime - _lastMeasureTime > 10)
+    if (currentTime - _lastMeasureTime > PERIOD_SPEED_CALC_US)
     {
         float dt = currentTime - _lastMeasureTime;
         _lastMeasureTime = currentTime;

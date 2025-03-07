@@ -10,7 +10,7 @@
 class Joint
 {
 public:
-    static constexpr unsigned long PID_LOOP_FREQ_US = 1000ul;
+    static constexpr unsigned long PID_LOOP_FREQ_HZ = 100ul;
 
     Joint(Encoder *encoder,
           PID *pid,
@@ -19,7 +19,7 @@ public:
     ~Joint(void) {};
 
     void init(void);
-    void setSpeed(float speed_);
+    void setSpeedRad(float speed_);
     void update(void);
     long getAngle(void);
 
@@ -29,7 +29,7 @@ private:
     FIT0186 *_fit0186 = nullptr;
 
     Helpers::Timer<unsigned long, micros> _timerPidLoop =
-        Helpers::Timer<unsigned long, micros>(1000000.0f / (float)PID_LOOP_FREQ_US);
+        Helpers::Timer<unsigned long, micros>(1000000.0f / (float)PID_LOOP_FREQ_HZ);
 
     Helpers::Timer<unsigned long, micros> _printTimer =
         Helpers::Timer<unsigned long, micros>(1000000.0f / 100ul);
@@ -54,9 +54,13 @@ void Joint::update(void)
 
         cmd = _pid->computeCommand(error);
 
-        // Serial.println(_encoder->getAngularVelocity());
-        // Serial.print("Computed command");
-        // Serial.println(cmd);
+        Serial.print("Goal speed : ");
+        Serial.println(_goalSpeed);
+        Serial.print("angular velocity");
+        Serial.println(_encoder->getAngularVelocity());
+        Serial.print("Error : ");
+        Serial.println(error);
+        Serial.println();
 
         _fit0186->setCmd(cmd);
     }
@@ -68,7 +72,7 @@ long Joint::getAngle(void)
     return _encoder->getPulses();
 }
 
-void Joint::setSpeed(float speed_)
+void Joint::setSpeedRad(float speed_)
 {
     _goalSpeed = speed_;
 }
