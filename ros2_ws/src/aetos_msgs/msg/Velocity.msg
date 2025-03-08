@@ -1,5 +1,3 @@
-uint8 VX = 0
-uint8 VY = 1
-uint8 VZ = 2
-
-float32[3] data
+float64 velocity_x 
+float64 velocity_y 
+float64 velocity_z 

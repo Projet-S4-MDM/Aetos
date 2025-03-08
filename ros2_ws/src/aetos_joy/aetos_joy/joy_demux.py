@@ -36,10 +36,8 @@ class JoyDemux(Node):
         """Reads joystick values, prints them, and publishes them as a Velocity message."""
         pygame.event.pump()
 
-    
         dpad_x = self.controller.get_hat(0)[0]  
         dpad_y = self.controller.get_hat(0)[1]  
-        
     
         button_a = self.controller.get_button(0) 
         button_x = self.controller.get_button(3)  
@@ -50,7 +48,10 @@ class JoyDemux(Node):
 
        
         velocity_msg = Velocity()
-        velocity_msg.data = [velocity_x, velocity_y, velocity_z]
+        # velocity_msg.data = [velocity_x, velocity_y, velocity_z]
+        velocity_msg.velocity_x = velocity_x
+        velocity_msg.velocity_y = velocity_y
+        velocity_msg.velocity_z = velocity_z
         self.velocity_publisher.publish(velocity_msg)
         
 def main(args=None):

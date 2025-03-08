@@ -58,7 +58,6 @@ class CableDrivenRobot(Node):
             (1, 1, 0),  
     ]
 
-
         for x, y, z, dx, dy, dz in beams:
             self.ax.bar3d(x, y, z, dx, dy, dz, color='black')
         for x, y, z, dx, dy, dz in vertical_beams:
@@ -83,10 +82,10 @@ class CableDrivenRobot(Node):
         current_time = time.time()
         time_diff = current_time - self.last_velocity_time
         
-        variable_temp1 = msg.w1 * time_diff
-        varuable_temp2 = msg.w2 * time_diff
-        variable_temp3 = msg.w3 * time_diff 
-        variable_temp4 = msg.w4 * time_diff
+        variable_temp1 = msg.omega1 * time_diff
+        varuable_temp2 = msg.omega2 * time_diff
+        variable_temp3 = msg.omega3 * time_diff 
+        variable_temp4 = msg.omega4 * time_diff
         
         if math.isnan(variable_temp1) | math.isnan(varuable_temp2) | math.isnan(variable_temp3) | math.isnan(variable_temp4):
             self.encoder_values.angle1 = self.encoder_values.angle1
@@ -95,19 +94,19 @@ class CableDrivenRobot(Node):
             self.encoder_values.angle4 = self.encoder_values.angle4
             
         else:
-            self.encoder_values.angle1 += msg.w1 * time_diff
-            self.encoder_values.angle2 += msg.w2 * time_diff
-            self.encoder_values.angle3 += msg.w3 * time_diff
-            self.encoder_values.angle4 += msg.w4 * time_diff
+            self.encoder_values.angle1 += msg.omega1 * time_diff
+            self.encoder_values.angle2 += msg.omega2 * time_diff
+            self.encoder_values.angle3 += msg.omega3 * time_diff
+            self.encoder_values.angle4 += msg.omega4 * time_diff
         
         
         self.encoder_publisher.publish(self.encoder_values)
 
         self.get_logger().info(f"Publishing Encoder Values: angle1={self.encoder_values.angle1:.2f}, angle2={self.encoder_values.angle2:.2f}, angle3={self.encoder_values.angle3:.2f}, angle4={self.encoder_values.angle4:.2f}")
 
-        self.last_motor_velocities = [msg.w1, msg.w2, msg.w3, msg.w4]
+        self.last_motor_velocities = [msg.omega1, msg.omega2, msg.omega3, msg.omega4]
         
-        self.get_logger().info(f"Received motor velocities: w1={msg.w1}, w2={msg.w2}, w3={msg.w3}, w4={msg.w4}")
+        self.get_logger().info(f"Received motor velocities: w1={msg.omega1}, w2={msg.omega2}, w3={msg.omega3}, w4={msg.omega4}")
         
         self.last_velocity_time = current_time
 
@@ -121,7 +120,6 @@ class CableDrivenRobot(Node):
             self.cables[i].set_3d_properties([z, effector_z])
         
         return [self.effector] + self.cables
-
 
 def main(args=None):
     rclpy.init(args=args)

@@ -37,10 +37,9 @@ RUN apt-get update && apt-get install -q -y --no-install-recommends \
     dbus \
     libbluetooth-dev \
     libeigen3-dev \  
+    libserial-dev \
     && rm -rf /var/lib/apt/lists/*  
     
-
-
 # Create DBus directory and set permissions
 RUN mkdir -p /var/run/dbus && chmod 755 /var/run/dbus
 

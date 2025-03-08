@@ -52,10 +52,10 @@ void SerialCom::velocityMsgCallbcak(const aetos_msgs::msg::MotorVelocity::Shared
     }
     try
     {
-        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->data[velocityMsg_->W_1], sizeof(float)));
-        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->data[velocityMsg_->W_2], sizeof(float)));
-        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->data[velocityMsg_->W_3], sizeof(float)));
-        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->data[velocityMsg_->W_4], sizeof(float)));
+        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->omega1, sizeof(float)));
+        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->omega2, sizeof(float)));
+        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->omega3, sizeof(float)));
+        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->omega4, sizeof(float)));
     }
     catch (const std::exception &e)
     {
@@ -127,10 +127,10 @@ void SerialCom::serialMonitor(void)
         if (bytesRead == sizeof(float) * 4)
         {
             aetos_msgs::msg::EncoderValues encoderMsg;
-            std::memcpy(&encoderMsg.data[encoderMsg.ANGLE_1], &buffer[0 * sizeof(float)], sizeof(float));
-            std::memcpy(&encoderMsg.data[encoderMsg.ANGLE_2], &buffer[1 * sizeof(float)], sizeof(float));
-            std::memcpy(&encoderMsg.data[encoderMsg.ANGLE_3], &buffer[2 * sizeof(float)], sizeof(float));
-            std::memcpy(&encoderMsg.data[encoderMsg.ANGLE_4], &buffer[3 * sizeof(float)], sizeof(float));
+            std::memcpy(&encoderMsg.angle1, &buffer[0 * sizeof(float)], sizeof(float));
+            std::memcpy(&encoderMsg.angle2, &buffer[1 * sizeof(float)], sizeof(float));
+            std::memcpy(&encoderMsg.angle3, &buffer[2 * sizeof(float)], sizeof(float));
+            std::memcpy(&encoderMsg.angle4, &buffer[3 * sizeof(float)], sizeof(float));
 
             _encoderPub->publish(encoderMsg);
         }
