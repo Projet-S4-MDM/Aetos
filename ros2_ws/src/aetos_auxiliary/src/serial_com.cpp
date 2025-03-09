@@ -218,7 +218,7 @@ std::string SerialCom::findSerialPort(void)
 SerialCom::SerialCom() : Node("serial_comm"), _serial(_io_service)
 {
     _motorVelSub = this->create_subscription<aetos_msgs::msg::MotorVelocity>(
-        "aetos/control/motor_speed", 10,
+        "aetos/control/velocity", 10,
         std::bind(&SerialCom::velocityMsgCallbcak, this, std::placeholders::_1));
 
     _encoderPub = this->create_publisher<aetos_msgs::msg::EncoderValues>(

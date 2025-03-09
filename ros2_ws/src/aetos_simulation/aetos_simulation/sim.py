@@ -11,7 +11,7 @@ import time
 
 class CableDrivenRobot(Node):
     def __init__(self):
-        super().__init__('cable_robot_node')
+        super().__init__('sim')
         self.subscription = self.create_subscription(EffectorPosition, 'aetos/control/position', self.effector_position_callback, 10)
         self.velocity_subscription = self.create_subscription(MotorVelocity, 'aetos/control/velocity', self.motor_velocity_callback, 10)
         self.encoder_publisher = self.create_publisher(EncoderValues, 'aetos/control/encoder', 10)
@@ -74,7 +74,7 @@ class CableDrivenRobot(Node):
 
     def effector_position_callback(self, msg):
         """Handles incoming effector position messages."""
-        self.get_logger().info(f"Received effector position: x={msg.position_x}, y={msg.position_y}, z={msg.position_z}")
+        # self.get_logger().info(f"Received effector position: x={msg.position_x}, y={msg.position_y}, z={msg.position_z}")
         self.position = [msg.position_x, msg.position_y, msg.position_z]
 
     def motor_velocity_callback(self, msg):
@@ -99,14 +99,13 @@ class CableDrivenRobot(Node):
             self.encoder_values.angle3 += msg.omega3 * time_diff
             self.encoder_values.angle4 += msg.omega4 * time_diff
         
-        
         self.encoder_publisher.publish(self.encoder_values)
 
-        self.get_logger().info(f"Publishing Encoder Values: angle1={self.encoder_values.angle1:.2f}, angle2={self.encoder_values.angle2:.2f}, angle3={self.encoder_values.angle3:.2f}, angle4={self.encoder_values.angle4:.2f}")
+        # self.get_logger().info(f"Publishing Encoder Values: angle1={self.encoder_values.angle1:.2f}, angle2={self.encoder_values.angle2:.2f}, angle3={self.encoder_values.angle3:.2f}, angle4={self.encoder_values.angle4:.2f}")
 
         self.last_motor_velocities = [msg.omega1, msg.omega2, msg.omega3, msg.omega4]
         
-        self.get_logger().info(f"Received motor velocities: w1={msg.omega1}, w2={msg.omega2}, w3={msg.omega3}, w4={msg.omega4}")
+        # self.get_logger().info(f"Received motor velocities: w1={msg.omega1}, w2={msg.omega2}, w3={msg.omega3}, w4={msg.omega4}")
         
         self.last_velocity_time = current_time
 
@@ -125,12 +124,13 @@ def main(args=None):
     rclpy.init(args=args)
     node = CableDrivenRobot()
     try:
-        while rclpy.ok():
-            pass
+        node.ros_thread.join()  # Wait for the ROS thread to finish
     except KeyboardInterrupt:
         pass
-    node.destroy_node()
-    rclpy.shutdown()
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
 
 if __name__ == '__main__':
     main()

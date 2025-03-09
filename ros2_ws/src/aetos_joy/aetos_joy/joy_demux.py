@@ -27,7 +27,7 @@ class JoyDemux(Node):
         self.controller.init()
         self.get_logger().info(f"Connected to Xbox Controller: {self.controller.get_name()}")
 
-        self.timer = self.create_timer(0.2, self.process_joystick_input)
+        self.timer = self.create_timer(0.01, self.process_joystick_input)
 
         self.prev_velocity = None
         self.last_print_time = time.time()
@@ -46,7 +46,6 @@ class JoyDemux(Node):
         velocity_y = float(dpad_y)
         velocity_z = float(button_x - button_a) 
 
-       
         velocity_msg = Velocity()
         # velocity_msg.data = [velocity_x, velocity_y, velocity_z]
         velocity_msg.velocity_x = velocity_x

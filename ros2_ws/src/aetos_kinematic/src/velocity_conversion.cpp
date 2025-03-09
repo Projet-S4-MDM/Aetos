@@ -39,6 +39,18 @@ struct sCableLength
   float l4;
 };
 
+constexpr float LIMIT_BUFFER = 0.2f;
+
+namespace Limits
+{
+  constexpr float X_MAX = 1.0f - LIMIT_BUFFER;
+  constexpr float X_MIN = 0.0f + LIMIT_BUFFER;
+  constexpr float Y_MAX = 1.0f - LIMIT_BUFFER;
+  constexpr float Y_MIN = 0.0f + LIMIT_BUFFER;
+  constexpr float Z_MAX = 1.0f - LIMIT_BUFFER;
+  constexpr float Z_MIN = 0.0f + LIMIT_BUFFER;
+}
+
 // SETUP
 constexpr float PI = 3.14159265359;
 
@@ -69,7 +81,7 @@ public:
 
     pub_motor_velocity = this->create_publisher<aetos_msgs::msg::MotorVelocity>("aetos/control/velocity", 10);
 
-    pub_position = this->create_publisher<aetos_msgs::msg::EffectorPosition>("aetos/control/position", 10); // Use the generated message type
+    pub_position = this->create_publisher<aetos_msgs::msg::EffectorPosition>("aetos/control/position", 10);
   }
 
 private:
@@ -102,6 +114,7 @@ private:
     _velocity.vz = vz;
 
     this->forwardKinematics();
+    this->uavInBoundSecurityCheck();
     this->inverseKinematics();
     this->publish_motor_velocity(_motorVelocity);
     this->publish_position(_cameraPosition);
@@ -109,7 +122,7 @@ private:
 
   void encoder_callback(const aetos_msgs::msg::EncoderValues &msg)
   {
-    RCLCPP_INFO(this->get_logger(), "I heard: encoder angle1: '%f', angle2: '%f', angle3: '%f', angle4: '%f'", msg.angle1, msg.angle2, msg.angle3, msg.angle4);
+    // RCLCPP_INFO(this->get_logger(), "I heard: encoder angle1: '%f', angle2: '%f', angle3: '%f', angle4: '%f'", msg.angle1, msg.angle2, msg.angle3, msg.angle4);
     this->updateLength(msg);
   }
 
@@ -150,16 +163,20 @@ void VelocityConversion::updateVelocity(const aetos_msgs::msg::Velocity &msg)
 
 void VelocityConversion::uavInBoundSecurityCheck()
 {
-  if ((_cameraPosition.x <= 0 && _velocity.vx < 0) || (_cameraPosition.x >= _arenaLength && _velocity.vx > 0))
+  
+  if ((_cameraPosition.x <= Limits::X_MIN && _velocity.vx < 0) || (_cameraPosition.x >= Limits::X_MAX && _velocity.vx > 0))
   {
+    RCLCPP_WARN(this->get_logger(), "Hit Limits");
     _velocity.vx = 0;
   }
-  if ((_cameraPosition.y <= 0 && _velocity.vy < 0) || (_cameraPosition.y >= _arenaWidth && _velocity.vy > 0))
+  else if ((_cameraPosition.y <= Limits::Y_MIN && _velocity.vy < 0) || (_cameraPosition.y >= Limits::Y_MAX && _velocity.vy > 0))
   {
+    RCLCPP_WARN(this->get_logger(), "Hit Limits");
     _velocity.vy = 0;
   }
-  if ((_cameraPosition.z <= 0 && _velocity.vz < 0) || (_cameraPosition.z >= _arenaHeight && _velocity.vz > 0))
+  else if ((_cameraPosition.z <= Limits::Z_MIN && _velocity.vz < 0) || (_cameraPosition.z >= Limits::Z_MAX && _velocity.vz > 0))
   {
+    RCLCPP_WARN(this->get_logger(), "Hit Limits");
     _velocity.vz = 0;
   }
 };
@@ -204,14 +221,12 @@ void VelocityConversion::inverseKinematics()
   _motorVelocity.w2 = Lv(1) / (_radius);
   _motorVelocity.w3 = Lv(2) / (_radius);
   _motorVelocity.w4 = Lv(3) / (_radius);
-  std::cout << "Vitesse en rad/s: " << _motorVelocity.w1 << "" << _motorVelocity.w2 << "" << _motorVelocity.w3 << "" << _motorVelocity.w4 << std::endl;
 }
 void VelocityConversion::forwardKinematics()
 {
   _cameraPosition.x = (_cableLength.l1 * _cableLength.l1 + _arenaLength * _arenaLength - _cableLength.l4 * _cableLength.l4) / (2 * _arenaLength);
   _cameraPosition.y = (_cableLength.l1 * _cableLength.l1 + _arenaWidth * _arenaWidth - _cableLength.l2 * _cableLength.l2) / (2 * _arenaWidth);
   _cameraPosition.z = sqrt(abs(_cableLength.l1 * _cableLength.l1 - _cameraPosition.x * _cameraPosition.x - _cameraPosition.y * _cameraPosition.y));
-  std::cout << "Position de la camera: " << _cameraPosition.x << " " << _cameraPosition.y << " " << _cameraPosition.z << std::endl;
 }
 
 int main(int argc, char *argv[])
