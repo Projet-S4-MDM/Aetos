@@ -2,26 +2,32 @@
 #include "config.hpp"
 #include "Joint.hpp"
 #include "Serialnterface.hpp"
+#include "talon_srx.hpp"
+#include "FIT0186.hpp"
 
 void setup()
 {
     Serial.begin(115200);
 
-    FIT0186 motor1 = FIT0186(PIN_PWM_1, PIN_DIR_1, true);
+    TalonSrx talon1 = TalonSrx(PIN_PWM_1);
+    //FIT0186 motor1 = FIT0186(PIN_PWM_1, PIN_DIR_1, false);
     Encoder encoder1 = Encoder(PIN_ENCODER_A1, PIN_ENCODER_B1);
-    PID pid1(1.0f, 0.0f, 0.0f, 50.0f);
-    Joint joint1 = Joint(&encoder1, &pid1, &motor1);
+    // PID pid1(1.0f, 0.0f, 0.0f, 50.0f);
+    // Joint joint1 = Joint(&encoder1, &pid1, &talon1);
 
     // joint1.init();
-    motor1.init();
+    encoder1.init();
 
-    Serial.println("Init done");
+    talon1.init();
+
     delay(3000);
+
     for (;;)
     {
-        motor1.setCmd(100.0f);
-        // joint1.update();+0++++++++++++++++000000000000++0
-        // joint1.setSpeedRad(70.0f);
+        Serial.println(encoder1.getAngularVelocity());
+        // joint1.update();
+        // joint1.setSpeedRad(30.0f);
+        talon1.setCmd(100.0f);
     }
 }
 

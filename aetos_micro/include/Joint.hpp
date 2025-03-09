@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include "encoder.hpp"
 #include "PID.hpp"
-#include "FIT0186.hpp"
+#include "talon_srx.hpp"
 #include "timer.hpp"
 
 class Joint
@@ -14,7 +14,7 @@ public:
 
     Joint(Encoder *encoder,
           PID *pid,
-          FIT0186 *fit0186);
+          TalonSrx *talon);
 
     ~Joint(void) {};
 
@@ -26,13 +26,13 @@ public:
 private:
     Encoder *_encoder = nullptr;
     PID *_pid = nullptr;
-    FIT0186 *_fit0186 = nullptr;
+    TalonSrx *_talon = nullptr;
 
     Helpers::Timer<unsigned long, micros> _timerPidLoop =
         Helpers::Timer<unsigned long, micros>(1000000.0f / (float)PID_LOOP_FREQ_HZ);
 
     Helpers::Timer<unsigned long, micros> _printTimer =
-        Helpers::Timer<unsigned long, micros>(1000000.0f / 100ul);
+        Helpers::Timer<unsigned long, micros>(1000000.0f / 10ul);
 
     float _goalSpeed = 0.0f;
 };
@@ -43,7 +43,7 @@ void Joint::update(void)
 
     if (_printTimer.isDone())
     {
-        Serial.println(_encoder->getAngularVelocity());
+        //Serial.println(_encoder->getAngularVelocity());
     }
 
     if (_timerPidLoop.isDone())
@@ -54,6 +54,7 @@ void Joint::update(void)
 
         cmd = _pid->computeCommand(error);
 
+        /*
         Serial.print("Goal speed : ");
         Serial.println(_goalSpeed);
         Serial.print("angular velocity");
@@ -61,8 +62,9 @@ void Joint::update(void)
         Serial.print("Error : ");
         Serial.println(error);
         Serial.println();
+        */
 
-        _fit0186->setCmd(cmd);
+        _talon->setCmd(cmd);
     }
 }
 
@@ -81,10 +83,10 @@ void Joint::init()
 {
     _encoder->init();
     _pid->init();
-    _fit0186->init();
+    _talon->init();
 }
 
-Joint::Joint(Encoder *encoder_, PID *pid_, FIT0186 *fit0186_)
-    : _encoder(encoder_), _pid(pid_), _fit0186(fit0186_) {}
+Joint::Joint(Encoder *encoder_, PID *pid_, TalonSrx *talon_)
+    : _encoder(encoder_), _pid(pid_), _talon(talon_) {}
 
 #endif

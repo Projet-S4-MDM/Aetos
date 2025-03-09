@@ -7,9 +7,8 @@
 class FIT0186
 {
 public:
-    static constexpr uint32_t PWM_FREQUENCY = 5000;
+    static constexpr uint32_t PWM_FREQUENCY = 10000;
     static constexpr ledc_timer_bit_t LEDC_TIMER_RESOLUTION = LEDC_TIMER_8_BIT;
-    static constexpr float MAX_RAD_PER_SEC = 29.83f; 
 
     static constexpr uint32_t PERCENT_TO_DUTY(float percent_)
     {
@@ -78,13 +77,6 @@ public:
         ESP_ERROR_CHECK(ledc_update_duty(LEDC_LOW_SPEED_MODE, _ledc_motorChannel_1));
         
         _currentSpeed = cmd_;
-    }
-
-    void setCmdRad(float speed)
-    {
-        float cmd = (speed / MAX_RAD_PER_SEC) * 100.0f;
-        cmd = constrain(cmd, -100.0f, 100.0f); // Ensure it's within the valid range
-        setCmd(cmd);
     }
 
     float getCmd(void)

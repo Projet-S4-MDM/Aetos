@@ -9,6 +9,9 @@ class Encoder
 {
 public:
     static constexpr uint32_t COUNTS_PER_REVOLUTION = 2797;
+    static constexpr uint8_t MAX_INSTANCES = 4;
+    static Encoder *instances[MAX_INSTANCES];
+    static uint8_t instanceCount;
 
     Encoder(gpio_num_t encoder_pin_A_, gpio_num_t encoder_pin_B_)
     {
@@ -21,19 +24,19 @@ public:
 
     bool init()
     {
-        if (instance != nullptr)
+        if (instanceCount >= MAX_INSTANCES)
         {
             return false;
         }
         pinMode(_encoder_pin_A, INPUT);
         pinMode(_encoder_pin_B, INPUT);
 
-        instance = this;
-
-        attachInterrupt(digitalPinToInterrupt(_encoder_pin_A), &Encoder::isrHandler, CHANGE);
-        attachInterrupt(digitalPinToInterrupt(_encoder_pin_B), &Encoder::isrHandler, CHANGE);
+        //instances[instanceCount] = this;
+        attachInterrupt(digitalPinToInterrupt(_encoder_pin_A), isrHandlerA, CHANGE);
+        attachInterrupt(digitalPinToInterrupt(_encoder_pin_B), isrHandlerB, CHANGE);
 
         _velocityTimer.init(10); // 10ms update interval
+        instanceCount++;
         return true;
     }
 
@@ -65,14 +68,11 @@ public:
     {
         if (_velocityTimer.isDone())
         {
-            // Calculate pulses per second
             long pulseDelta = _lastPulses - _pulses;
             float timeDelta = _velocityTimer.getInterval() / 1000.0f;
             float pulsesPerSecond = pulseDelta / timeDelta;
 
-            // Convert to rad per second
             _angularVelocity = _speedAvg.addValue(pulsesPerSecond * (2.0f * PI) / COUNTS_PER_REVOLUTION);
-
             _lastPulses = _pulses;
         }
     }
@@ -86,9 +86,27 @@ private:
     Helpers::Timer<unsigned long, millis> _velocityTimer;
     Helpers::MovingAverage<float, 10> _speedAvg = Helpers::MovingAverage<float, 10>(0.0f);
 
-    static Encoder *instance;
+    static void IRAM_ATTR isrHandlerA()
+    {
+        for (uint8_t i = 0; i < instanceCount; i++)
+        {
+            if (instances[i])
+            {
+                instances[i]->handleInterrupt();
+            }
+        }
+    }
 
-    static void IRAM_ATTR isrHandler();
+    static void IRAM_ATTR isrHandlerB()
+    {
+        for (uint8_t i = 0; i < instanceCount; i++)
+        {
+            if (instances[i])
+            {
+                instances[i]->handleInterrupt();
+            }
+        }
+    }
 
     void IRAM_ATTR handleInterrupt()
     {
@@ -97,33 +115,22 @@ private:
         uint8_t currentA = digitalRead(_encoder_pin_A);
         uint8_t currentB = digitalRead(_encoder_pin_B);
         uint8_t currentAB = (currentB << 1) | currentA;
-
         uint8_t encoded = (oldAB << 2) | currentAB;
 
-        // State machine for quadrature decoding
-        // CW rotation: 0b0001, 0b0111, 0b1110, 0b1000
-        // CCW rotation: 0b0010, 0b1011, 0b1101, 0b0100
         if (encoded == 0b0001 || encoded == 0b0111 || encoded == 0b1110 || encoded == 0b1000)
         {
-            _pulses++; // Clockwise
+            _pulses++;
         }
         else if (encoded == 0b0010 || encoded == 0b1011 || encoded == 0b1101 || encoded == 0b0100)
         {
-            _pulses--; // Counter-clockwise
+            _pulses--;
         }
 
         oldAB = currentAB;
     }
 };
 
-Encoder *Encoder::instance = nullptr;
-
-void IRAM_ATTR Encoder::isrHandler()
-{
-    if (instance)
-    {
-        instance->handleInterrupt();
-    }
-}
+Encoder *Encoder::instances[Encoder::MAX_INSTANCES] = {nullptr};
+uint8_t Encoder::instanceCount = 0;
 
 #endif // __ENCODER_HPP__
