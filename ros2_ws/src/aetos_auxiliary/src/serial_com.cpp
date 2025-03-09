@@ -52,10 +52,13 @@ void SerialCom::velocityMsgCallbcak(const aetos_msgs::msg::MotorVelocity::Shared
     }
     try
     {
-        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->omega1, sizeof(float)));
-        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->omega2, sizeof(float)));
-        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->omega3, sizeof(float)));
-        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->omega4, sizeof(float)));
+
+        RCLCPP_INFO(this->get_logger(), "Velocities: Motor1: %f, Motor2: %f, Motor3: %f, Motor4: %f ", velocityMsg_->omega1, velocityMsg_->omega2, velocityMsg_->omega3, velocityMsg_->omega4);
+
+        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->omega1, sizeof(double)));
+        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->omega2, sizeof(double)));
+        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->omega3, sizeof(double)));
+        boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->omega4, sizeof(double)));
     }
     catch (const std::exception &e)
     {
