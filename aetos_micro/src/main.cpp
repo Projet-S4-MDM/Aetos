@@ -28,7 +28,10 @@ void setup()
         // joint1.update();
         requestedVelocity = serialCom.getVelocityData();
 
-        Serial.println(requestedVelocity.motor1Velocity);
+        Serial.print(requestedVelocity.motor1Velocity);
+        Serial.print(requestedVelocity.motor2Velocity);
+        Serial.print(requestedVelocity.motor3Velocity);
+        Serial.println(requestedVelocity.motor4Velocity);
         // Serial.println(requestedVelocity.motor2Velocity);
         // Serial.println(requestedVelocity.motor3Velocity);
         // Serial.println(requestedVelocity.motor4Velocity);

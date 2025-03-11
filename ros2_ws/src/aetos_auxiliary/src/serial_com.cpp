@@ -52,7 +52,6 @@ void SerialCom::velocityMsgCallbcak(const aetos_msgs::msg::MotorVelocity::Shared
     }
     try
     {
-
         RCLCPP_INFO(this->get_logger(), "Velocities: Motor1: %f, Motor2: %f, Motor3: %f, Motor4: %f ", velocityMsg_->omega1, velocityMsg_->omega2, velocityMsg_->omega3, velocityMsg_->omega4);
 
         boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->omega1, sizeof(double)));

@@ -6,10 +6,10 @@
 
 struct sRequestedVelocity
 {
-    float motor1Velocity;
-    float motor2Velocity;
-    float motor3Velocity;
-    float motor4Velocity;
+    double motor1Velocity;
+    double motor2Velocity;
+    double motor3Velocity;
+    double motor4Velocity;
 };
 
 struct sEncoderData
