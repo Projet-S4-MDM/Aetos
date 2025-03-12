@@ -1,67 +1,45 @@
 #include <Arduino.h>
 #include "config.hpp"
-#include "Joint.hpp"
-#include "Serialnterface.hpp"
+#include "quadratureEncoder.hpp"
 #include "talon_srx.hpp"
-#include "FIT0186.hpp"
+#include "Joint.hpp"
+#include "PID.hpp"
 
 void setup()
 {
     Serial.begin(115200);
 
-    TalonSrx talon1 = TalonSrx(PIN_PWM_1);
-    //FIT0186 motor1 = FIT0186(PIN_PWM_1, PIN_DIR_1, false);
-    Encoder encoder1 = Encoder(PIN_ENCODER_A1, PIN_ENCODER_B1);
-    // PID pid1(1.0f, 0.0f, 0.0f, 50.0f);
-    // Joint joint1 = Joint(&encoder1, &pid1, &talon1);
+    QuadratureEncoder encoder1 = QuadratureEncoder(PIN_ENCODER_A1, PIN_ENCODER_B1, PCNT_UNIT_1);
+    QuadratureEncoder encoder2 = QuadratureEncoder(PIN_ENCODER_A2, PIN_ENCODER_B2, PCNT_UNIT_3);
 
-    // joint1.init();
-    encoder1.init();
 
-    talon1.init();
+    TalonSrx talon1 = TalonSrx(PIN_PWM_1, LEDC_TIMER_0);
+    TalonSrx talon2 = TalonSrx(PIN_PWM_2, LEDC_TIMER_1);
 
-    delay(3000);
+    PID pid1 = PID(1.0f, 0.0f, 0.0f, 50.0f);
+    PID pid2 = PID(1.0f, 0.0f, 0.0f, 50.0f);
+
+    Joint joint1 = Joint(&encoder1, &pid1, &talon1);
+    Joint joint2 = Joint(&encoder2, &pid2, &talon2);
+
+    joint1.init();
+    joint2.init();
+
+    Serial.print("Init done!");
 
     for (;;)
     {
-        Serial.println(encoder1.getAngularVelocity());
-        // joint1.update();
-        // joint1.setSpeedRad(30.0f);
-        talon1.setCmd(100.0f);
+        joint1.update();
+        joint2.update();
+
+        joint1.setSpeedRad(30.0f);
+        joint2.setSpeedRad(30.0f);
+
+        Serial.println(joint1.getAngle());
+
     }
 }
 
 void loop()
 {
 }
-
-// void setup()
-// {
-//     Serial.begin(9600);
-
-//     for (;;)
-//     {
-//         if (Serial.available() >= sizeof(sRequestedVelocity))
-//         {
-//             sRequestedVelocity requestedVelocity;
-
-//             byte *dataPtr = reinterpret_cast<byte *>(&requestedVelocity);
-//             for (size_t i = 0; i < sizeof(sRequestedVelocity); i++)
-//             {
-//                 dataPtr[i] = Serial.read();
-//             }
-
-//             Serial.println("Received Velocity Data:");
-//             Serial.print("VX: ");
-//             Serial.println(requestedVelocity.xVelocity);
-//             Serial.print("VY: ");
-//             Serial.println(requestedVelocity.yVelocity);
-//             Serial.print("VZ: ");
-//             Serial.println(requestedVelocity.zVelocity);
-//         }
-//     }
-// }
-
-// void loop()
-// {
-// }

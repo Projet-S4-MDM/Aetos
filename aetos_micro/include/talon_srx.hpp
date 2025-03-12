@@ -20,7 +20,7 @@ private:
     static constexpr uint32_t MS_TO_DUTY(uint32_t freq_, float microSeconds_)
     {
         float period = 1.0f / static_cast<float>(freq_);
-        return static_cast<uint32_t>(round(((microSeconds_ / 1'000'000.f) / period) * ((float)(1u << 20))));
+        return static_cast<uint32_t>(round(((microSeconds_ / 1'000'000.f) / period) * ((float)(1u << 14))));
     }
 
 public:
@@ -49,7 +49,7 @@ public:
         ledc_timer_config_t ledc_timer;
         ledc_timer.speed_mode = LEDC_LOW_SPEED_MODE;
         ledc_timer.timer_num = _timer;
-        ledc_timer.duty_resolution = LEDC_TIMER_20_BIT;
+        ledc_timer.duty_resolution = LEDC_TIMER_14_BIT;
         ledc_timer.freq_hz = _freqSignal;
         ledc_timer.clk_cfg = LEDC_AUTO_CLK;
         ledc_timer_config(&ledc_timer);

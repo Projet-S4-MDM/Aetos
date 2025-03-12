@@ -2,7 +2,7 @@
 #define __JOINT_HPP__
 
 #include <Arduino.h>
-#include "encoder.hpp"
+#include "quadratureEncoder.hpp"
 #include "PID.hpp"
 #include "talon_srx.hpp"
 #include "timer.hpp"
@@ -12,7 +12,7 @@ class Joint
 public:
     static constexpr unsigned long PID_LOOP_FREQ_HZ = 100ul;
 
-    Joint(Encoder *encoder,
+    Joint(QuadratureEncoder *encoder,
           PID *pid,
           TalonSrx *talon);
 
@@ -24,7 +24,7 @@ public:
     long getAngle(void);
 
 private:
-    Encoder *_encoder = nullptr;
+    QuadratureEncoder *_encoder = nullptr;
     PID *_pid = nullptr;
     TalonSrx *_talon = nullptr;
 
@@ -43,7 +43,7 @@ void Joint::update(void)
 
     if (_printTimer.isDone())
     {
-        //Serial.println(_encoder->getAngularVelocity());
+        // Serial.println(_encoder->getAngularVelocity());
     }
 
     if (_timerPidLoop.isDone())
@@ -71,7 +71,7 @@ void Joint::update(void)
 long Joint::getAngle(void)
 {
     // return _encoder->getAngle();
-    return _encoder->getPulses();
+    return _encoder->getCount();
 }
 
 void Joint::setSpeedRad(float speed_)
@@ -81,12 +81,12 @@ void Joint::setSpeedRad(float speed_)
 
 void Joint::init()
 {
-    _encoder->init();
+    _encoder->begin();
     _pid->init();
     _talon->init();
 }
 
-Joint::Joint(Encoder *encoder_, PID *pid_, TalonSrx *talon_)
+Joint::Joint(QuadratureEncoder *encoder_, PID *pid_, TalonSrx *talon_)
     : _encoder(encoder_), _pid(pid_), _talon(talon_) {}
 
 #endif

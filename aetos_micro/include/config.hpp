@@ -3,11 +3,14 @@
 
 #include "Arduino.h"
 
-constexpr gpio_num_t PIN_PWM_1 = GPIO_NUM_18;
-constexpr gpio_num_t PIN_DIR_1 = GPIO_NUM_5;
+constexpr gpio_num_t PIN_PWM_1 = GPIO_NUM_13;
+constexpr gpio_num_t PIN_PWM_2 = GPIO_NUM_12;
 
 
-constexpr gpio_num_t PIN_ENCODER_A1 = GPIO_NUM_34;
-constexpr gpio_num_t PIN_ENCODER_B1 = GPIO_NUM_35;
+constexpr gpio_num_t PIN_ENCODER_A1 = GPIO_NUM_48;
+constexpr gpio_num_t PIN_ENCODER_B1 = GPIO_NUM_47;
+
+constexpr gpio_num_t PIN_ENCODER_A2 = GPIO_NUM_36;
+constexpr gpio_num_t PIN_ENCODER_B2 = GPIO_NUM_35;
 
 #endif
