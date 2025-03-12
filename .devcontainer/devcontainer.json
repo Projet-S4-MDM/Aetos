@@ -23,7 +23,6 @@
                 "ms-vscode.cpptools-extension-pack",
                 "platformio.platformio-ide",
                 "hediet.vscode-drawio"
-
             ]
         }
     },
@@ -31,20 +30,25 @@
         "DISPLAY": "unix:0",
         "ROS_LOCALHOST_ONLY": "1",
         "ROS_DOMAIN_ID": "69",
-        "SDL_JOYSTICK_DEVICE": "/dev/input/js0", 
+        "SDL_JOYSTICK_DEVICE": "/dev/input/js0",
         "SDL_AUDIODRIVER": "dummy"
     },
     "runArgs": [
         "--net=host",
         "--pid=host",
         "--ipc=host",
-        "--device-cgroup-rule=c 13:* rmw", 
+        "--device-cgroup-rule=c 13:* rmw",
         "-e",
         "DISPLAY=${env:DISPLAY}"
     ],
     "mounts": [
         "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
         "source=/dev/dri,target=/dev/dri,type=bind,consistency=cached",
-        "source=/var/run/dbus/system_bus_socket,target=/var/run/dbus/system_bus_socket,type=bind"
-    ]
+        "source=/var/run/dbus/system_bus_socket,target=/var/run/dbus/system_bus_socket,type=bind",
+        "source=/dev/bus/usb,target=/dev/bus/usb,type=bind",
+        "source=/dev,target=/dev,type=bind",
+        "source=/sys,target=/sys,type=bind",
+        "source=/run/udev,target=/run/udev,type=bind"
+    ],
+    "postCreateCommand": "bash -c 'source /opt/ros/humble/setup.bash && rosdep update'"
 }
