@@ -59,6 +59,7 @@ RUN python3 -m pip install --upgrade pip \
         setuptools==58.2.0 \
         evdev \
         pybullet \
+        websockets \
         matplotlib
 
 # Set up environment for ROS2
