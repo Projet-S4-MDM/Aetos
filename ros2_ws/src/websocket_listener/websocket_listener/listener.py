@@ -29,6 +29,7 @@ class VelocityPublisher(Node):
         self.publisher_.publish(msg)
         self.get_logger().info(f'Publishing Velocity: x={msg.data[0]:.2f}, y={msg.data[1]:.2f}, z={msg.data[2]:.2f}')
 
+
 def main(args=None):
     rclpy.init(args=args)
     velocity_publisher = VelocityPublisher()
