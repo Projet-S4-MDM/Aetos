@@ -47,6 +47,7 @@ RUN apt-get update && apt-get install -q -y --no-install-recommends \
     libsdl2-image-dev \
     libsdl2-mixer-dev \
     libsdl2-ttf-dev \
+    qttools5-dev-tools \
     && rm -rf /var/lib/apt/lists/*
 
 # Create DBus directory and set permissions
