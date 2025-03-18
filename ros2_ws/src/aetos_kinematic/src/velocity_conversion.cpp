@@ -73,15 +73,19 @@ public:
   VelocityConversion()
       : Node("VelocityConversion")
   {
-    sub_velocity = this->create_subscription<aetos_msgs::msg::Velocity>(
-        "aetos/joy/velocity", 10, std::bind(&VelocityConversion::velocity_callback, this, _1));
+    _subJoyVelocity = this->create_subscription<aetos_msgs::msg::Velocity>(
+        "aetos/joy/velocity", 10, std::bind(&VelocityConversion::joyVelocityCallback, this, _1));
 
-    sub_encoder = this->create_subscription<aetos_msgs::msg::EncoderValues>(
+    _subAutoVelocity = this->create_subscription<aetos_msgs::msg::Velocity>(
+        "aetos/vision/velocity", 10, std::bind(&VelocityConversion::autoVelocityCallback, this, _1));
+
+    _subEncoder = this->create_subscription<aetos_msgs::msg::EncoderValues>(
         "aetos/control/encoder", 10, std::bind(&VelocityConversion::encoder_callback, this, _1));
 
-    pub_motor_velocity = this->create_publisher<aetos_msgs::msg::MotorVelocity>("aetos/control/velocity", 10);
+    _joyVelPub = this->create_publisher<aetos_msgs::msg::MotorVelocity>("aetos/control/teleop", 10);
+    _autoVelPub = this->create_publisher<aetos_msgs::msg::MotorVelocity>("aetos/control/auto", 10);
 
-    pub_position = this->create_publisher<aetos_msgs::msg::EffectorPosition>("aetos/control/position", 10);
+    _positionPub = this->create_publisher<aetos_msgs::msg::EffectorPosition>("aetos/control/position", 10);
   }
 
 private:
@@ -91,23 +95,18 @@ private:
   sCableLength _cableLength;
 
   void updateVelocity(const aetos_msgs::msg::Velocity &msg);
-
   void updateLength(const aetos_msgs::msg::EncoderValues &msg);
-
   void forwardKinematics();
-
   void inverseKinematics();
-
   void uavInBoundSecurityCheck();
 
-  void velocity_callback(const aetos_msgs::msg::Velocity &msg)
+  void autoVelocityCallback(const aetos_msgs::msg::Velocity &msg)
   {
+    auto message = aetos_msgs::msg::MotorVelocity();
 
     float vx = msg.velocity_x;
     float vy = msg.velocity_y;
     float vz = msg.velocity_z;
-
-    // RCLCPP_INFO(this->get_logger(), "I heard: velocity vx: '%f', vy: '%f', vz: '%f'", msg.data[0], msg.data[1], msg.data[2]);
 
     _velocity.vx = vx;
     _velocity.vy = vy;
@@ -116,25 +115,54 @@ private:
     this->forwardKinematics();
     this->uavInBoundSecurityCheck();
     this->inverseKinematics();
-    this->publish_motor_velocity(_motorVelocity);
+
+    message.omega1 = _motorVelocity.w1;
+    message.omega2 = _motorVelocity.w2;
+    message.omega3 = _motorVelocity.w3;
+    message.omega4 = _motorVelocity.w4;
+    
+    _autoVelPub->publish(message);
+    this->publish_position(_cameraPosition);
+  }
+
+  void joyVelocityCallback(const aetos_msgs::msg::Velocity &msg)
+  {
+    auto message = aetos_msgs::msg::MotorVelocity();
+
+    float vx = msg.velocity_x;
+    float vy = msg.velocity_y;
+    float vz = msg.velocity_z;
+
+    _velocity.vx = vx;
+    _velocity.vy = vy;
+    _velocity.vz = vz;
+
+    this->forwardKinematics();
+    this->uavInBoundSecurityCheck();
+    this->inverseKinematics();
+
+    message.omega1 = _motorVelocity.w1;
+    message.omega2 = _motorVelocity.w2;
+    message.omega3 = _motorVelocity.w3;
+    message.omega4 = _motorVelocity.w4;
+    _joyVelPub->publish(message);
+
     this->publish_position(_cameraPosition);
   }
 
   void encoder_callback(const aetos_msgs::msg::EncoderValues &msg)
   {
-    // RCLCPP_INFO(this->get_logger(), "I heard: encoder angle1: '%f', angle2: '%f', angle3: '%f', angle4: '%f'", msg.angle1, msg.angle2, msg.angle3, msg.angle4);
     this->updateLength(msg);
   }
 
   void publish_motor_velocity(const sMotorVelocity &_motorVelocity)
   {
-
     auto message = aetos_msgs::msg::MotorVelocity();
     message.omega1 = _motorVelocity.w1;
     message.omega2 = _motorVelocity.w2;
     message.omega3 = _motorVelocity.w3;
     message.omega4 = _motorVelocity.w4;
-    pub_motor_velocity->publish(message);
+    _joyVelPub->publish(message);
   }
 
   void publish_position(const sPosition &_cameraPosition)
@@ -143,13 +171,16 @@ private:
     message.position_x = _cameraPosition.x;
     message.position_y = _cameraPosition.y;
     message.position_z = _cameraPosition.z;
-    pub_position->publish(message);
+    _positionPub->publish(message);
   }
 
-  rclcpp::Subscription<aetos_msgs::msg::Velocity>::SharedPtr sub_velocity;
-  rclcpp::Subscription<aetos_msgs::msg::EncoderValues>::SharedPtr sub_encoder;
-  rclcpp::Publisher<aetos_msgs::msg::MotorVelocity>::SharedPtr pub_motor_velocity;
-  rclcpp::Publisher<aetos_msgs::msg::EffectorPosition>::SharedPtr pub_position;
+  rclcpp::Subscription<aetos_msgs::msg::Velocity>::SharedPtr _subJoyVelocity;
+  rclcpp::Subscription<aetos_msgs::msg::Velocity>::SharedPtr _subAutoVelocity;
+  rclcpp::Subscription<aetos_msgs::msg::EncoderValues>::SharedPtr _subEncoder;
+
+  rclcpp::Publisher<aetos_msgs::msg::MotorVelocity>::SharedPtr _joyVelPub;
+  rclcpp::Publisher<aetos_msgs::msg::MotorVelocity>::SharedPtr _autoVelPub;
+  rclcpp::Publisher<aetos_msgs::msg::EffectorPosition>::SharedPtr _positionPub;
 };
 
 void VelocityConversion::updateVelocity(const aetos_msgs::msg::Velocity &msg)
@@ -163,20 +194,20 @@ void VelocityConversion::updateVelocity(const aetos_msgs::msg::Velocity &msg)
 
 void VelocityConversion::uavInBoundSecurityCheck()
 {
-  
+
   if ((_cameraPosition.x <= Limits::X_MIN && _velocity.vx < 0) || (_cameraPosition.x >= Limits::X_MAX && _velocity.vx > 0))
   {
-    RCLCPP_WARN(this->get_logger(), "Hit Limits");
+    RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 2000, "Hit Limits");
     _velocity.vx = 0;
   }
   else if ((_cameraPosition.y <= Limits::Y_MIN && _velocity.vy < 0) || (_cameraPosition.y >= Limits::Y_MAX && _velocity.vy > 0))
   {
-    RCLCPP_WARN(this->get_logger(), "Hit Limits");
+    RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 2000, "Hit Limits");
     _velocity.vy = 0;
   }
   else if ((_cameraPosition.z <= Limits::Z_MIN && _velocity.vz < 0) || (_cameraPosition.z >= Limits::Z_MAX && _velocity.vz > 0))
   {
-    RCLCPP_WARN(this->get_logger(), "Hit Limits");
+    RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 2000, "Hit Limits");
     _velocity.vz = 0;
   }
 };
