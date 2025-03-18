@@ -3,7 +3,7 @@ from setuptools import find_packages
 import os
 from glob import glob
 
-package_name = 'websocket_listener'
+package_name = 'aetos_cam'
 
 setup(
     name=package_name,
@@ -18,8 +18,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'listener = websocket_listener.listener:main',
-            'serveur = websocket_listener.serveur:main',
+            'camera = aetos_cam.camera:main',
+            'serveur = aetos_cam.serveur:main',
         ],
     },
     data_files=[
