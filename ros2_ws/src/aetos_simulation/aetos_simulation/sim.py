@@ -14,7 +14,7 @@ class Sim(Node):
         super().__init__('sim')
         self.subscription = self.create_subscription(EffectorPosition, 'aetos/control/position', self.effector_position_callback, 10)
         self.velocity_subscription = self.create_subscription(MotorVelocity, 'aetos/control/velocity', self.motor_velocity_callback, 10)
-        self.encoder_publisher = self.create_publisher(EncoderValues, 'aetos/control/encoder', 10)
+        self.encoder_publisher = self.create_publisher(EncoderValues, 'aetos/control/sim_encoder', 10)
         
         self.position = [0.0, 0.0, 0.0] 
         self.last_velocity_time = time.time()
@@ -99,7 +99,6 @@ class Sim(Node):
             self.encoder_values.angle4 += msg.omega4 * time_diff
         
         self.encoder_publisher.publish(self.encoder_values)
-
 
         self.last_motor_velocities = [msg.omega1, msg.omega2, msg.omega3, msg.omega4]
         

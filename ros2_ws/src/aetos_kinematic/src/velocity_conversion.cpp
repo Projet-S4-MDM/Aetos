@@ -79,6 +79,8 @@ public:
     _subAutoVelocity = this->create_subscription<aetos_msgs::msg::Velocity>(
         "aetos/vision/velocity", 10, std::bind(&VelocityConversion::autoVelocityCallback, this, _1));
 
+    _subSimEncoder = this->create_subscription<aetos_msgs::msg::EncoderValues>(
+        "aetos/control/sim_encoder", 10, std::bind(&VelocityConversion::encoder_callback, this, _1));
     _subEncoder = this->create_subscription<aetos_msgs::msg::EncoderValues>(
         "aetos/control/encoder", 10, std::bind(&VelocityConversion::encoder_callback, this, _1));
 
@@ -176,6 +178,7 @@ private:
 
   rclcpp::Subscription<aetos_msgs::msg::Velocity>::SharedPtr _subJoyVelocity;
   rclcpp::Subscription<aetos_msgs::msg::Velocity>::SharedPtr _subAutoVelocity;
+  rclcpp::Subscription<aetos_msgs::msg::EncoderValues>::SharedPtr _subSimEncoder;
   rclcpp::Subscription<aetos_msgs::msg::EncoderValues>::SharedPtr _subEncoder;
 
   rclcpp::Publisher<aetos_msgs::msg::MotorVelocity>::SharedPtr _joyVelPub;
