@@ -102,7 +102,6 @@ class Sim(Node):
 
         self.last_motor_velocities = [msg.omega1, msg.omega2, msg.omega3, msg.omega4]
         
-        
         self.last_velocity_time = current_time
 
     def update(self, frame):
