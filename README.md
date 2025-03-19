@@ -134,6 +134,8 @@ cd ..
 code .
 ```
 
+## Developping in aetos_micro
+
 ## Raspberry Pi 5 Setup and Environment
 The Raspberry Pi is powered by a 5V 3A power pack and runs on the Raspberry Pi 64-bit OS.
 It's using a Raspberry Pi Camera V3 and communicates with the PC via a WebSocket server.
@@ -267,4 +269,15 @@ libcamera-hello
 
 This will open the entire development environment in the same devcontainer but in a separate VS Code window.
 
-## Developping in aetos_micro
+### Known Issues
+#### 1. Docker
+We are not using Docker and ROS2 on the Raspberry Pi.
+We tried to make it work, but the imager for ros2 in the docker is not properly supported by the Raspberry Pi **5 specificly**.
+Maybe it is possible, but VSCode crashes every time after running `Reopen in Dev-Container`
+Instead, we used the WebSocket approach to bypass the problem.
+
+#### 2. Pi Camera
+We could have used Ubuntu instead of Raspbian to make Docker work.
+However, this creates another issue: the Raspberry Pi camera is not supported on Ubuntu.
+So, you could use Ubuntu + Docker, but you would need to replace the Pi Camera with a different USB camera.
+
