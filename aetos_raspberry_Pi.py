@@ -106,7 +106,7 @@ async def send_data():
             await asyncio.sleep(3)  # Attendre 3 secondes avant de réessayer
 
 # Demander une valeur à l'utilisateur
-SERVER_IP = "172.20.10.2" 
+SERVER_IP = "0.0.0.0" 
 asyncio.run(send_data())
 
 
