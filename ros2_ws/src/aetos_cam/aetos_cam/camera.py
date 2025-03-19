@@ -33,9 +33,6 @@ def decode_image(base64_str):
         print(f"[Erreur décodage image] {e}")
         return None
 
-# =======================
-# Callback WebSocket : reçoit les données string
-# =======================
 async def handle_websocket(websocket):
     global shared_data, last_message_time
     async for message in websocket:
