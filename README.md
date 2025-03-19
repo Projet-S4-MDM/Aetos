@@ -133,6 +133,7 @@ terminator
 cd ..
 code .
 ```
+This will open the entire development environment in the same devcontainer but in a separate VS Code window.
 
 ## Developping in aetos_micro
 
@@ -267,7 +268,7 @@ libcamera-hello
 
 4. If it still doesn't work, good luck! ❤️
 
-This will open the entire development environment in the same devcontainer but in a separate VS Code window.
+
 
 ### Known Issues
 #### 1. Docker
