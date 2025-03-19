@@ -47,7 +47,7 @@ void SerialCom::velocityMsgCallbcak(const aetos_msgs::msg::MotorVelocity::Shared
     std::lock_guard<std::mutex> lock(_serialMutex);
     if (!_serialConnected)
     {
-        RCLCPP_WARN(this->get_logger(), "Serial port not connected. Dropping message.");
+        RCLCPP_ERROR_THROTTLE(this->get_logger(), *this->get_clock(), 5000, "Serial port not connected. Dropping message.");
         return;
     }
     try
