@@ -15,8 +15,8 @@ def generate_launch_description():
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([PathJoinSubstitution([FindPackageShare('aetos_kinematic'), 'launch', 'kinematics.launch.py'])])),
     
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([PathJoinSubstitution([FindPackageShare('aetos_simulation'), 'launch', 'sim.launch.py'])])),
+        # IncludeLaunchDescription(
+        #     PythonLaunchDescriptionSource([PathJoinSubstitution([FindPackageShare('aetos_simulation'), 'launch', 'sim.launch.py'])])),
 
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([PathJoinSubstitution([FindPackageShare('aetos_auxiliary'), 'launch', 'auxiliary.launch.py'])]))
