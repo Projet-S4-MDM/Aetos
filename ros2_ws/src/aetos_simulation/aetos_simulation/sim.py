@@ -9,12 +9,12 @@ from rclpy.node import Node
 from aetos_msgs.msg import EffectorPosition, MotorVelocity, EncoderValues
 import time
 
-class Sim(Node):
+class CableDrivenRobot(Node):
     def __init__(self):
         super().__init__('sim')
         self.subscription = self.create_subscription(EffectorPosition, 'aetos/control/position', self.effector_position_callback, 10)
         self.velocity_subscription = self.create_subscription(MotorVelocity, 'aetos/control/velocity', self.motor_velocity_callback, 10)
-        self.encoder_publisher = self.create_publisher(EncoderValues, 'aetos/control/encoder', 10)
+        self.encoder_publisher = self.create_publisher(EncoderValues, 'aetos/control/sim_encoder', 10)
         
         self.position = [0.0, 0.0, 0.0] 
         self.last_velocity_time = time.time()
@@ -74,6 +74,7 @@ class Sim(Node):
 
     def effector_position_callback(self, msg):
         """Handles incoming effector position messages."""
+        # self.get_logger().info(f"Received effector position: x={msg.position_x}, y={msg.position_y}, z={msg.position_z}")
         self.position = [msg.position_x, msg.position_y, msg.position_z]
 
     def motor_velocity_callback(self, msg):
@@ -100,9 +101,7 @@ class Sim(Node):
         
         self.encoder_publisher.publish(self.encoder_values)
 
-
         self.last_motor_velocities = [msg.omega1, msg.omega2, msg.omega3, msg.omega4]
-        
         
         self.last_velocity_time = current_time
 
@@ -119,15 +118,15 @@ class Sim(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    node = Sim()
+    node = CableDrivenRobot()
     try:
-        while rclpy.ok():
-            plt.pause(0.1)  # Permet d'interagir avec le graphe sans bloquer
+        node.ros_thread.join()  # Wait for the ROS thread to finish
     except KeyboardInterrupt:
-        print("Shutting down gracefully...")
+        pass
     finally:
         node.destroy_node()
         rclpy.shutdown()
+
 
 if __name__ == '__main__':
     main()
