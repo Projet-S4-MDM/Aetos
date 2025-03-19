@@ -122,7 +122,7 @@ private:
     message.omega2 = _motorVelocity.w2;
     message.omega3 = _motorVelocity.w3;
     message.omega4 = _motorVelocity.w4;
-    
+
     _autoVelPub->publish(message);
     this->publish_position(_cameraPosition);
   }
