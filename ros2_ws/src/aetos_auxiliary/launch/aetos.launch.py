@@ -8,6 +8,7 @@ def generate_launch_description():
     
     return LaunchDescription([
 
+        
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([PathJoinSubstitution([FindPackageShare('aetos_joy'), 'launch', 'joy.launch.py'])])),
         
@@ -19,12 +20,10 @@ def generate_launch_description():
 
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([PathJoinSubstitution([FindPackageShare('aetos_auxiliary'), 'launch', 'auxiliary.launch.py'])]))
-
     ])
     
 # TODO
 # 1. Fix sim shutting down on interrupt
-# 2. Create full sim vs visualize sim for encoder topic management
+# 2. Cerate full sim vs visualize sim for encoder topic management
 # 3. Make controller discovery run in a loop
 # 4. Implement deadman
-# 5.Fix issue with software limits
