@@ -13,16 +13,19 @@ from aetos_gui.ui_node import UINode
 class MainWindow(QMainWindow):
     def __init__(self, ui_node, executor):
         super(MainWindow, self).__init__()
-        self.ui_node = ui_node  # Référence au nœud ROS2
-        self.executor = executor  # Exécuteur multi-thread pour ROS2
-
-        # Ajout d'un raccourci clavier pour fermer l'application
+        self.ui_node = ui_node  
+        self.executor = executor  
+        
         shortcut = QShortcut(QKeySequence("Ctrl+W"), self)
         shortcut.activated.connect(self.close_application)
 
-        # Chargement de l'interface utilisateur depuis un fichier .ui
+
         resources_directory = self.ui_node.get_resources_directory('aetos_gui')
         uic.loadUi(resources_directory + "main_window.ui", self)
+        
+        self.rb_manuel = self.findChild(PyQt5.QtWidgets.QRadioButton, "rb_manuel")
+        self.rb_automatique = self.findChild(PyQt5.QtWidgets.QRadioButton, "rb_automatique")
+        
 
     def closeEvent(self, event):
         """Gère la fermeture de l'application."""
@@ -40,7 +43,7 @@ def main(args=None):
     rclpy.init(args=args)
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-    # Activation du support des écrans 4K
+   
     if hasattr(PyQt5.QtCore.Qt, 'AA_EnableHighDpiScaling'):
         PyQt5.QtWidgets.QApplication.setAttribute(PyQt5.QtCore.Qt.AA_EnableHighDpiScaling, True)
     if hasattr(PyQt5.QtCore.Qt, 'AA_UseHighDpiPixmaps'):
@@ -53,7 +56,7 @@ def main(args=None):
     app = QApplication(sys.argv)
     window = MainWindow(ui_node, executor)
 
-    # Démarrer l'exécution du nœud ROS2 dans un thread séparé
+    
     thread = Thread(target=executor.spin)
     thread.start()
 
