@@ -61,11 +61,9 @@ Arbitration::Arbitration() : Node("arbitration_node")
 
     _motorVelPub = this->create_publisher<aetos_msgs::msg::MotorVelocity>(
         "aetos/control/velocity", 1);
-
     _velocitySrv = this->create_service<aetos_msgs::srv::VelocityArbitration>(
         "aetos/communication/set_arbitration",
         std::bind(&Arbitration::arbitrationCallback, this, std::placeholders::_1, std::placeholders::_2));
-
     _cmdSendTimer = this->create_wall_timer(std::chrono::milliseconds(10), std::bind(&Arbitration::sendCmd, this));
 }
 
