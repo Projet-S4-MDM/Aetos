@@ -10,7 +10,7 @@
 class Joint
 {
 public:
-    static constexpr unsigned long PID_LOOP_FREQ_HZ = 100ul;
+    static constexpr unsigned long PID_LOOP_FREQ_HZ = 10000ul;
 
     Joint(QuadratureEncoder *encoder,
           PID *pid,
@@ -32,7 +32,7 @@ private:
         Helpers::Timer<unsigned long, micros>(1000000.0f / (float)PID_LOOP_FREQ_HZ);
 
     Helpers::Timer<unsigned long, micros> _printTimer =
-        Helpers::Timer<unsigned long, micros>(1000000.0f / 10ul);
+        Helpers::Timer<unsigned long, micros>(1000000.0f / (float)PID_LOOP_FREQ_HZ);
 
     float _goalSpeed = 0.0f;
 };
@@ -43,27 +43,14 @@ void Joint::update(void)
 
     if (_printTimer.isDone())
     {
-        // Serial.println(_encoder->getAngularVelocity());
+        Serial.println(_encoder->getAngularVelocity());
     }
 
     if (_timerPidLoop.isDone())
     {
         float cmd = 0.0f;
-
         float error = _encoder->getAngularVelocity() - _goalSpeed;
-
         cmd = _pid->computeCommand(error);
-
-        /*
-        Serial.print("Goal speed : ");
-        Serial.println(_goalSpeed);
-        Serial.print("angular velocity");
-        Serial.println(_encoder->getAngularVelocity());
-        Serial.print("Error : ");
-        Serial.println(error);
-        Serial.println();
-        */
-
         _talon->setCmd(cmd);
     }
 }
