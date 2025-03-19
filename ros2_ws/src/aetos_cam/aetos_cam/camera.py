@@ -1,6 +1,5 @@
 import asyncio
 import websockets
-import json
 import base64
 import cv2
 import numpy as np
@@ -23,45 +22,39 @@ last_message_time = time.time()
 lock = threading.Lock()  # Pour gérer l'accès aux variables partagées
 
 # =======================
-# Fonction pour décoder l'image base64
-# =======================
-def decode_image(base64_str):
-    try:
-        img_data = base64.b64decode(base64_str)
-        np_array = np.frombuffer(img_data, np.uint8)
-        image = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
-        return image
-    except Exception as e:
-        print(f"[Erreur décodage image] {e}")
-        return None
-
-# =======================
 # Fonction WebSocket (thread séparé)
 # =======================
 async def handle_websocket(websocket):
+    """ Réception WebSocket avec binaire direct """
     global last_message_time
 
     async for message in websocket:
         try:
-            received_data = json.loads(message)
+            # Séparer les données de position et l'image
+            header_size = 12  # 3 x float (4 octets chacun)
+            
+            if len(message) >= header_size:
+                with lock:
+                    # Extraire les coordonnées (3x float)
+                    shared_data["x"] = np.frombuffer(message[0:4], dtype=np.float32)[0]
+                    shared_data["y"] = np.frombuffer(message[4:8], dtype=np.float32)[0]
+                    shared_data["z"] = np.frombuffer(message[8:12], dtype=np.float32)[0]
 
-            # Mise à jour des variables partagées avec verrouillage
-            with lock:
-                shared_data["x"] = float(received_data.get('x', 0.0))
-                shared_data["y"] = float(received_data.get('y', 0.0))
-                shared_data["z"] = float(received_data.get('z', 0.0))
+                    # Extraire l'image (binaire restant)
+                    img_data = message[header_size:]
+                    if img_data:
+                        np_array = np.frombuffer(img_data, np.uint8)
+                        image = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
+                        if image is not None:
+                            shared_data["image"] = image
 
-                if 'image' in received_data:
-                    shared_data["image"] = decode_image(received_data['image'])
+                    last_message_time = time.time()
 
-                last_message_time = time.time()
-
-        except json.JSONDecodeError:
-            print("[WebSocket] Erreur: données non valides JSON.")
         except Exception as e:
             print(f"[WebSocket] Erreur: {e}")
 
 async def start_websocket_server():
+    """ Démarrer le serveur WebSocket """
     server = await websockets.serve(handle_websocket, "0.0.0.0", 8765, max_size=2**23)
     print("[WebSocket] Serveur démarré sur le port 8765")
     await server.wait_closed()
@@ -70,38 +63,41 @@ async def start_websocket_server():
 # Node ROS2 pour publier les données
 # =======================
 class DataPublisherNode(Node):
+    """ Nœud ROS2 pour publier les données Vector3 """
     def __init__(self):
         super().__init__("data_publisher")
         self.publisher_ = self.create_publisher(Vector3, "data_topic", 10)
         self.timer = self.create_timer(0.1, self.timer_callback)  # 10Hz
 
     def timer_callback(self):
-        """Callback ROS2 appelée par le timer"""
+        """ Callback ROS2 pour publier les données """
         global last_message_time
 
         now = time.time()
 
         with lock:
-            # Timeout de sécurité (1 seconde)
             if now - last_message_time > 1.0:
+                # Timeout : réinitialisation des valeurs
                 print("[Sécurité] Timeout dépassé. Réinitialisation des données.")
                 shared_data["x"] = 0.0
                 shared_data["y"] = 0.0
                 shared_data["z"] = 0.0
 
-            # Publication des données ROS2
+            # Publier les coordonnées (forcer la conversion en float natif)
             msg = Vector3()
-            msg.x = shared_data["x"]
-            msg.y = shared_data["y"]
-            msg.z = shared_data["z"]
+            msg.x = float(shared_data["x"])  
+            msg.y = float(shared_data["y"])  
+            msg.z = float(shared_data["z"])  
+
             self.publisher_.publish(msg)
             self.get_logger().info(f"[ROS2] Publication: x={msg.x}, y={msg.y}, z={msg.z}")
+
 
 # =======================
 # Thread pour afficher les images OpenCV
 # =======================
 def image_display_thread():
-    """Thread séparé pour afficher les images"""
+    """ Affichage des images dans un thread séparé """
     while rclpy.ok():
         with lock:
             if shared_data["image"] is not None:
@@ -113,7 +109,6 @@ def image_display_thread():
 # Fonction principale
 # =======================
 def main():
-    # Initialiser ROS2
     rclpy.init()
     node = DataPublisherNode()
 
@@ -141,6 +136,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
