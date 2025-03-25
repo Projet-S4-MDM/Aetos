@@ -74,16 +74,12 @@ public:
       : Node("VelocityConversion")
   {
     _subJoyVelocity = this->create_subscription<aetos_msgs::msg::Velocity>(
-        "aetos/joy/velocity", 10, std::bind(&VelocityConversion::joyVelocityCallback, this, _1));
-
-    _subAutoVelocity = this->create_subscription<aetos_msgs::msg::Velocity>(
-        "aetos/vision/velocity", 10, std::bind(&VelocityConversion::autoVelocityCallback, this, _1));
+        "aetos/control/velocity", 10, std::bind(&VelocityConversion::joyVelocityCallback, this, _1));
 
     _subEncoder = this->create_subscription<aetos_msgs::msg::EncoderValues>(
         "aetos/control/encoder", 10, std::bind(&VelocityConversion::encoder_callback, this, _1));
 
-    _joyVelPub = this->create_publisher<aetos_msgs::msg::MotorVelocity>("aetos/control/teleop", 10);
-    _autoVelPub = this->create_publisher<aetos_msgs::msg::MotorVelocity>("aetos/control/auto", 10);
+    _joyVelPub = this->create_publisher<aetos_msgs::msg::MotorVelocity>("aetos/cmd/velocity", 10);
 
     _positionPub = this->create_publisher<aetos_msgs::msg::EffectorPosition>("aetos/control/position", 10);
   }

@@ -12,28 +12,34 @@ class JoyDemux(Node):
         
         os.environ["SDL_JOYSTICK_DEVICE"] = "/dev/input/js0"
 
-        self.velocity_publisher = self.create_publisher(Velocity, 'aetos/joy/velocity', 10)
+        self.velocity_publisher = self.create_publisher(Velocity, 'aetos/velocity/teleop', 10)
 
         pygame.init()
         pygame.joystick.init()
 
-        if pygame.joystick.get_count() == 0:
-            self.get_logger().error("No Xbox controller connected!")
-            rclpy.shutdown()
-            pygame.quit()
-            sys.exit(1)
-            
-        self.controller = pygame.joystick.Joystick(0)
-        self.controller.init()
-        self.get_logger().info(f"Connected to Xbox Controller: {self.controller.get_name()}")
-
-        self.timer = self.create_timer(0.01, self.process_joystick_input)
-
-        self.prev_velocity = None
-        self.last_print_time = time.time()
+        self.controller = None
+        self.controller_check_timer = self.create_timer(1.0, self.check_controller)  # Check every 1 second
+        self.joystick_timer = None  # Will be created once a controller is detected
         
+    def check_controller(self):
+        """Checks for a connected controller and initializes it if found."""
+        pygame.joystick.quit()
+        pygame.joystick.init()
+
+        if pygame.joystick.get_count() > 0:
+            self.controller = pygame.joystick.Joystick(0)
+            self.controller.init()
+            self.get_logger().info(f"Connected to Xbox Controller: {self.controller.get_name()}")
+
+            # Start joystick input processing
+            if self.joystick_timer is None:
+                self.joystick_timer = self.create_timer(0.01, self.process_joystick_input)
+
+        else:
+            self.get_logger().warn("No Xbox controller detected. Retrying...")
+
     def process_joystick_input(self):
-        """Reads joystick values, prints them, and publishes them as a Velocity message."""
+        """Reads joystick values and publishes them as a Velocity message."""
         pygame.event.pump()
 
         dpad_x = self.controller.get_hat(0)[0]  
@@ -47,12 +53,11 @@ class JoyDemux(Node):
         velocity_z = float(button_x - button_a) 
 
         velocity_msg = Velocity()
-        # velocity_msg.data = [velocity_x, velocity_y, velocity_z]
         velocity_msg.velocity_x = velocity_x
         velocity_msg.velocity_y = velocity_y
         velocity_msg.velocity_z = velocity_z
         self.velocity_publisher.publish(velocity_msg)
-        
+
 def main(args=None):
     rclpy.init(args=args)
     node = JoyDemux()

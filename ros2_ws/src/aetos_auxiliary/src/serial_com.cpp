@@ -220,11 +220,11 @@ std::string SerialCom::findSerialPort(void)
 SerialCom::SerialCom() : Node("serial_comm"), _serial(_io_service)
 {
     _motorVelSub = this->create_subscription<aetos_msgs::msg::MotorVelocity>(
-        "aetos/control/velocity", 10,
+        "aetos/cmd/velocity", 10,
         std::bind(&SerialCom::velocityMsgCallbcak, this, std::placeholders::_1));
 
     _encoderPub = this->create_publisher<aetos_msgs::msg::EncoderValues>(
-        "aetos/control/encoder", 1);
+        "aetos/encoder/motor", 1);
 
     _usbMonitorTimer = this->create_wall_timer(
         std::chrono::milliseconds(USB_MONITOR_FREQ),

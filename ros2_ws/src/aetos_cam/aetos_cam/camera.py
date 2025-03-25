@@ -10,9 +10,6 @@ import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Vector3
 
-# =======================
-# Variables partagées
-# =======================
 shared_data = {
     "x": 0.0,
     "y": 0.0,

@@ -23,8 +23,10 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/EncoderValues.msg"
   "msg/Velocity.msg"
   "msg/VelocityArbitration.msg"
+  "msg/EncoderArbitration.msg"
 
   "srv/VelocityArbitration.srv"
+  "srv/EncoderArbitration.srv"
 )
 
 ament_package()

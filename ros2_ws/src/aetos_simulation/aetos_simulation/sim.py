@@ -14,7 +14,7 @@ class Sim(Node):
         super().__init__('sim')
         self.subscription = self.create_subscription(EffectorPosition, 'aetos/control/position', self.effector_position_callback, 10)
         self.velocity_subscription = self.create_subscription(MotorVelocity, 'aetos/control/velocity', self.motor_velocity_callback, 10)
-        self.encoder_publisher = self.create_publisher(EncoderValues, 'aetos/control/encoder', 10)
+        self.encoder_publisher = self.create_publisher(EncoderValues, 'aetos/encoder/sim', 10)
         
         self.position = [0.0, 0.0, 0.0] 
         self.last_velocity_time = time.time()
