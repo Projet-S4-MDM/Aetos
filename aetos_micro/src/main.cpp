@@ -5,6 +5,8 @@
 #include "Joint.hpp"
 #include "PID.hpp"
 
+
+
 void setup()
 {
     Serial.begin(115200);
@@ -19,10 +21,10 @@ void setup()
     TalonSrx talon3 = TalonSrx(PIN_PWM_3, LEDC_TIMER_2, LEDC_CHANNEL_3);
     TalonSrx talon4 = TalonSrx(PIN_PWM_4, LEDC_TIMER_3, LEDC_CHANNEL_4);
 
-    PID pid1 = PID(1.0f, 0.0f, 0.0f, 50.0f);
-    PID pid2 = PID(1.0f, 0.0f, 0.0f, 50.0f);
-    PID pid3 = PID(1.0f, 0.0f, 0.0f, 50.0f);
-    PID pid4 = PID(1.0f, 0.0f, 0.0f, 50.0f);
+    PID pid1 = PID(KP, KI, KD, 50.0f);
+    PID pid2 = PID(KP, KI, KD, 50.0f);
+    PID pid3 = PID(KP, KI, KD, 50.0f);
+    PID pid4 = PID(KP, KI, KD, 50.0f);
 
     Joint joint1 = Joint(&encoder1, &pid1, &talon1);
     Joint joint2 = Joint(&encoder2, &pid2, &talon2);
@@ -43,15 +45,25 @@ void setup()
 
     for (;;)
     {
+        static unsigned long lastTime = 0;
+        static float speed = PI;  // Commence à +PI
+    
+        unsigned long currentTime = millis();
+        
+        if (currentTime - lastTime >= 2000) {  // Change la vitesse toutes les secondes
+            speed = -speed;  // Alterne entre -PI et +PI
+            lastTime = currentTime;
+        }
+    
+        joint1.setSpeedRad(speed);
+        joint2.setSpeedRad(speed);
+        joint3.setSpeedRad(speed);
+        joint4.setSpeedRad(speed);
+    
         joint1.update();
         joint2.update();
         joint3.update();
         joint4.update();
-
-        joint1.setSpeedRad(10.0f);
-        joint2.setSpeedRad(10.0f);
-        joint3.setSpeedRad(10.0f);
-        joint4.setSpeedRad(10.0f);
     }
 }
 

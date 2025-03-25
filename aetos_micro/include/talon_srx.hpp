@@ -77,14 +77,25 @@ public:
         {
             this->stop();
         }
+        else if(_speed < -100.0f)
+        {
+            _speed = -100.0f;
+            writeMicroseconds(MAP(_speed, -100.0f, 0.0f, SIGNAL_FULL_REVERSE_MS, SIGNAL_MIN_REVERSE_MS));
+        }
         else if (_speed < 0.0f)
         {
+            writeMicroseconds(MAP(_speed, -100.0f, 0.0f, SIGNAL_FULL_REVERSE_MS, SIGNAL_MIN_REVERSE_MS));
+        }
+        else if(_speed > 100.0f)
+        {
+            _speed = 100.0f;
             writeMicroseconds(MAP(_speed, -100.0f, 0.0f, SIGNAL_FULL_REVERSE_MS, SIGNAL_MIN_REVERSE_MS));
         }
         else if (_speed > 0.0f)
         {
             writeMicroseconds(MAP(_speed, 0.0f, 100.0f, SIGNAL_MIN_FORWARD_MS, SIGNAL_FULL_FORWARD_MS));
         }
+        
     }
 
     float getCmd(void)

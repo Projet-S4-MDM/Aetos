@@ -67,7 +67,7 @@ public:
             long pulseDelta = _lastPulses - _pulses;
             float timeDelta = _velocityTimer.getInterval() / 1'000'000.0f;
             float pulsesPerSecond = pulseDelta / timeDelta;
-
+            
             _angularVelocity = _speedAvg.addValue(pulsesPerSecond * (2.0f * PI) / COUNTS_PER_REVOLUTION);
             _lastPulses = _pulses;
         }

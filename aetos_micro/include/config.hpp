@@ -3,6 +3,10 @@
 
 #include "Arduino.h"
 
+#define KP 6.0f
+#define KI 0.002f
+#define KD 0.01f
+
 constexpr gpio_num_t PIN_PWM_1 = GPIO_NUM_4;
 constexpr gpio_num_t PIN_PWM_2 = GPIO_NUM_5;
 constexpr gpio_num_t PIN_PWM_3 = GPIO_NUM_6;
