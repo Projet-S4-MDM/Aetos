@@ -41,10 +41,10 @@ Arbitration::Arbitration() : Node("arbitration_node")
         _zeroCmd.omega3 = 0.0f;
         _zeroCmd.omega4 = 0.0f;
 
-        _cmdAuto.omega1 = 0.0f;
-        _cmdAuto.omega2 = 0.0f;
-        _cmdAuto.omega3 = 0.0f;
-        _cmdAuto.omega4 = 0.0f;
+        _cmdTeleop.omega1 = 0.0f;
+        _cmdTeleop.omega2 = 0.0f;
+        _cmdTeleop.omega3 = 0.0f;
+        _cmdTeleop.omega4 = 0.0f;
 
         _cmdAuto.omega1 = 0.0f;
         _cmdAuto.omega2 = 0.0f;
