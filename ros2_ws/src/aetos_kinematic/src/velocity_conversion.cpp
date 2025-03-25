@@ -54,6 +54,8 @@ namespace Limits
 // SETUP
 constexpr float PI = 3.14159265359;
 
+constexpr float MAX_WHEEL_VELOCITY = 6.0f;
+
 constexpr float _radius = 0.05;
 
 constexpr float _arenaLength = 0.816;
@@ -95,6 +97,7 @@ private:
   void forwardKinematics();
   void inverseKinematics();
   void uavInBoundSecurityCheck();
+  void scaleVelocities();
 
   void autoVelocityCallback(const aetos_msgs::msg::Velocity &msg)
   {
@@ -116,7 +119,7 @@ private:
     message.omega2 = _motorVelocity.w2;
     message.omega3 = _motorVelocity.w3;
     message.omega4 = _motorVelocity.w4;
-    
+
     _autoVelPub->publish(message);
     this->publish_position(_cameraPosition);
   }
@@ -248,6 +251,23 @@ void VelocityConversion::inverseKinematics()
   _motorVelocity.w2 = Lv(1) / (_radius);
   _motorVelocity.w3 = Lv(2) / (_radius);
   _motorVelocity.w4 = Lv(3) / (_radius);
+
+  float velocityRatio = std::max({abs(Lv(0) / _radius / MAX_WHEEL_VELOCITY),
+                                  abs(Lv(1) / _radius / MAX_WHEEL_VELOCITY),
+                                  abs(Lv(2) / _radius / MAX_WHEEL_VELOCITY),
+                                  abs(Lv(3) / _radius / MAX_WHEEL_VELOCITY)});
+
+  // Scale velocities if needed
+  if (velocityRatio > 1.0f)
+  {
+    Lv /= velocityRatio;
+  }
+
+  // Assign scaled velocities to motor velocities
+  _motorVelocity.w1 = Lv(0) / _radius;
+  _motorVelocity.w2 = Lv(1) / _radius;
+  _motorVelocity.w3 = Lv(2) / _radius;
+  _motorVelocity.w4 = Lv(3) / _radius;
 }
 void VelocityConversion::forwardKinematics()
 {

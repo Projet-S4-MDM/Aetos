@@ -1,5 +1,6 @@
 #include <rclcpp/rclcpp.hpp>
 
+#include <aetos_msgs/msg/velocity.hpp>
 #include <aetos_msgs/msg/motor_velocity.hpp>
 #include <aetos_msgs/msg/encoder_values.hpp>
 #include <aetos_msgs/msg/velocity_arbitration.hpp>
@@ -16,8 +17,8 @@ public:
     ~Arbitration() = default;
 
 private:
-    void teleopCmdCallback(const aetos_msgs::msg::MotorVelocity teleopCmdMsg_);
-    void autoCmdCallback(const aetos_msgs::msg::MotorVelocity autoCmdMsg_);
+    void teleopCmdCallback(const aetos_msgs::msg::Velocity teleopCmdMsg_);
+    void autoCmdCallback(const aetos_msgs::msg::Velocity autoCmdMsg_);
     void simEncoderCallback(const aetos_msgs::msg::EncoderValues simEncoderMsg_);
     void motorEncoderCallback(const aetos_msgs::msg::EncoderValues motorEncoderMsg_);
 
@@ -31,19 +32,19 @@ private:
     rclcpp::Service<aetos_msgs::srv::VelocityArbitration>::SharedPtr _velocitySrv;
     rclcpp::Service<aetos_msgs::srv::EncoderArbitration>::SharedPtr _encoderSrv;
 
-    rclcpp::Subscription<aetos_msgs::msg::MotorVelocity>::SharedPtr _teleopCmdSub;
-    rclcpp::Subscription<aetos_msgs::msg::MotorVelocity>::SharedPtr _autoCmdSub;
+    rclcpp::Subscription<aetos_msgs::msg::Velocity>::SharedPtr _teleopCmdSub;
+    rclcpp::Subscription<aetos_msgs::msg::Velocity>::SharedPtr _autoCmdSub;
     rclcpp::Subscription<aetos_msgs::msg::EncoderValues>::SharedPtr _simEncoderSub;
     rclcpp::Subscription<aetos_msgs::msg::EncoderValues>::SharedPtr _motorEncoderSub;
 
-    rclcpp::Publisher<aetos_msgs::msg::MotorVelocity>::SharedPtr _motorVelPub;
+    rclcpp::Publisher<aetos_msgs::msg::Velocity>::SharedPtr _motorVelPub;
     rclcpp::Publisher<aetos_msgs::msg::EncoderValues>::SharedPtr _encoderPub;
 
     rclcpp::TimerBase::SharedPtr _cmdSendTimer;
 
-    aetos_msgs::msg::MotorVelocity _zeroCmd;
-    aetos_msgs::msg::MotorVelocity _cmdTeleop;
-    aetos_msgs::msg::MotorVelocity _cmdAuto;
+    aetos_msgs::msg::Velocity _zeroCmd;
+    aetos_msgs::msg::Velocity _cmdTeleop;
+    aetos_msgs::msg::Velocity _cmdAuto;
 
     aetos_msgs::msg::EncoderValues _zeroEncoder;
     aetos_msgs::msg::EncoderValues _simEncoder;
@@ -55,28 +56,28 @@ private:
 
 Arbitration::Arbitration() : Node("arbitration_node")
 {
-    for (size_t i = 0; i < N_JOINTS; i++)
-    {
-        _zeroCmd.omega1 = 0.0f;
-        _zeroCmd.omega2 = 0.0f;
-        _zeroCmd.omega3 = 0.0f;
-        _zeroCmd.omega4 = 0.0f;
+    // for (size_t i = 0; i < N_JOINTS; i++)
+    // {
+    //     _zeroCmd.omega1 = 0.0f;
+    //     _zeroCmd.omega2 = 0.0f;
+    //     _zeroCmd.omega3 = 0.0f;
+    //     _zeroCmd.omega4 = 0.0f;
 
-        _cmdAuto.omega1 = 0.0f;
-        _cmdAuto.omega2 = 0.0f;
-        _cmdAuto.omega3 = 0.0f;
-        _cmdAuto.omega4 = 0.0f;
+    //     _cmdAuto.omega1 = 0.0f;
+    //     _cmdAuto.omega2 = 0.0f;
+    //     _cmdAuto.omega3 = 0.0f;
+    //     _cmdAuto.omega4 = 0.0f;
 
-        _cmdTeleop.omega1 = 0.0f;
-        _cmdTeleop.omega2 = 0.0f;
-        _cmdTeleop.omega3 = 0.0f;
-        _cmdTeleop.omega4 = 0.0f;
-    }
+    //     _cmdTeleop.omega1 = 0.0f;
+    //     _cmdTeleop.omega2 = 0.0f;
+    //     _cmdTeleop.omega3 = 0.0f;
+    //     _cmdTeleop.omega4 = 0.0f;
+    // }
 
-    _teleopCmdSub = this->create_subscription<aetos_msgs::msg::MotorVelocity>(
+    _teleopCmdSub = this->create_subscription<aetos_msgs::msg::Velocity>(
         "aetos/velocity/teleop", 10,
         std::bind(&Arbitration::teleopCmdCallback, this, std::placeholders::_1));
-    _autoCmdSub = this->create_subscription<aetos_msgs::msg::MotorVelocity>(
+    _autoCmdSub = this->create_subscription<aetos_msgs::msg::Velocity>(
         "aetos/velocity/auto", 10,
         std::bind(&Arbitration::autoCmdCallback, this, std::placeholders::_1));
     _motorEncoderSub = this->create_subscription<aetos_msgs::msg::EncoderValues>(
@@ -86,7 +87,7 @@ Arbitration::Arbitration() : Node("arbitration_node")
         "aetos/encoder/sim", 10,
         std::bind(&Arbitration::simEncoderCallback, this, std::placeholders::_1));
 
-    _motorVelPub = this->create_publisher<aetos_msgs::msg::MotorVelocity>(
+    _motorVelPub = this->create_publisher<aetos_msgs::msg::Velocity>(
         "aetos/control/velocity", 1);
     _encoderPub = this->create_publisher<aetos_msgs::msg::EncoderValues>(
         "aetos/control/encoder", 1);
@@ -131,12 +132,12 @@ void Arbitration::encoderArbitrationCallback(const std::shared_ptr<aetos_msgs::s
     response_->current_arbitration = _encoderArbitration;
 }
 
-void Arbitration::teleopCmdCallback(const aetos_msgs::msg::MotorVelocity teleopCmdMsg_)
+void Arbitration::teleopCmdCallback(const aetos_msgs::msg::Velocity teleopCmdMsg_)
 {
     _cmdTeleop = teleopCmdMsg_;
 }
 
-void Arbitration::autoCmdCallback(const aetos_msgs::msg::MotorVelocity autoCmdMsg_)
+void Arbitration::autoCmdCallback(const aetos_msgs::msg::Velocity autoCmdMsg_)
 {
     _cmdAuto = autoCmdMsg_;
 }
