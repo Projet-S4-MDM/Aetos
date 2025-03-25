@@ -50,6 +50,7 @@ RUN apt-get update && apt-get install -q -y --no-install-recommends \
     qttools5-dev-tools \
     qttools5-dev \
     python3-pyqt5 \
+    python3-pyqt5.qtmultimedia \
     python3-pyqt5.qtquick \
     qml-module-qtquick-controls \
     qml-module-qtquick-dialogs \
