@@ -3,12 +3,15 @@ import sys
 import signal
 
 import PyQt5
-from PyQt5.QtWidgets import QApplication, QMainWindow, QShortcut, QPushButton, QRadioButton
+from PyQt5.QtWidgets import QApplication, QMainWindow, QShortcut, QPushButton, QRadioButton, QLabel
 from PyQt5.QtGui import QKeySequence
 from PyQt5 import uic
+from PyQt5.QtCore import pyqtSignal, QObject
+
 import rclpy
 from rclpy.executors import MultiThreadedExecutor
 from aetos_gui.ui_node import UINode
+from aetos_msgs.msg import Velocity, EffectorPosition
 from aetos_msgs.msg import VelocityArbitration, EncoderArbitration
 from aetos_msgs.srv import VelocityArbitration as VelocityArbitrationSrv
 from aetos_msgs.srv import EncoderArbitration as EncoderArbitrationSrv
@@ -19,12 +22,10 @@ class MainWindow(QMainWindow):
         self.ui_node = ui_node  
         self.executor = executor  
         
-        
         shortcut = QShortcut(QKeySequence("Ctrl+W"), self)
         shortcut.activated.connect(self.close_application)
         resources_directory = self.ui_node.get_resources_directory('aetos_gui')
         uic.loadUi(resources_directory + "main_window.ui", self)
-        
         
         self.rb_manuel = self.findChild(QRadioButton, "rb_manuel")
         self.rb_automatique = self.findChild(QRadioButton, "rb_automatique")
@@ -32,11 +33,24 @@ class MainWindow(QMainWindow):
         self.rb_real = self.findChild(QRadioButton, "rb_real")
         self.pb_arret = self.findChild(QPushButton, "pb_arret")
         
-        
         self.rb_manuel.toggled.connect(self.update_velocity_arbitration)
         self.rb_automatique.toggled.connect(self.update_velocity_arbitration)
         self.rb_simulation.toggled.connect(self.update_encoder_arbitration)
         self.rb_real.toggled.connect(self.update_encoder_arbitration)
+        
+        self.lbl_vx = self.findChild(QLabel, "Vx")
+        self.lbl_vy = self.findChild(QLabel, "Vy")
+        self.lbl_vz = self.findChild(QLabel, "Vz")
+        
+        self.lbl_px = self.findChild(QLabel, "position_x")
+        self.lbl_py = self.findChild(QLabel, "position_y")
+        self.lbl_pz = self.findChild(QLabel, "position_z")
+        
+        
+        self.ui_node.create_subscription(Velocity, 'aetos/control/velocity', self.velocity_callback, 10)
+        self.subscription = self.create_subscription(EffectorPosition, 'aetos/control/position', self.effector_position_callback, 10)
+
+        
     
     def update_velocity_arbitration(self):
         if self.rb_manuel.isChecked():
