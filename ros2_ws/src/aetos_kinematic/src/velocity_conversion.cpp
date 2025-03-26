@@ -54,7 +54,7 @@ namespace Limits
 // SETUP
 constexpr float PI = 3.14159265359;
 
-constexpr float MAX_WHEEL_VELOCITY = 3.0f;
+constexpr float MAX_WHEEL_VELOCITY = 1.0f;
 
 constexpr float _radius = 0.05;
 
@@ -62,12 +62,12 @@ constexpr float _arenaLength = 0.95f;
 constexpr float _arenaWidth = 0.95f;
 constexpr float _arenaHeight = 0.935f;
 
-constexpr sCableLength _initialCableLength = {20.33f, 20.33f, 20.33f, 20.33f};
+constexpr sCableLength _initialCableLength = {0.7f, 0.7f, 0.7f, 0.7f};
 
 constexpr sPosition _pole1 = {0.0f, 0.0f, 0.0f};
-constexpr sPosition _pole2 = {0.0f, 0.816f, 0.0f};
-constexpr sPosition _pole3 = {0.816f, 0.816f, 0.0f};
-constexpr sPosition _pole4 = {0.816f, 0.0f, 0.0f};
+constexpr sPosition _pole2 = {0.0f, 0.95f, 0.0f};
+constexpr sPosition _pole3 = {0.95f, 0.95f, 0.0f};
+constexpr sPosition _pole4 = {0.95f, 0.0f, 0.0f};
 
 class VelocityConversion : public rclcpp::Node
 {
@@ -211,33 +211,30 @@ void VelocityConversion::inverseKinematics()
   J(3, 1) = (_cameraPosition.y - _pole4.y) / _cableLength.l4;
   J(3, 2) = (_cameraPosition.z - _pole4.z) / _cableLength.l4;
 
-  V(0) = _velocity.vx;
-  V(1) = _velocity.vy;
-  V(2) = _velocity.vz;
+  V(0) = _velocity.vx / 5.0f;
+  V(1) = _velocity.vy / 5.0f;
+  V(2) = _velocity.vz / 5.0f;
+
 
   Lv = J * V;
 
-  _motorVelocity.w1 = Lv(0) / (_radius);
-  _motorVelocity.w2 = Lv(1) / (_radius);
-  _motorVelocity.w3 = Lv(2) / (_radius);
-  _motorVelocity.w4 = Lv(3) / (_radius);
+  // float velocityRatio = std::max({abs(Lv(0) / _radius / MAX_WHEEL_VELOCITY),
+  //                                 abs(Lv(1) / _radius / MAX_WHEEL_VELOCITY),
+  //                                 abs(Lv(2) / _radius / MAX_WHEEL_VELOCITY),
+  //                                 abs(Lv(3) / _radius / MAX_WHEEL_VELOCITY)});
 
-  float velocityRatio = std::max({abs(Lv(0) / _radius / MAX_WHEEL_VELOCITY),
-                                  abs(Lv(1) / _radius / MAX_WHEEL_VELOCITY),
-                                  abs(Lv(2) / _radius / MAX_WHEEL_VELOCITY),
-                                  abs(Lv(3) / _radius / MAX_WHEEL_VELOCITY)});
+  // if (velocityRatio > 1.0f)
+  // {
+  //   Lv /= velocityRatio;
+  // }
 
-  if (velocityRatio > 1.0f)
-  {
-    Lv /= velocityRatio;
-  }
-
-  // Assign scaled velocities to motor velocities
   _motorVelocity.w1 = Lv(0) / _radius;
   _motorVelocity.w2 = Lv(1) / _radius;
   _motorVelocity.w3 = Lv(2) / _radius;
   _motorVelocity.w4 = Lv(3) / _radius;
 }
+
+
 void VelocityConversion::forwardKinematics()
 {
   _cameraPosition.x = (_cableLength.l1 * _cableLength.l1 + _arenaLength * _arenaLength - _cableLength.l4 * _cableLength.l4) / (2 * _arenaLength);
