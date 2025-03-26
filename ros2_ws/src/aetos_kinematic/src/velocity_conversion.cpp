@@ -54,7 +54,7 @@ namespace Limits
 // SETUP
 constexpr float PI = 3.14159265359;
 
-constexpr float MAX_WHEEL_VELOCITY = 6.0f;
+constexpr float MAX_WHEEL_VELOCITY = 3.0f;
 
 constexpr float _radius = 0.05;
 
@@ -107,7 +107,7 @@ private:
     _velocity.vz = msg.velocity_z;
 
     this->forwardKinematics();
-    this->uavInBoundSecurityCheck();
+    // this->uavInBoundSecurityCheck();
     this->inverseKinematics();
 
     message.omega1 = _motorVelocity.w1;
@@ -158,7 +158,7 @@ void VelocityConversion::updateVelocity(const aetos_msgs::msg::Velocity &msg)
   _velocity.vy = msg.velocity_y;
   _velocity.vz = msg.velocity_z;
 
-  this->uavInBoundSecurityCheck();
+  // this->uavInBoundSecurityCheck();
 }
 
 void VelocityConversion::uavInBoundSecurityCheck()
@@ -227,7 +227,6 @@ void VelocityConversion::inverseKinematics()
                                   abs(Lv(2) / _radius / MAX_WHEEL_VELOCITY),
                                   abs(Lv(3) / _radius / MAX_WHEEL_VELOCITY)});
 
-  // Scale velocities if needed
   if (velocityRatio > 1.0f)
   {
     Lv /= velocityRatio;
