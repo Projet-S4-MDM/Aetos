@@ -1,4 +1,4 @@
-float64 omega1
-float64 omega2
-float64 omega3
-float64 omega4
+float32 omega1
+float32 omega2
+float32 omega3
+float32 omega4

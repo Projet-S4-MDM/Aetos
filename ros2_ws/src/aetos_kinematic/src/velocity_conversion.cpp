@@ -39,7 +39,7 @@ struct sCableLength
   float l4;
 };
 
-constexpr float LIMIT_BUFFER = 0.2f;
+constexpr float LIMIT_BUFFER = 0.1f;
 
 namespace Limits
 {
@@ -54,20 +54,20 @@ namespace Limits
 // SETUP
 constexpr float PI = 3.14159265359;
 
-constexpr float MAX_WHEEL_VELOCITY = 6.0f;
+constexpr float MAX_WHEEL_VELOCITY = 1.0f;
 
 constexpr float _radius = 0.05;
 
-constexpr float _arenaLength = 0.816;
-constexpr float _arenaWidth = 0.816;
-constexpr float _arenaHeight = 0.7;
+constexpr float _arenaLength = 0.95f;
+constexpr float _arenaWidth = 0.95f;
+constexpr float _arenaHeight = 0.935f;
 
-constexpr sCableLength _initialCableLength = {0.05f, 0.78144487f, 1.10399827f, 0.78144487f};
+constexpr sCableLength _initialCableLength = {0.7f, 0.7f, 0.7f, 0.7f};
 
 constexpr sPosition _pole1 = {0.0f, 0.0f, 0.0f};
-constexpr sPosition _pole2 = {0.0f, 0.816f, 0.0f};
-constexpr sPosition _pole3 = {0.816f, 0.816f, 0.0f};
-constexpr sPosition _pole4 = {0.816f, 0.0f, 0.0f};
+constexpr sPosition _pole2 = {0.0f, 0.95f, 0.0f};
+constexpr sPosition _pole3 = {0.95f, 0.95f, 0.0f};
+constexpr sPosition _pole4 = {0.95f, 0.0f, 0.0f};
 
 class VelocityConversion : public rclcpp::Node
 {
@@ -97,44 +97,14 @@ private:
   void forwardKinematics();
   void inverseKinematics();
   void uavInBoundSecurityCheck();
-  void scaleVelocities();
-
-  void autoVelocityCallback(const aetos_msgs::msg::Velocity &msg)
-  {
-    auto message = aetos_msgs::msg::MotorVelocity();
-
-    float vx = msg.velocity_x;
-    float vy = msg.velocity_y;
-    float vz = msg.velocity_z;
-
-    _velocity.vx = vx;
-    _velocity.vy = vy;
-    _velocity.vz = vz;
-
-    this->forwardKinematics();
-    this->uavInBoundSecurityCheck();
-    this->inverseKinematics();
-
-    message.omega1 = _motorVelocity.w1;
-    message.omega2 = _motorVelocity.w2;
-    message.omega3 = _motorVelocity.w3;
-    message.omega4 = _motorVelocity.w4;
-
-    _autoVelPub->publish(message);
-    this->publish_position(_cameraPosition);
-  }
 
   void joyVelocityCallback(const aetos_msgs::msg::Velocity &msg)
   {
     auto message = aetos_msgs::msg::MotorVelocity();
 
-    float vx = msg.velocity_x;
-    float vy = msg.velocity_y;
-    float vz = msg.velocity_z;
-
-    _velocity.vx = vx;
-    _velocity.vy = vy;
-    _velocity.vz = vz;
+    _velocity.vx = msg.velocity_x;
+    _velocity.vy = msg.velocity_y;
+    _velocity.vz = msg.velocity_z;
 
     this->forwardKinematics();
     this->uavInBoundSecurityCheck();
@@ -241,34 +211,29 @@ void VelocityConversion::inverseKinematics()
   J(3, 1) = (_cameraPosition.y - _pole4.y) / _cableLength.l4;
   J(3, 2) = (_cameraPosition.z - _pole4.z) / _cableLength.l4;
 
-  V(0) = _velocity.vx;
-  V(1) = _velocity.vy;
-  V(2) = _velocity.vz;
+  V(0) = _velocity.vx / 5.0f;
+  V(1) = _velocity.vy / 5.0f;
+  V(2) = _velocity.vz / 5.0f;
 
   Lv = J * V;
 
-  _motorVelocity.w1 = Lv(0) / (_radius);
-  _motorVelocity.w2 = Lv(1) / (_radius);
-  _motorVelocity.w3 = Lv(2) / (_radius);
-  _motorVelocity.w4 = Lv(3) / (_radius);
+  // float velocityRatio = std::max({abs(Lv(0) / _radius / MAX_WHEEL_VELOCITY),
+  //                                 abs(Lv(1) / _radius / MAX_WHEEL_VELOCITY),
+  //                                 abs(Lv(2) / _radius / MAX_WHEEL_VELOCITY),
+  //                                 abs(Lv(3) / _radius / MAX_WHEEL_VELOCITY)});
 
-  float velocityRatio = std::max({abs(Lv(0) / _radius / MAX_WHEEL_VELOCITY),
-                                  abs(Lv(1) / _radius / MAX_WHEEL_VELOCITY),
-                                  abs(Lv(2) / _radius / MAX_WHEEL_VELOCITY),
-                                  abs(Lv(3) / _radius / MAX_WHEEL_VELOCITY)});
+  // if (velocityRatio > 1.0f)
+  // {
+  //   Lv /= velocityRatio;
+  // }
 
-  // Scale velocities if needed
-  if (velocityRatio > 1.0f)
-  {
-    Lv /= velocityRatio;
-  }
-
-  // Assign scaled velocities to motor velocities
   _motorVelocity.w1 = Lv(0) / _radius;
   _motorVelocity.w2 = Lv(1) / _radius;
   _motorVelocity.w3 = Lv(2) / _radius;
   _motorVelocity.w4 = Lv(3) / _radius;
 }
+
+
 void VelocityConversion::forwardKinematics()
 {
   _cameraPosition.x = (_cableLength.l1 * _cableLength.l1 + _arenaLength * _arenaLength - _cableLength.l4 * _cableLength.l4) / (2 * _arenaLength);

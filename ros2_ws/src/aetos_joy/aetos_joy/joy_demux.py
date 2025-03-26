@@ -44,7 +44,7 @@ class JoyDemux(Node):
         
         velocity_x = float(dpad_x)
         velocity_y = float(dpad_y)
-        velocity_z = float(button_x - button_a) 
+        velocity_z = float(button_a - button_x) 
 
         velocity_msg = Velocity()
         # velocity_msg.data = [velocity_x, velocity_y, velocity_z]
