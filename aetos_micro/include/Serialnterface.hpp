@@ -6,10 +6,10 @@
 
 struct sRequestedVelocity
 {
-    double motor1Velocity;
-    double motor2Velocity;
-    double motor3Velocity;
-    double motor4Velocity;
+    float motor1Velocity;
+    float motor2Velocity;
+    float motor3Velocity;
+    float motor4Velocity;
 };
 
 struct sEncoderData
@@ -55,10 +55,10 @@ sRequestedVelocity SerialCom::getVelocityData()
 void SerialCom::sendEncoderData()
 {
     _encoderData = {
-        static_cast<float>(_joint1->getAngleRadians()),
-        static_cast<float>(_joint2->getAngleRadians()),
-        static_cast<float>(_joint3->getAngleRadians()),
-        static_cast<float>(_joint4->getAngleRadians()),
+        (_joint1->getAngleRadians()),
+        (_joint2->getAngleRadians()),
+        (_joint3->getAngleRadians()),
+        (_joint4->getAngleRadians()),
     };
 
     Serial.write(reinterpret_cast<uint8_t *>(&_encoderData), sizeof(_encoderData));

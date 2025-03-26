@@ -1,4 +1,4 @@
-float64 angle1
-float64 angle2
-float64 angle3
-float64 angle4  
+float32 angle1
+float32 angle2
+float32 angle3
+float32 angle4  

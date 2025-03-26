@@ -163,7 +163,7 @@ void Arbitration::sendCmd(void)
         _motorVelPub->publish(_cmdAuto);
         break;
     case aetos_msgs::msg::VelocityArbitration::NONE:
-        _motorVelPub->publish(_zeroCmd);
+        _motorVelPub->publish(_cmdTeleop);
         break;
     default:
         break;
@@ -178,7 +178,7 @@ void Arbitration::sendCmd(void)
         _encoderPub->publish(_simEncoder);
         break;
     case aetos_msgs::msg::EncoderArbitration::NONE:
-        _encoderPub->publish(_zeroEncoder);
+        _encoderPub->publish(_motorEncoder);
         break;
     default:
         break;

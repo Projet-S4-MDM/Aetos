@@ -58,11 +58,11 @@ constexpr float MAX_WHEEL_VELOCITY = 6.0f;
 
 constexpr float _radius = 0.05;
 
-constexpr float _arenaLength = 0.816;
-constexpr float _arenaWidth = 0.816;
-constexpr float _arenaHeight = 0.7;
+constexpr float _arenaLength = 0.95f;
+constexpr float _arenaWidth = 0.95f;
+constexpr float _arenaHeight = 0.935f;
 
-constexpr sCableLength _initialCableLength = {0.05f, 0.78144487f, 1.10399827f, 0.78144487f};
+constexpr sCableLength _initialCableLength = {20.33f, 20.33f, 20.33f, 20.33f};
 
 constexpr sPosition _pole1 = {0.0f, 0.0f, 0.0f};
 constexpr sPosition _pole2 = {0.0f, 0.816f, 0.0f};
@@ -97,44 +97,14 @@ private:
   void forwardKinematics();
   void inverseKinematics();
   void uavInBoundSecurityCheck();
-  void scaleVelocities();
-
-  void autoVelocityCallback(const aetos_msgs::msg::Velocity &msg)
-  {
-    auto message = aetos_msgs::msg::MotorVelocity();
-
-    float vx = msg.velocity_x;
-    float vy = msg.velocity_y;
-    float vz = msg.velocity_z;
-
-    _velocity.vx = vx;
-    _velocity.vy = vy;
-    _velocity.vz = vz;
-
-    this->forwardKinematics();
-    this->uavInBoundSecurityCheck();
-    this->inverseKinematics();
-
-    message.omega1 = _motorVelocity.w1;
-    message.omega2 = _motorVelocity.w2;
-    message.omega3 = _motorVelocity.w3;
-    message.omega4 = _motorVelocity.w4;
-
-    _autoVelPub->publish(message);
-    this->publish_position(_cameraPosition);
-  }
 
   void joyVelocityCallback(const aetos_msgs::msg::Velocity &msg)
   {
     auto message = aetos_msgs::msg::MotorVelocity();
 
-    float vx = msg.velocity_x;
-    float vy = msg.velocity_y;
-    float vz = msg.velocity_z;
-
-    _velocity.vx = vx;
-    _velocity.vy = vy;
-    _velocity.vz = vz;
+    _velocity.vx = msg.velocity_x;
+    _velocity.vy = msg.velocity_y;
+    _velocity.vz = msg.velocity_z;
 
     this->forwardKinematics();
     this->uavInBoundSecurityCheck();
