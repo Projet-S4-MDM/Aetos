@@ -6,8 +6,10 @@ import numpy as np
 import time
 import threading
 import rclpy
+from cv_bridge import CvBridge
 from rclpy.node import Node
-from geometry_msgs.msg import Vector3
+from aetos_msgs.msg import Velocity 
+from sensor_msgs.msg import Image  # Flux vidéo
 
 # =======================
 # Variables partagées
@@ -63,34 +65,45 @@ async def start_websocket_server():
 # Node ROS2 pour publier les données
 # =======================
 class DataPublisherNode(Node):
-    """ Nœud ROS2 pour publier les données Vector3 """
+
     def __init__(self):
         super().__init__("data_publisher")
-        self.publisher_ = self.create_publisher(Vector3, "data_topic", 10)
+        self.velocity_publisher = self.create_publisher(Velocity, "aetos/cam/velocity", 10)
+        
+        # Publisher pour le flux vidéo
+        self.video_publisher = self.create_publisher(Image, "aetos/cam/video", 10)
+        
         self.timer = self.create_timer(0.1, self.timer_callback)  # 10Hz
-
+        
+        self.bridge = CvBridge()
+        
     def timer_callback(self):
-        """ Callback ROS2 pour publier les données """
         global last_message_time
-
         now = time.time()
 
         with lock:
             if now - last_message_time > 1.0:
-                # Timeout : réinitialisation des valeurs
                 print("[Sécurité] Timeout dépassé. Réinitialisation des données.")
                 shared_data["x"] = 0.0
                 shared_data["y"] = 0.0
                 shared_data["z"] = 0.0
 
-            # Publier les coordonnées (forcer la conversion en float natif)
-            msg = Vector3()
-            msg.x = float(shared_data["x"])  
-            msg.y = float(shared_data["y"])  
-            msg.z = float(shared_data["z"])  
+            # Publier les coordonnées avec le type de message Velocity
+            msg = Velocity()
+            msg.velocity_x = float(shared_data["x"])  
+            msg.velocity_y = float(shared_data["y"])  
+            msg.velocity_z = float(shared_data["z"])  
+            
 
-            self.publisher_.publish(msg)
-            self.get_logger().info(f"[ROS2] Publication: x={msg.x}, y={msg.y}, z={msg.z}")
+            self.velocity_publisher.publish(msg)
+            self.get_logger().info(f"[ROS2] Publication: vx={msg.velocity_x}, vy={msg.velocity_y}, vz={msg.velocity_z}")
+            
+            # Publier le flux vidéo uniquement depuis le WebSocket
+            if shared_data["image"] is not None:
+                img_msg = self.bridge.cv2_to_imgmsg(shared_data["image"], encoding="bgr8")
+                img_msg.header.stamp = self.get_clock().now().to_msg()
+                self.video_publisher.publish(img_msg)
+                self.get_logger().info("[ROS2] Flux vidéo WebSocket publié")
 
 
 # =======================
