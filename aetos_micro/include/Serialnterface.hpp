@@ -31,7 +31,7 @@ public:
     ~SerialCom() {};
 
     sRequestedVelocity getVelocityData();
-    void sendEncoderData(Joint joint1_, Joint joint2_, Joint joint3_, Joint joint4_);
+    void sendEncoderData();
 
 private:
     sRequestedVelocity _requestedVelocity;
@@ -52,13 +52,13 @@ sRequestedVelocity SerialCom::getVelocityData()
     return _requestedVelocity;
 }
 
-void SerialCom::sendEncoderData(Joint joint1_, Joint joint2_, Joint joint3_, Joint joint4_)
+void SerialCom::sendEncoderData()
 {
     _encoderData = {
-        static_cast<float>(joint1_.getAngle()),
-        static_cast<float>(joint2_.getAngle()),
-        static_cast<float>(joint3_.getAngle()),
-        static_cast<float>(joint4_.getAngle()),
+        static_cast<float>(_joint1->getAngleRadians()),
+        static_cast<float>(_joint2->getAngleRadians()),
+        static_cast<float>(_joint3->getAngleRadians()),
+        static_cast<float>(_joint4->getAngleRadians()),
     };
 
     Serial.write(reinterpret_cast<uint8_t *>(&_encoderData), sizeof(_encoderData));
