@@ -4,8 +4,10 @@
 #include "talon_srx.hpp"
 #include "Joint.hpp"
 #include "PID.hpp"
+#include "Serialnterface.hpp"
 
-
+static constexpr unsigned long READ_VELOCITY_FREQ_HZ = 100ul;
+static constexpr unsigned long SEND_ANGLE_FREQ_HZ = 100ul;
 
 void setup()
 {
@@ -31,6 +33,15 @@ void setup()
     Joint joint3 = Joint(&encoder3, &pid3, &talon3);
     Joint joint4 = Joint(&encoder4, &pid4, &talon4);
 
+    SerialCom serialCom = SerialCom(&joint1, &joint2, &joint3, &joint4);
+    sRequestedVelocity requestedVelocity;
+
+    Helpers::Timer<unsigned long, micros> _timerReadVelocity =
+        Helpers::Timer<unsigned long, micros>(1000000.0f / (float)READ_VELOCITY_FREQ_HZ);
+
+    Helpers::Timer<unsigned long, micros> _timerSendAngle =
+        Helpers::Timer<unsigned long, micros>(1000000.0f / (float)SEND_ANGLE_FREQ_HZ);
+
     encoder1.begin();
     encoder2.begin();
     encoder3.begin();
@@ -41,25 +52,23 @@ void setup()
     joint3.init();
     joint4.init();
 
-    Serial.print("Init done!");
-
     for (;;)
     {
-        static unsigned long lastTime = 0;
-        static float speed = PI;  // Commence à +PI
-    
-        unsigned long currentTime = millis();
-        
-        if (currentTime - lastTime >= 2000) {  // Change la vitesse toutes les secondes
-            speed = -speed;  // Alterne entre -PI et +PI
-            lastTime = currentTime;
+        requestedVelocity = serialCom.getVelocityData();
+
+        if(_timerReadVelocity.isDone())
+        {
+            joint1.setSpeedRad(requestedVelocity.motor1Velocity);
+            joint2.setSpeedRad(requestedVelocity.motor2Velocity);
+            joint3.setSpeedRad(requestedVelocity.motor3Velocity);
+            joint4.setSpeedRad(requestedVelocity.motor4Velocity);
         }
-    
-        joint1.setSpeedRad(speed);
-        joint2.setSpeedRad(speed);
-        joint3.setSpeedRad(speed);
-        joint4.setSpeedRad(speed);
-    
+
+        if(_timerSendAngle.isDone())
+        {
+            serialCom.sendEncoderData();
+        }
+
         joint1.update();
         joint2.update();
         joint3.update();

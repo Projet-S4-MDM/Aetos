@@ -22,7 +22,7 @@ public:
     void init(void);
     void setSpeedRad(float speed_);
     void update(void);
-    long getAngle(void);
+    long getAngleRadians(void);
 
 private:
     QuadratureEncoder *_encoder = nullptr;
@@ -44,7 +44,7 @@ void Joint::update(void)
 
     if (_printTimer.isDone())
     {
-        Serial.println(_encoder->getAngularVelocity());
+        //Serial.println(_encoder->getAngularVelocity());
     }
 
     if (_timerPidLoop.isDone())
@@ -67,10 +67,10 @@ void Joint::update(void)
     }
 }
 
-long Joint::getAngle(void)
+long Joint::getAngleRadians(void)
 {
     // return _encoder->getAngle();
-    return _encoder->getCount();
+    return _encoder->getAngleRadians();
 }
 
 void Joint::setSpeedRad(float speed_)

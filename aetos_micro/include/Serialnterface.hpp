@@ -6,9 +6,18 @@
 
 struct sRequestedVelocity
 {
-    float xVelocity;
-    float yVelocity;
-    float zVelocity;
+    double motor1Velocity;
+    double motor2Velocity;
+    double motor3Velocity;
+    double motor4Velocity;
+};
+
+struct sEncoderData
+{
+    float encoder1Data;
+    float encoder2Data;
+    float encoder3Data;
+    float encoder4Data;
 };
 
 class SerialCom
@@ -22,11 +31,11 @@ public:
     ~SerialCom() {};
 
     sRequestedVelocity getVelocityData();
-    void sendEncoderData(Joint joint1_, Joint joint2_, Joint joint3_, Joint joint4_);
+    void sendEncoderData();
 
 private:
     sRequestedVelocity _requestedVelocity;
-     sRequestedVelocity defaultVelocity = {0.0f, 0.0f, 0.0f};
+    sEncoderData _encoderData;
 
     Joint *_joint1 = nullptr;
     Joint *_joint2 = nullptr;
@@ -39,24 +48,23 @@ sRequestedVelocity SerialCom::getVelocityData()
     if (Serial.available() >= sizeof(sRequestedVelocity))
     {
         size_t bytesRead = Serial.readBytes(reinterpret_cast<char *>(&_requestedVelocity), sizeof(sRequestedVelocity));
-
-        return _requestedVelocity;
     }
-    return defaultVelocity;
+    return _requestedVelocity;
 }
 
-void SerialCom::sendEncoderData(Joint joint1_, Joint joint2_, Joint joint3_, Joint joint4_)
-{    
-    Serial.print(joint1_.getAngle());
-    Serial.print(",");
-    Serial.print(joint2_.getAngle());
-    Serial.print(",");
-    Serial.print(joint3_.getAngle());
-    Serial.print(",");
-    Serial.println(joint4_.getAngle());
+void SerialCom::sendEncoderData()
+{
+    _encoderData = {
+        static_cast<float>(_joint1->getAngleRadians()),
+        static_cast<float>(_joint2->getAngleRadians()),
+        static_cast<float>(_joint3->getAngleRadians()),
+        static_cast<float>(_joint4->getAngleRadians()),
+    };
+
+    Serial.write(reinterpret_cast<uint8_t *>(&_encoderData), sizeof(_encoderData));
 }
 
-SerialCom::SerialCom(Joint *joint1_,Joint *joint2_,Joint *joint3_,Joint *joint4_)
+SerialCom::SerialCom(Joint *joint1_, Joint *joint2_, Joint *joint3_, Joint *joint4_)
     : _joint1(joint1_), _joint2(joint2_), _joint3(joint3_), _joint4(joint4_) {}
 
 #endif

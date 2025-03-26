@@ -53,6 +53,11 @@ public:
         return count;
     }
 
+    float getAngleRadians()
+    {
+        return (getCount() * 2.0f * PI) / COUNTS_PER_REVOLUTION;
+    }
+
     float getAngularVelocity()
     {
         update();
