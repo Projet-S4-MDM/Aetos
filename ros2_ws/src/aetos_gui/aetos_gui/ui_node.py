@@ -3,8 +3,9 @@ from ament_index_python.packages import get_package_share_directory
 from rclpy.node import Node
 
 class UINode(Node):
-    def __init__(self):
-        super().__init__('ui_node')
+    def __init__(self, node_name='ui_node'):
+        """Initialise le node avec un nom par défaut ou personnalisé."""
+        super().__init__(node_name)
 
     def get_resources_directory(self, package_name):
         """Retourne le chemin du dossier 'resource' où se trouvent les fichiers UI."""
