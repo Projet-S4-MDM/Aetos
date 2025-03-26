@@ -39,7 +39,7 @@ struct sCableLength
   float l4;
 };
 
-constexpr float LIMIT_BUFFER = 0.2f;
+constexpr float LIMIT_BUFFER = 0.1f;
 
 namespace Limits
 {
@@ -107,7 +107,7 @@ private:
     _velocity.vz = msg.velocity_z;
 
     this->forwardKinematics();
-    // this->uavInBoundSecurityCheck();
+    this->uavInBoundSecurityCheck();
     this->inverseKinematics();
 
     message.omega1 = _motorVelocity.w1;
@@ -158,7 +158,7 @@ void VelocityConversion::updateVelocity(const aetos_msgs::msg::Velocity &msg)
   _velocity.vy = msg.velocity_y;
   _velocity.vz = msg.velocity_z;
 
-  // this->uavInBoundSecurityCheck();
+  this->uavInBoundSecurityCheck();
 }
 
 void VelocityConversion::uavInBoundSecurityCheck()
@@ -214,7 +214,6 @@ void VelocityConversion::inverseKinematics()
   V(0) = _velocity.vx / 5.0f;
   V(1) = _velocity.vy / 5.0f;
   V(2) = _velocity.vz / 5.0f;
-
 
   Lv = J * V;
 
