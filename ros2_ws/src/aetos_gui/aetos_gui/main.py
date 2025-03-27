@@ -1,6 +1,7 @@
 from threading import Thread
 import sys
 import signal
+import os
 
 import PyQt5
 from PyQt5.QtWidgets import QApplication, QMainWindow, QShortcut, QPushButton, QRadioButton, QLabel
@@ -24,8 +25,9 @@ class MainWindow(QMainWindow):
         
         shortcut = QShortcut(QKeySequence("Ctrl+W"), self)
         shortcut.activated.connect(self.close_application)
+        
         resources_directory = self.ui_node.get_resources_directory('aetos_gui')
-        uic.loadUi(resources_directory + "main_window.ui", self)
+        uic.loadUi(os.path.join(resources_directory, "main_window.ui"), self)
         
         self.rb_manuel = self.findChild(QRadioButton, "rb_manuel")
         self.rb_automatique = self.findChild(QRadioButton, "rb_automatique")
@@ -46,17 +48,14 @@ class MainWindow(QMainWindow):
         self.lbl_py = self.findChild(QLabel, "position_y")
         self.lbl_pz = self.findChild(QLabel, "position_z")
         
-        
         self.ui_node.create_subscription(Velocity, 'aetos/control/velocity', self.velocity_callback, 10)
-        self.subscription = self.create_subscription(EffectorPosition, 'aetos/control/position', self.effector_position_callback, 10)
-
-        
+        self.subscription = self.ui_node.create_subscription(EffectorPosition, 'aetos/control/position', self.effector_position_callback, 10)
     
     def update_velocity_arbitration(self):
         if self.rb_manuel.isChecked():
             mode = VelocityArbitration.TELEOP
         elif self.rb_automatique.isChecked():
-            mode = VelocityArbitration.AUTONOMUS
+            mode = VelocityArbitration.AUTONOMOUS  # Fixed spelling error
         else:
             mode = VelocityArbitration.NONE
         
@@ -105,6 +104,16 @@ class MainWindow(QMainWindow):
         except Exception as e:
             print(f"Service call failed: {e}")
     
+    def velocity_callback(self, msg):
+        self.lbl_vx.setText(f"{msg.velocity_x:.2f}")
+        self.lbl_vy.setText(f"{msg.velocity_y:.2f}")
+        self.lbl_vz.setText(f"{msg.velocity_z:.2f}")
+    
+    def effector_position_callback(self, msg):
+        self.lbl_px.setText(f"{msg.position_x:.2f}")
+        self.lbl_py.setText(f"{msg.position_y:.2f}")
+        self.lbl_pz.setText(f"{msg.position_z:.2f}")
+    
     def closeEvent(self, event):
         self.close_application()
     
@@ -112,6 +121,7 @@ class MainWindow(QMainWindow):
         self.ui_node.destroy_node()
         self.executor.shutdown()
         QApplication.quit()
+        sys.exit(0)
 
 def main(args=None):
     rclpy.init(args=args)
@@ -129,7 +139,7 @@ def main(args=None):
     app = QApplication(sys.argv)
     window = MainWindow(ui_node, executor)
     
-    thread = Thread(target=executor.spin)
+    thread = Thread(target=executor.spin, daemon=True)  
     thread.start()
     
     window.show()
