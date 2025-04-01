@@ -137,3 +137,27 @@ code .
 This will open the entire development environment in the same devcontainer but in a separate VS Code window.
 
 ## Developping in aetos_micro
+
+## Physical components
+
+To  remake this project, a 3d printer with a bed of at least 20cmX20cm. PLA filament is more then enough for this application.
+All the off the shelf components are presented in the next chart
+
+| Description | Quantity  | link |
+|------|--------|--------|
+| 20mmX100 aluminium extrusion |6| ...    |
+|20mmX120 aluminium extrusion|2|...|
+| T nuts for 20mm extrusion |64| ...    |
+| M3 brass inserts |20| ...   |
+|M2 socket head|4|...|
+|M5 socket head|||
+|Aluminium hub for 6mm d-shaft|4|...|
+|8lb braided fishing line|1 role|...|
+
+## Electronics
+All of the electronics used for this projects are off the shelf, but some components like the motor drives are overkill. A basic knowledge of soldering might be necessary to make this project.
+
+|Description|Quantity|
+|-----|-----|
+|12v, 7amp DC motor|4|
+|<7amp motor drive controled with PWM|4|
