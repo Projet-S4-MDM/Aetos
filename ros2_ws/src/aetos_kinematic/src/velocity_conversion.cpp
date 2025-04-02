@@ -83,6 +83,8 @@ public:
 
     _joyVelPub = this->create_publisher<aetos_msgs::msg::MotorVelocity>("aetos/cmd/velocity", 10);
 
+    _angularVelPub = this->create_publisher<aetos_msgs::msg::MotorVelocity>("aetos/control/angular_velocity", 10);
+
     _positionPub = this->create_publisher<aetos_msgs::msg::EffectorPosition>("aetos/control/position", 10);
   }
 
@@ -115,6 +117,7 @@ private:
     message.omega3 = _motorVelocity.w3;
     message.omega4 = _motorVelocity.w4;
     _joyVelPub->publish(message);
+    _angularVelPub->publish(message);
 
     this->publish_position(_cameraPosition);
   }
@@ -149,6 +152,7 @@ private:
 
   rclcpp::Publisher<aetos_msgs::msg::MotorVelocity>::SharedPtr _joyVelPub;
   rclcpp::Publisher<aetos_msgs::msg::MotorVelocity>::SharedPtr _autoVelPub;
+  rclcpp::Publisher<aetos_msgs::msg::MotorVelocity>::SharedPtr _angularVelPub;
   rclcpp::Publisher<aetos_msgs::msg::EffectorPosition>::SharedPtr _positionPub;
 };
 
