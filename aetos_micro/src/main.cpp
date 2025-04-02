@@ -55,7 +55,6 @@ void setup()
     for (;;)
     {
         requestedVelocity = serialCom.getVelocityData();
-        // Serial.println(requestedVelocity.motor1Velocity);
 
         if (_timerReadVelocity.isDone())
         {
@@ -66,12 +65,12 @@ void setup()
                 joint3.resetEncoders();
                 joint4.resetEncoders();
             }
-
-            joint1.setSpeedRad(requestedVelocity.motor1Velocity);
-            joint2.setSpeedRad(requestedVelocity.motor2Velocity);
-            joint3.setSpeedRad(requestedVelocity.motor3Velocity);
-            joint4.setSpeedRad(requestedVelocity.motor4Velocity);
         }
+
+        joint1.setSpeedRad(requestedVelocity.motor1Velocity);
+        joint2.setSpeedRad(requestedVelocity.motor2Velocity);
+        joint3.setSpeedRad(requestedVelocity.motor3Velocity);
+        joint4.setSpeedRad(requestedVelocity.motor4Velocity);
 
         if (_timerSendAngle.isDone())
         {

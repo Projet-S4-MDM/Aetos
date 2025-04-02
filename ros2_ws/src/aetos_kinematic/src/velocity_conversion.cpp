@@ -39,7 +39,7 @@ struct sCableLength
   float l4;
 };
 
-constexpr float LIMIT_BUFFER = 0.1f;
+constexpr float LIMIT_BUFFER = 0.05f;
 
 namespace Limits
 {
@@ -54,7 +54,7 @@ namespace Limits
 // SETUP
 constexpr float PI = 3.14159265359;
 
-constexpr float MAX_WHEEL_VELOCITY = 1.0f;
+constexpr float MAX_WHEEL_VELOCITY = 4.0f;
 
 constexpr float _radius = 0.05;
 
@@ -62,7 +62,7 @@ constexpr float _arenaLength = 0.95f;
 constexpr float _arenaWidth = 0.95f;
 constexpr float _arenaHeight = 0.935f;
 
-constexpr sCableLength _initialCableLength = {0.7f, 0.7f, 0.7f, 0.7f};
+constexpr sCableLength _initialCableLength = {0.9487f, 0.9487f, 0.9487f, 0.9487f};
 
 constexpr sPosition _pole1 = {0.0f, 0.0f, 0.0f};
 constexpr sPosition _pole2 = {0.0f, 0.95f, 0.0f};
@@ -94,7 +94,7 @@ private:
   sPosition _positionError = {0.0f, 0.0f, 0.0f};
   sMotorVelocity _motorVelocity;
   sCableLength _cableLength;
-  sPosition _desiredPosition = {0.475f, 0.475f, 0.25f};
+  sPosition _desiredPosition = {0.475f, 0.475f, 0.67f};
 
   void updateVelocity(const aetos_msgs::msg::Velocity &msg);
   void updateLength(const aetos_msgs::msg::EncoderValues &msg);
@@ -113,7 +113,7 @@ private:
     _velocity.vz = msg.velocity_z;
 
     this->updateDesiredPosition();
-    this->positionError();
+    // this->positionError();
     this->forwardKinematics();
     this->uavInBoundSecurityCheck();
     this->inverseKinematics();
@@ -210,11 +210,16 @@ void VelocityConversion::positionError()
   _positionError.y = _desiredPosition.y - _cameraPosition.y;
   _positionError.z = _desiredPosition.z - _cameraPosition.z;
 
-  RCLCPP_INFO(this->get_logger(), "Position Error: x=%.3f, Position Error: y=%.3f, Position Error: z=%.3f", _positionError.x, _positionError.y, _positionError.z);
-  // RCLCPP_INFO(this->get_logger(), "Camera Position: x=%.3f, Camera Position: y=%.3f, Camera Position: z=%.3f", _cameraPosition.x, _cameraPosition.y, _cameraPosition.z);
-  // RCLCPP_INFO(this->get_logger(), "Desired Position: x=%.3f, Desired Position: y=%.3f, Desired Position: z=%.3f", _desiredPosition.x, _desiredPosition.y, _desiredPosition.z);
+  const double threshold = 0.001;
+  
+  if (std::abs(_positionError.x) < threshold)
+    _positionError.x = 0.0;
+  if (std::abs(_positionError.y) < threshold)
+    _positionError.y = 0.0;
+  if (std::abs(_positionError.z) < threshold)
+    _positionError.z = 0.0;
 
-  const float Kp = 0.8f;
+  const float Kp = 0.6f;
 
   _velocity.vx += Kp * _positionError.x;
   _velocity.vy += Kp * _positionError.y;

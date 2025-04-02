@@ -55,12 +55,13 @@ sRequestedVelocity SerialCom::getVelocityData()
 
 void SerialCom::sendEncoderData()
 {
+    const float threshold = 0.001F;
+
     _encoderData = {
-        (_joint1->getAngleRadians()),
-        (_joint2->getAngleRadians()),
-        (_joint3->getAngleRadians()),
-        (_joint4->getAngleRadians()),
-    };
+        (std::abs(_joint1->getAngleRadians()) < threshold) ? 0.0F : _joint1->getAngleRadians(),
+        (std::abs(_joint2->getAngleRadians()) < threshold) ? 0.0F : _joint2->getAngleRadians(),
+        (std::abs(_joint3->getAngleRadians()) < threshold) ? 0.0F : _joint3->getAngleRadians(),
+        (std::abs(_joint4->getAngleRadians()) < threshold) ? 0.0F : _joint4->getAngleRadians()};
 
     Serial.write(reinterpret_cast<uint8_t *>(&_encoderData), sizeof(_encoderData));
 }

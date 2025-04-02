@@ -15,17 +15,17 @@ def generate_launch_description():
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([PathJoinSubstitution([FindPackageShare('aetos_kinematic'), 'launch', 'kinematics.launch.py'])])),
     
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([PathJoinSubstitution([FindPackageShare('aetos_simulation'), 'launch', 'sim.launch.py'])])),
+        # IncludeLaunchDescription(
+        #     PythonLaunchDescriptionSource([PathJoinSubstitution([FindPackageShare('aetos_simulation'), 'launch', 'sim.launch.py'])])),
 
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([PathJoinSubstitution([FindPackageShare('aetos_auxiliary'), 'launch', 'auxiliary.launch.py'])])),
         
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([PathJoinSubstitution([FindPackageShare('aetos_gui'), 'launch', 'gui.launch.py'])])),
+        # IncludeLaunchDescription(
+        #     PythonLaunchDescriptionSource([PathJoinSubstitution([FindPackageShare('aetos_gui'), 'launch', 'gui.launch.py'])])),
         
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([PathJoinSubstitution([FindPackageShare('aetos_cam'), 'launch', 'cam.launch.py'])]))
+        # IncludeLaunchDescription(
+        #     PythonLaunchDescriptionSource([PathJoinSubstitution([FindPackageShare('aetos_cam'), 'launch', 'cam.launch.py'])]))
         
         
 
@@ -33,5 +33,5 @@ def generate_launch_description():
     
 # TODO
 # 1. Fix sim shutting down on interrupt
-# 2. Cerate full sim vs visualize sim for encoder topic management
+# 2. Create full sim vs visualize sim for encoder topic management
 # 4. Implement deadman
