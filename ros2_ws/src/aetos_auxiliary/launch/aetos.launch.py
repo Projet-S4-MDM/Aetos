@@ -22,7 +22,10 @@ def generate_launch_description():
             PythonLaunchDescriptionSource([PathJoinSubstitution([FindPackageShare('aetos_auxiliary'), 'launch', 'auxiliary.launch.py'])])),
         
         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([PathJoinSubstitution([FindPackageShare('aetos_gui'), 'launch', 'gui.launch.py'])]))
+            PythonLaunchDescriptionSource([PathJoinSubstitution([FindPackageShare('aetos_gui'), 'launch', 'gui.launch.py'])])),
+        
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([PathJoinSubstitution([FindPackageShare('aetos_cam'), 'launch', 'cam.launch.py'])]))
         
         
 
