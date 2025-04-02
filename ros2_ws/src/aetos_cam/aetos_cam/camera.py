@@ -36,7 +36,6 @@ async def handle_websocket(websocket):
                     shared_data["x"] = np.frombuffer(message[0:4], dtype=np.float32)[0]
                     shared_data["y"] = np.frombuffer(message[4:8], dtype=np.float32)[0]
                     shared_data["z"] = np.frombuffer(message[8:12], dtype=np.float32)[0]
-
                     
                     img_data = message[header_size:]
                     if img_data:
@@ -60,9 +59,9 @@ class DataPublisherNode(Node):
 
     def __init__(self):
         super().__init__("data_publisher")
-        self.velocity_publisher = self.create_publisher(Velocity, "aetos/cam/velocity", 10)
+        self.velocity_publisher = self.create_publisher(Velocity, "/aetos/velocity/auto", 10)
         
-        
+    
         self.video_publisher = self.create_publisher(Image, "aetos/cam/video", 10)
         
         self.timer = self.create_timer(0.1, self.timer_callback)  

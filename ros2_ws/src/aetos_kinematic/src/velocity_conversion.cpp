@@ -211,7 +211,7 @@ void VelocityConversion::positionError()
   _positionError.z = _desiredPosition.z - _cameraPosition.z;
 
   const double threshold = 0.001;
-  
+
   if (std::abs(_positionError.x) < threshold)
     _positionError.x = 0.0;
   if (std::abs(_positionError.y) < threshold)
