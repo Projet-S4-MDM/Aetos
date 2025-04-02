@@ -4,7 +4,9 @@
 
 ### Docker Installation
 
-Set up Docker's apt repository:
+To facilitate dependency management, the project runs with docker which builds a custom image containing all necessary requirements for the project. Follow the following steps to set up docker.
+
+1. Set up Docker's apt repository:
 
 ```bash
 # Add Docker's official GPG key:
@@ -42,9 +44,6 @@ sudo usermod -aG docker $USER
 
 Reboot your computer to enable changes to groups.
 
-
-Reboot your computer to enable changes to groups.
-
 ---
 
 ### VS Code Setup
@@ -77,63 +76,19 @@ Alternatively, you can:
 
 Once inside the container, you'll have access to all dependencies specified in the Dockerfile. Here's what you need to know for development:
 
-### Terminal Setup
-
-To access the terminal in VS Code:
-
-1. Press `Ctrl + Shift + ‘`
-2. In the terminal, run:
+The dockfile has Terminator installed which is a terminal demultiplier. This facilitates development especially for a ros2 project. To access terminator, open a VSCode terminal and enter the following. 
 
 ```bash
 terminator
 ```
-
-This gives you access to the terminal multiplier, which facilitates development in the ROS2 environment.
 
 > **Note:** The script that launches Terminator currently has some issues, but this does not affect usage.
 
 ---
 
-### ROS2 Development
-
-- The main branch currently contains a `test_pgk` package, which serves as a template for Git. Delete this package and replace it with your own.
-
-  > **Note:** This package will be removed as features are merged.
-
-- A ROS2 package should be created for each distinct feature. For example:
-  - One package for vision recognition
-  - Another package for a GUI
-
----
 
 ## Developing in `aetos_micro`
 
-To access the `aetos_micro` development environment:
+PlatformIO and the Arduino library are currently unstable in the devContainer. This does not affect use but may affect intellisense.
 
-1. Open the folder as a PlatformIO project:
-   - Click on the PlatformIO icon in your VS Code activity bar.
-   - Click the "Pick folder" button.
-2. When prompted, enter the following path:
-
-```bash
-/home/ws/aetos_micro/
-```
-
-Click "OK." This will reload the page and open only the `aetos_micro` folder in a PlatformIO project.
-
-> **Note:** The Arduino include is currently unstable, which may cause issues with IntelliSense.
-
-3. You can now code in the `aetos_micro` folder as in a regular PlatformIO environment.
-
-4. To work in `aetos_micro` and `ros2_ws` simultaneously:
-   - Open a VS Code terminal and enter the following commands:
-
-```bash
-terminator
-cd ..
-code .
-```
-
-This will open the entire development environment in the same devcontainer but in a separate VS Code window.
-
-## Developping in aetos_micro
+Access the folder here [aetos_micro](./home/ws/aetos_micro/)
