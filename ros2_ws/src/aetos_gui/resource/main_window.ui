@@ -272,7 +272,7 @@ QRadioButton::indicator:checked {
    <widget class="QFrame" name="frame">
     <property name="geometry">
      <rect>
-      <x>210</x>
+      <x>200</x>
       <y>10</y>
       <width>731</width>
       <height>791</height>
@@ -457,7 +457,7 @@ border-radius: 8px</string>
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>60</y>
+       <y>50</y>
        <width>691</width>
        <height>431</height>
       </rect>
