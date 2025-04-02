@@ -86,9 +86,3 @@ terminator
 
 ---
 
-
-## Developing in `aetos_micro`
-
-PlatformIO and the Arduino library are currently unstable in the devContainer. This does not affect use but may affect intellisense.
-
-Access the folder here [aetos_micro](./home/ws/aetos_micro/)
