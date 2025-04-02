@@ -55,7 +55,7 @@ class MainWindow(QMainWindow):
         if self.rb_manuel.isChecked():
             mode = VelocityArbitration.TELEOP
         elif self.rb_automatique.isChecked():
-            mode = VelocityArbitration.AUTONOMOUS  # Fixed spelling error
+            mode = VelocityArbitration.AUTONOMOUS  
         else:
             mode = VelocityArbitration.NONE
         

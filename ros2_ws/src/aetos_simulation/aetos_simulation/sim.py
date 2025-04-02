@@ -122,7 +122,7 @@ def main(args=None):
     node = Sim()
     try:
         while rclpy.ok():
-            plt.pause(0.1)  # Permet d'interagir avec le graphe sans bloquer
+            plt.pause(0.1) 
     except KeyboardInterrupt:
         print("Shutting down gracefully...")
     finally:
