@@ -1,0 +1,263 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36" version="26.2.4">
+  <diagram name="Page-1" id="WqFKpvdEzLfP4UaN7BVd">
+    <mxGraphModel dx="2525" dy="1105" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="aZ_M8dF49Par6prSaV25-1" value="&lt;p style=&quot;&quot;&gt;&lt;b&gt;Package: aetos_simulation&amp;nbsp;&lt;/b&gt;&lt;/p&gt;" style="whiteSpace=wrap;html=1;align=center;horizontal=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="780" y="670" width="250" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-2" value="&lt;p style=&quot;&quot;&gt;&lt;b&gt;Package: aetos_auxiliary&lt;/b&gt;&lt;/p&gt;" style="whiteSpace=wrap;html=1;align=center;horizontal=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="-250" y="660" width="270" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-3" value="&lt;p style=&quot;&quot;&gt;&lt;b&gt;Package: aetos_kinematic&lt;/b&gt;&lt;/p&gt;" style="whiteSpace=wrap;html=1;align=center;horizontal=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="252.5" y="670" width="270" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-4" value="&lt;p style=&quot;&quot;&gt;&lt;b&gt;Package: aetos_joy&lt;/b&gt;&lt;/p&gt;" style="whiteSpace=wrap;html=1;align=center;horizontal=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="82.5" width="275" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-5" value="&lt;b&gt;File: joy_demux.py&lt;br&gt;Node: JoyDemux&lt;br&gt;&lt;/b&gt;&lt;br&gt;This node takes in input from the controller and outputs mappings for x, y and z velocities" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="60" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-6" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="aZ_M8dF49Par6prSaV25-5">
+          <mxGeometry width="100" relative="1" as="geometry">
+            <mxPoint x="-80" y="120" as="sourcePoint" />
+            <mxPoint x="80" y="160" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-7" value="Controller input" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontStyle=1" vertex="1" connectable="0" parent="aZ_M8dF49Par6prSaV25-6">
+          <mxGeometry x="-0.11" y="-3" relative="1" as="geometry">
+            <mxPoint x="1" y="-13" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-11" value="&lt;b&gt;File: velocity_conversion.cpp&lt;br&gt;Node: VelocityConversion&lt;br&gt;&lt;/b&gt;&amp;nbsp;&lt;br&gt;This node takes in input from the velocity and encoder msg and computes necessary kinematics to convert desired velocities to direct motor commands" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="282.5" y="720" width="210" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-12" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=-0.005;entryY=0.387;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" target="aZ_M8dF49Par6prSaV25-25">
+          <mxGeometry width="100" relative="1" as="geometry">
+            <mxPoint x="190" y="180.00000000000006" as="sourcePoint" />
+            <mxPoint x="201.8499999999999" y="437.2399999999998" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="190" y="310" />
+              <mxPoint x="190" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-13" value="name: Velocity.msg&lt;br&gt;namespace: aetos/joy/velocity" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontStyle=1" vertex="1" connectable="0" parent="aZ_M8dF49Par6prSaV25-12">
+          <mxGeometry x="0.2417" y="2" relative="1" as="geometry">
+            <mxPoint x="-2" y="-56" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-14" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="aZ_M8dF49Par6prSaV25-15" target="aZ_M8dF49Par6prSaV25-23">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="205" y="1070" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-15" value="&lt;b&gt;File: serial_com.cpp&lt;br&gt;Node: SerialCom&lt;br&gt;&lt;/b&gt;&lt;br&gt;This node takes in motor inputs and relays it to ESP32 microcontrollers through serial port" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-219.99999999999994" y="705" width="210" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-16" value="&lt;p style=&quot;&quot;&gt;&lt;b&gt;Package: aetos_cam&lt;/b&gt;&lt;/p&gt;" style="whiteSpace=wrap;html=1;align=center;horizontal=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="435" width="250" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-19" value="&lt;b&gt;File: vision_control.py&lt;br&gt;Node: VisionControl&lt;br&gt;&lt;/b&gt;&lt;br&gt;This node takes in input from the camera feed and outputs desired x, y and z velocities" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="60" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-20" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="aZ_M8dF49Par6prSaV25-19">
+          <mxGeometry width="100" relative="1" as="geometry">
+            <mxPoint x="870" y="120" as="sourcePoint" />
+            <mxPoint x="880" y="120" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-21" value="Camera feed" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontStyle=1" vertex="1" connectable="0" parent="aZ_M8dF49Par6prSaV25-20">
+          <mxGeometry x="-0.2489" y="2" relative="1" as="geometry">
+            <mxPoint x="-1" y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-22" value="&lt;b&gt;File: sim.py&lt;br&gt;Node: Sim&lt;br&gt;&lt;/b&gt;&lt;br&gt;This node takes in input from the velocity msg in order to form a simulation for testing and visualization" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="800" y="720" width="210" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-23" value="&lt;b&gt;ESP32&lt;/b&gt;" style="whiteSpace=wrap;html=1;fillColor=#fa6800;fontColor=#000000;strokeColor=#C73500;" vertex="1" parent="1">
+          <mxGeometry x="-185" y="910" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-25" value="&lt;p style=&quot;&quot;&gt;&lt;b&gt;Package: aetos_auxiliary&lt;/b&gt;&lt;/p&gt;" style="whiteSpace=wrap;html=1;align=center;horizontal=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="220" y="340" width="370" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-26" value="&lt;b&gt;File: arbitration.cpp&lt;br&gt;Node: Arbitration&lt;br&gt;&lt;/b&gt;&lt;br&gt;This node arbitrates between teleoperation and autonomous velocity commands, as well as between motor and simulated encoder values, based on received messages and service requests, and publishes the selected commands accordingly." style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="248.75" y="375" width="312.5" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-28" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.991;entryY=0.376;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1">
+          <mxGeometry width="100" relative="1" as="geometry">
+            <mxPoint x="621.35" y="180" as="sourcePoint" />
+            <mxPoint x="589.9950000000001" y="440.24" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="621.35" y="310" />
+              <mxPoint x="620.97" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-29" value="name: Velocity.msg&lt;br&gt;namespace: aetos/cam/velocity" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontStyle=1" vertex="1" connectable="0" parent="aZ_M8dF49Par6prSaV25-28">
+          <mxGeometry x="0.2417" y="2" relative="1" as="geometry">
+            <mxPoint x="4" y="-51" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-30" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.106;exitY=1.003;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.251;entryY=-0.005;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="aZ_M8dF49Par6prSaV25-26">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="282.4999999999999" y="560" as="sourcePoint" />
+            <mxPoint x="282.87" y="668.29" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-31" value="&lt;div&gt;name: Velocity.msg&lt;/div&gt;namespace: aetos/control/velocity" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontStyle=1" vertex="1" connectable="0" parent="aZ_M8dF49Par6prSaV25-30">
+          <mxGeometry x="0.1733" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-32" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.778;exitY=1.003;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.251;entryY=-0.005;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="aZ_M8dF49Par6prSaV25-26">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="492.5" y="560" as="sourcePoint" />
+            <mxPoint x="492.5" y="668" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-33" value="&lt;div&gt;name: EncoderValues.msg&lt;/div&gt;namespace: aetos/control/encoder" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontStyle=1" vertex="1" connectable="0" parent="aZ_M8dF49Par6prSaV25-32">
+          <mxGeometry x="0.1733" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-35" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.253;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="aZ_M8dF49Par6prSaV25-3" target="aZ_M8dF49Par6prSaV25-1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="517.5" y="719.9999999999999" as="sourcePoint" />
+            <mxPoint x="804.73" y="723.15" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-36" value="&lt;div&gt;name: MotorVelocity.msg&lt;/div&gt;namespace: aetos/cmd/velocity" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontStyle=1" vertex="1" connectable="0" parent="aZ_M8dF49Par6prSaV25-35">
+          <mxGeometry x="0.1733" y="1" relative="1" as="geometry">
+            <mxPoint x="-20" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-37" value="" style="endArrow=classic;html=1;rounded=0;entryX=-0.002;entryY=0.62;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" target="aZ_M8dF49Par6prSaV25-1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="523" y="800" as="sourcePoint" />
+            <mxPoint x="790" y="800" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-38" value="&lt;div&gt;name: EffectorPosition.msg&lt;/div&gt;namespace: aetos/cmd/position" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontStyle=1" vertex="1" connectable="0" parent="aZ_M8dF49Par6prSaV25-37">
+          <mxGeometry x="0.1733" y="1" relative="1" as="geometry">
+            <mxPoint x="-20" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-40" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="aZ_M8dF49Par6prSaV25-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="250" y="770" as="sourcePoint" />
+            <mxPoint x="387" y="930" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-41" value="&lt;div&gt;name: MotorVelocity.msg&lt;/div&gt;namespace: aetos/cmd/velocity" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontStyle=1" vertex="1" connectable="0" parent="aZ_M8dF49Par6prSaV25-40">
+          <mxGeometry x="0.1733" y="1" relative="1" as="geometry">
+            <mxPoint x="28" y="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-43" value="" style="endArrow=classic;html=1;rounded=0;entryX=1.008;entryY=0.694;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.509;exitY=-0.005;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="aZ_M8dF49Par6prSaV25-1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="907.04" y="705" as="sourcePoint" />
+            <mxPoint x="590" y="555.44" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="907.04" y="635" />
+              <mxPoint x="907.04" y="555" />
+              <mxPoint x="687.04" y="555" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-44" value="name: EncoderValues.msg&lt;div&gt;namespace: aetos/encoder/sim&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontStyle=1" vertex="1" connectable="0" parent="aZ_M8dF49Par6prSaV25-43">
+          <mxGeometry x="0.2846" y="-3" relative="1" as="geometry">
+            <mxPoint x="148" y="58" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-45" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-114" y="660" as="sourcePoint" />
+            <mxPoint x="217" y="510" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="-114" y="590" />
+              <mxPoint x="-114" y="510" />
+              <mxPoint x="20" y="510" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-46" value="name: EncoderValues.msg&lt;div&gt;namespace: aetos/encoder/motor&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontStyle=1" vertex="1" connectable="0" parent="aZ_M8dF49Par6prSaV25-45">
+          <mxGeometry x="0.2846" y="-3" relative="1" as="geometry">
+            <mxPoint x="-155" y="52" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-47" value="&lt;p style=&quot;&quot;&gt;&lt;b&gt;Package: aetos_gui&amp;nbsp;&lt;/b&gt;&lt;/p&gt;" style="whiteSpace=wrap;html=1;align=center;horizontal=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="240" width="290" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-48" value="&lt;b&gt;File: main.py&lt;br&gt;Node: MainWindow&lt;br&gt;&lt;/b&gt;&lt;br&gt;This node creates a Qt interface to control the velocity and encoder arbitration modes, as well as simulation and real encoder data, while displaying real-time velocity and effector position feedback." style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="280" width="230" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-50" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.001;exitY=0.197;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.538;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="aZ_M8dF49Par6prSaV25-48" target="aZ_M8dF49Par6prSaV25-25">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="880" y="300" as="sourcePoint" />
+            <mxPoint x="780" y="470" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="780" y="310" />
+              <mxPoint x="780" y="400" />
+              <mxPoint x="780" y="480" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-52" value="name: VelocityArbitration.msg&lt;div&gt;namespace: aetos/communication/velocity_arbitration&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontStyle=1" vertex="1" connectable="0" parent="aZ_M8dF49Par6prSaV25-50">
+          <mxGeometry x="0.0475" relative="1" as="geometry">
+            <mxPoint x="170" y="-27" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-53" value="" style="endArrow=none;html=1;rounded=0;entryX=0.003;entryY=0.734;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" target="aZ_M8dF49Par6prSaV25-48">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="780" y="390" as="sourcePoint" />
+            <mxPoint x="910" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-54" value="name: EncoderArbitration.msg&lt;div&gt;namespace: aetos/communication/encoder_arbitration&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontStyle=1" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="950" y="390.0028274458888" as="geometry" />
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-55" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.655;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" target="aZ_M8dF49Par6prSaV25-47">
+          <mxGeometry width="100" relative="1" as="geometry">
+            <mxPoint x="1300" y="130" as="sourcePoint" />
+            <mxPoint x="1090" y="130" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-56" value="Camera feed" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontStyle=1" vertex="1" connectable="0" parent="aZ_M8dF49Par6prSaV25-55">
+          <mxGeometry x="-0.2489" y="2" relative="1" as="geometry">
+            <mxPoint x="-2" y="-51" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-57" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.352;entryY=0.999;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" target="aZ_M8dF49Par6prSaV25-47">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="590" y="517.27" as="sourcePoint" />
+            <mxPoint x="1210" y="450" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1212" y="517.27" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-59" value="&lt;div&gt;name: Velocity.msg&lt;/div&gt;namespace: aetos/control/velocity" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontStyle=1" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="1069.9961174133537" y="519.9974992621394" as="geometry" />
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-60" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.619;entryY=1.009;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" target="aZ_M8dF49Par6prSaV25-47">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="370" y="880" as="sourcePoint" />
+            <mxPoint x="1290" y="870" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="370" y="920" />
+              <mxPoint x="1290" y="920" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aZ_M8dF49Par6prSaV25-61" value="&lt;div&gt;name: EffectorPosition.msg&lt;/div&gt;namespace: aetos/cmd/position" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontStyle=1" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="1299.9955166053305" y="699.9972983444383" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
