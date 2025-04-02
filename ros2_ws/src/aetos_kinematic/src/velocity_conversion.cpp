@@ -54,7 +54,7 @@ namespace Limits
 // SETUP
 constexpr float PI = 3.14159265359;
 
-constexpr float MAX_WHEEL_VELOCITY = 4.0f;
+constexpr float MAX_WHEEL_VELOCITY = 5.0f;
 
 constexpr float _radius = 0.05;
 

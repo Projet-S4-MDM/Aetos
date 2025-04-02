@@ -17,6 +17,7 @@ shared_data = {
     "z": 0.0,
     "image": None 
 }
+
 last_message_time = time.time()
 lock = threading.Lock()  
 
