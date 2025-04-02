@@ -1,5 +1,6 @@
 #include <rclcpp/rclcpp.hpp>
 #include <aetos_msgs/msg/motor_velocity.hpp>
+#include <aetos_msgs/msg/velocity.hpp>
 #include <aetos_msgs/msg/encoder_values.hpp>
 
 #include <libudev.h>
@@ -20,7 +21,8 @@ public:
     ~SerialCom();
 
 private:
-    void velocityMsgCallbcak(const aetos_msgs::msg::MotorVelocity::SharedPtr velocityMsg);
+    void velocityMsgCallbcak(const aetos_msgs::msg::MotorVelocity::SharedPtr velocityMsg_);
+    void joyMsgCallback(const aetos_msgs::msg::Velocity::SharedPtr joyMsg_);
     void serialMonitor(void);
     void usbMonitor(void);
     std::string findSerialPort(void);
@@ -28,6 +30,7 @@ private:
     void closeSerialPort(void);
 
     bool _serialConnected;
+    float _homing;
     std::string _serialPort;
     std::mutex _serialMutex;
     std::thread _ioThread;
@@ -39,6 +42,7 @@ private:
     rclcpp::TimerBase::SharedPtr _usbMonitorTimer;
 
     rclcpp::Subscription<aetos_msgs::msg::MotorVelocity>::SharedPtr _motorVelSub;
+    rclcpp::Subscription<aetos_msgs::msg::Velocity>::SharedPtr _joyPub;
     rclcpp::Publisher<aetos_msgs::msg::EncoderValues>::SharedPtr _encoderPub;
 };
 
@@ -52,17 +56,21 @@ void SerialCom::velocityMsgCallbcak(const aetos_msgs::msg::MotorVelocity::Shared
     }
     try
     {
-        // RCLCPP_INFO(this->get_logger(), "Velocities: Motor1: %f, Motor2: %f, Motor3: %f, Motor4: %f ", velocityMsg_->omega1, velocityMsg_->omega2, velocityMsg_->omega3, velocityMsg_->omega4);
-
         boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->omega1, sizeof(float)));
         boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->omega2, sizeof(float)));
         boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->omega3, sizeof(float)));
         boost::asio::write(_serial, boost::asio::buffer(&velocityMsg_->omega4, sizeof(float)));
+        boost::asio::write(_serial, boost::asio::buffer(&_homing, sizeof(float)));
     }
     catch (const std::exception &e)
     {
         RCLCPP_ERROR(this->get_logger(), "Failed to send data: %s", e.what());
     }
+}
+
+void SerialCom::joyMsgCallback(const aetos_msgs::msg::Velocity::SharedPtr joyMsg_)
+{
+    _homing = joyMsg_->homing;
 }
 
 void SerialCom::closeSerialPort(void)
@@ -217,11 +225,17 @@ std::string SerialCom::findSerialPort(void)
     return detectedPort;
 }
 
+
+
 SerialCom::SerialCom() : Node("serial_comm"), _serial(_io_service)
 {
     _motorVelSub = this->create_subscription<aetos_msgs::msg::MotorVelocity>(
         "aetos/cmd/velocity", 10,
         std::bind(&SerialCom::velocityMsgCallbcak, this, std::placeholders::_1));
+    
+    _joyPub = this->create_subscription<aetos_msgs::msg::Velocity>(
+        "aetos/velocity/teleop", 10,
+        std::bind(&SerialCom::joyMsgCallback, this, std::placeholders::_1));
 
     _encoderPub = this->create_publisher<aetos_msgs::msg::EncoderValues>(
         "aetos/encoder/motor", 1);

@@ -39,18 +39,21 @@ class JoyDemux(Node):
         dpad_x = self.controller.get_hat(0)[0]  
         dpad_y = self.controller.get_hat(0)[1]  
     
-        button_a = self.controller.get_button(0) 
-        button_x = self.controller.get_button(3)  
+        button_a = self.controller.get_button(0)
+        button_x = self.controller.get_button(3)
+        button_b = self.controller.get_button(1)
         
         velocity_x = float(dpad_x)
         velocity_y = float(dpad_y)
-        velocity_z = float(button_a - button_x) 
+        velocity_z = float(button_a - button_x)
+        homing = float(button_b)
 
         velocity_msg = Velocity()
-        # velocity_msg.data = [velocity_x, velocity_y, velocity_z]
         velocity_msg.velocity_x = velocity_x
         velocity_msg.velocity_y = velocity_y
         velocity_msg.velocity_z = velocity_z
+        velocity_msg.homing = homing
+        
         self.velocity_publisher.publish(velocity_msg)
         
 def main(args=None):

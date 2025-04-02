@@ -23,6 +23,7 @@ public:
     void setSpeedRad(float speed_);
     void update(void);
     float getAngleRadians(void);
+    void resetEncoders(void);
 
 private:
     QuadratureEncoder *_encoder = nullptr;
@@ -75,6 +76,11 @@ float Joint::getAngleRadians(void)
 void Joint::setSpeedRad(float speed_)
 {
     _goalSpeed = -speed_;
+}
+
+void Joint::resetEncoders(void)
+{
+    _encoder->reset();
 }
 
 void Joint::init()

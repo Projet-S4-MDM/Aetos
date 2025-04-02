@@ -10,6 +10,7 @@ struct sRequestedVelocity
     float motor2Velocity;
     float motor3Velocity;
     float motor4Velocity;
+    float homing;
 };
 
 struct sEncoderData

@@ -89,14 +89,18 @@ public:
 private:
   sVelocity _velocity;
   sPosition _cameraPosition;
+  sPosition _positionError = {0.0f, 0.0f, 0.0f};
   sMotorVelocity _motorVelocity;
   sCableLength _cableLength;
+  sPosition _desiredPosition = {0.475f, 0.475f, 0.25f};
 
   void updateVelocity(const aetos_msgs::msg::Velocity &msg);
   void updateLength(const aetos_msgs::msg::EncoderValues &msg);
   void forwardKinematics();
   void inverseKinematics();
   void uavInBoundSecurityCheck();
+  void positionError();
+  void updateDesiredPosition();
 
   void joyVelocityCallback(const aetos_msgs::msg::Velocity &msg)
   {
@@ -106,6 +110,8 @@ private:
     _velocity.vy = msg.velocity_y;
     _velocity.vz = msg.velocity_z;
 
+    this->updateDesiredPosition();
+    this->positionError();
     this->forwardKinematics();
     this->uavInBoundSecurityCheck();
     this->inverseKinematics();
@@ -114,6 +120,7 @@ private:
     message.omega2 = _motorVelocity.w2;
     message.omega3 = _motorVelocity.w3;
     message.omega4 = _motorVelocity.w4;
+
     _joyVelPub->publish(message);
 
     this->publish_position(_cameraPosition);
@@ -127,19 +134,23 @@ private:
   void publish_motor_velocity(const sMotorVelocity &_motorVelocity)
   {
     auto message = aetos_msgs::msg::MotorVelocity();
+
     message.omega1 = _motorVelocity.w1;
     message.omega2 = _motorVelocity.w2;
     message.omega3 = _motorVelocity.w3;
     message.omega4 = _motorVelocity.w4;
+
     _joyVelPub->publish(message);
   }
 
   void publish_position(const sPosition &_cameraPosition)
   {
     auto message = aetos_msgs::msg::EffectorPosition();
+
     message.position_x = _cameraPosition.x;
     message.position_y = _cameraPosition.y;
     message.position_z = _cameraPosition.z;
+
     _positionPub->publish(message);
   }
 
@@ -189,6 +200,32 @@ void VelocityConversion::updateLength(const aetos_msgs::msg::EncoderValues &msg)
   _cableLength.l4 = msg.angle4 * _radius + _initialCableLength.l4;
 }
 
+void VelocityConversion::positionError()
+{
+  _positionError.x = _desiredPosition.x - _cameraPosition.x;
+  _positionError.y = _desiredPosition.y - _cameraPosition.y;
+  _positionError.z = _desiredPosition.z - _cameraPosition.z;
+
+  RCLCPP_INFO(this->get_logger(), "Position Error: x=%.3f, Position Error: y=%.3f, Position Error: z=%.3f", _positionError.x, _positionError.y, _positionError.z);
+  // RCLCPP_INFO(this->get_logger(), "Camera Position: x=%.3f, Camera Position: y=%.3f, Camera Position: z=%.3f", _cameraPosition.x, _cameraPosition.y, _cameraPosition.z);
+  // RCLCPP_INFO(this->get_logger(), "Desired Position: x=%.3f, Desired Position: y=%.3f, Desired Position: z=%.3f", _desiredPosition.x, _desiredPosition.y, _desiredPosition.z);
+
+  const float Kp = 0.8f;
+
+  _velocity.vx += Kp * _positionError.x;
+  _velocity.vy += Kp * _positionError.y;
+  _velocity.vz += Kp * _positionError.z;
+}
+
+void VelocityConversion::updateDesiredPosition()
+{
+  float dt = 0.01f;
+
+  _desiredPosition.x += _velocity.vx * dt;
+  _desiredPosition.y += _velocity.vy * dt;
+  _desiredPosition.z += _velocity.vz * dt;
+}
+
 void VelocityConversion::inverseKinematics()
 {
   Eigen::MatrixXf J(4, 3);
@@ -211,28 +248,27 @@ void VelocityConversion::inverseKinematics()
   J(3, 1) = (_cameraPosition.y - _pole4.y) / _cableLength.l4;
   J(3, 2) = (_cameraPosition.z - _pole4.z) / _cableLength.l4;
 
-  V(0) = _velocity.vx / 5.0f;
-  V(1) = _velocity.vy / 5.0f;
-  V(2) = _velocity.vz / 5.0f;
+  V(0) = _velocity.vx;
+  V(1) = _velocity.vy;
+  V(2) = _velocity.vz;
 
   Lv = J * V;
 
-  // float velocityRatio = std::max({abs(Lv(0) / _radius / MAX_WHEEL_VELOCITY),
-  //                                 abs(Lv(1) / _radius / MAX_WHEEL_VELOCITY),
-  //                                 abs(Lv(2) / _radius / MAX_WHEEL_VELOCITY),
-  //                                 abs(Lv(3) / _radius / MAX_WHEEL_VELOCITY)});
+  float velocityRatio = std::max({abs(Lv(0) / _radius / MAX_WHEEL_VELOCITY),
+                                  abs(Lv(1) / _radius / MAX_WHEEL_VELOCITY),
+                                  abs(Lv(2) / _radius / MAX_WHEEL_VELOCITY),
+                                  abs(Lv(3) / _radius / MAX_WHEEL_VELOCITY)});
 
-  // if (velocityRatio > 1.0f)
-  // {
-  //   Lv /= velocityRatio;
-  // }
+  if (velocityRatio > 1.0f)
+  {
+    Lv /= velocityRatio;
+  }
 
   _motorVelocity.w1 = Lv(0) / _radius;
   _motorVelocity.w2 = Lv(1) / _radius;
   _motorVelocity.w3 = Lv(2) / _radius;
   _motorVelocity.w4 = Lv(3) / _radius;
 }
-
 
 void VelocityConversion::forwardKinematics()
 {

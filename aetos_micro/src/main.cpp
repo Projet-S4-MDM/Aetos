@@ -59,6 +59,14 @@ void setup()
 
         if (_timerReadVelocity.isDone())
         {
+            if (requestedVelocity.homing)
+            {
+                joint1.resetEncoders();
+                joint2.resetEncoders();
+                joint3.resetEncoders();
+                joint4.resetEncoders();
+            }
+
             joint1.setSpeedRad(requestedVelocity.motor1Velocity);
             joint2.setSpeedRad(requestedVelocity.motor2Velocity);
             joint3.setSpeedRad(requestedVelocity.motor3Velocity);
