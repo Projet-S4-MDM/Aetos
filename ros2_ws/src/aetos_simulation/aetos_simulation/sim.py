@@ -13,7 +13,7 @@ class Sim(Node):
     def __init__(self):
         super().__init__('sim')
         self.subscription = self.create_subscription(EffectorPosition, 'aetos/control/position', self.effector_position_callback, 10)
-        self.velocity_subscription = self.create_subscription(MotorVelocity, 'aetos/control/velocity', self.motor_velocity_callback, 10)
+        self.velocity_subscription = self.create_subscription(MotorVelocity, 'aetos/control/angular_velocity', self.motor_velocity_callback, 10)
         self.encoder_publisher = self.create_publisher(EncoderValues, 'aetos/encoder/sim', 10)
         
         self.position = [0.0, 0.0, 0.0] 
@@ -122,7 +122,7 @@ def main(args=None):
     node = Sim()
     try:
         while rclpy.ok():
-            plt.pause(0.1)  # Permet d'interagir avec le graphe sans bloquer
+            plt.pause(0.1) 
     except KeyboardInterrupt:
         print("Shutting down gracefully...")
     finally:
