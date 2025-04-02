@@ -1,12 +1,12 @@
 import sys
 import signal
-import os
+from threading import Thread
 
 import PyQt5
 from PyQt5.QtWidgets import QApplication, QMainWindow, QShortcut, QPushButton, QRadioButton, QLabel
-from PyQt5.QtGui import QKeySequence
+from PyQt5.QtGui import QKeySequence, QPixmap, QImage
+from PyQt5.QtCore import pyqtSignal, QObject, Qt
 from PyQt5 import uic
-from PyQt5.QtCore import pyqtSignal, QObject
 
 import rclpy
 from rclpy.executors import MultiThreadedExecutor
@@ -79,37 +79,44 @@ class DataSubscriberNode(UINode, QObject):
 class MainWindow(QMainWindow):
     def __init__(self, ui_node, executor):
         super(MainWindow, self).__init__()
-        self.ui_node = ui_node  
-        self.executor = executor  
-        
+        self.ui_node = ui_node
+        self.executor = executor
+
+        # Raccourci pour quitter avec Ctrl+W
         shortcut = QShortcut(QKeySequence("Ctrl+W"), self)
         shortcut.activated.connect(self.close_application)
-        
+
+        # Chargement de l'interface Qt existante
         resources_directory = self.ui_node.get_resources_directory('aetos_gui')
-        uic.loadUi(os.path.join(resources_directory, "main_window.ui"), self)
-        
+        uic.loadUi(resources_directory + "main_window.ui", self)
+
+        # Connexion des éléments d'interface
         self.rb_manuel = self.findChild(QRadioButton, "rb_manuel")
         self.rb_automatique = self.findChild(QRadioButton, "rb_automatique")
         self.rb_simulation = self.findChild(QRadioButton, "rb_simulation")
         self.rb_real = self.findChild(QRadioButton, "rb_real")
         self.pb_arret = self.findChild(QPushButton, "pb_arret")
-        
+
+        # ✅ Zone pour afficher le flux vidéo (QLabel)
+        self.video_label = QLabel(self)
+        self.video_label.setGeometry(250, 70, 640, 480)  # Position + taille
+        self.video_label.setAlignment(Qt.AlignCenter)
+        self.video_label.setStyleSheet("border: 2px solid black;")
+
+        # Connexion des boutons aux méthodes
         self.rb_manuel.toggled.connect(self.update_velocity_arbitration)
         self.rb_automatique.toggled.connect(self.update_velocity_arbitration)
         self.rb_simulation.toggled.connect(self.update_encoder_arbitration)
         self.rb_real.toggled.connect(self.update_encoder_arbitration)
-        
-        self.lbl_vx = self.findChild(QLabel, "Vx")
-        self.lbl_vy = self.findChild(QLabel, "Vy")
-        self.lbl_vz = self.findChild(QLabel, "Vz")
-        
-        self.lbl_px = self.findChild(QLabel, "position_x")
-        self.lbl_py = self.findChild(QLabel, "position_y")
-        self.lbl_pz = self.findChild(QLabel, "position_z")
-        
-        self.ui_node.create_subscription(Velocity, 'aetos/control/velocity', self.velocity_callback, 10)
-        self.subscription = self.ui_node.create_subscription(EffectorPosition, 'aetos/control/position', self.effector_position_callback, 10)
-    
+        self.pb_arret.clicked.connect(self.close_application)
+
+        # Connexion du signal PyQt5
+        self.ui_node.video_signal.connect(self.update_video)
+
+    def update_video(self, pixmap: QPixmap):
+        """ Met à jour l'affichage vidéo """
+        self.video_label.setPixmap(pixmap)
+
     def update_velocity_arbitration(self):
         """ Gestion de l'arbitrage de vitesse """
         if self.rb_manuel.isChecked():
@@ -167,20 +174,7 @@ class MainWindow(QMainWindow):
             print(f"Arbitration set to {response.current_arbitration.arbitration}")
         except Exception as e:
             print(f"Service call failed: {e}")
-    
-    def velocity_callback(self, msg):
-        self.lbl_vx.setText(f"{msg.velocity_x:.2f}")
-        self.lbl_vy.setText(f"{msg.velocity_y:.2f}")
-        self.lbl_vz.setText(f"{msg.velocity_z:.2f}")
-    
-    def effector_position_callback(self, msg):
-        self.lbl_px.setText(f"{msg.position_x:.2f}")
-        self.lbl_py.setText(f"{msg.position_y:.2f}")
-        self.lbl_pz.setText(f"{msg.position_z:.2f}")
-    
-    def closeEvent(self, event):
-        self.close_application()
-    
+
     def close_application(self):
         """ Fermeture propre """
         print("Fermeture de l'application...")
@@ -208,11 +202,8 @@ def main():
 
     # Lancement de l'interface Qt
     app = QApplication(sys.argv)
-    window = MainWindow(ui_node, executor)
-    
-    thread = Thread(target=executor.spin, daemon=True)  
-    thread.start()
-    
+    window = MainWindow(node, executor)
+
     window.show()
     sys.exit(app.exec_())
 
