@@ -23,7 +23,7 @@ void setup()
     TalonSrx talon3 = TalonSrx(PIN_PWM_3, LEDC_TIMER_2, LEDC_CHANNEL_3);
     TalonSrx talon4 = TalonSrx(PIN_PWM_4, LEDC_TIMER_3, LEDC_CHANNEL_4);
 
-    PID pid1 = PID(KP + 0.5f, KI, KD, 50.0f);
+    PID pid1 = PID(KP + 1.0f, KI, KD, 50.0f);
     PID pid2 = PID(KP + 0.5f, KI, KD, 50.0f);
     PID pid3 = PID(KP, KI, KD, 50.0f);
     PID pid4 = PID(KP, KI, KD, 50.0f);
