@@ -140,24 +140,21 @@ This will open the entire development environment in the same devcontainer but i
 
 ## Physical components
 
-To  remake this project, a 3d printer with a bed of at least 20cmX20cm. PLA filament is more then enough for this application.
+To  remake this project, a 3d printer with a bed of at least 20cmX20cm and a lasercutter able to cut plywood. PLA filament is more then enough for this application.
 All the off the shelf components are presented in the next chart
 
-| Description | Quantity  | link |
-|------|--------|--------|
-| 20mmX100 aluminium extrusion |6| ...    |
-|20mmX120 aluminium extrusion|2|...|
-| T nuts for 20mm extrusion |64| ...    |
-| M3 brass inserts |20| ...   |
-|M2 socket head|4|...|
-|M5 socket head|||
-|Aluminium hub for 6mm d-shaft|4|...|
-|8lb braided fishing line|1 role|...|
+| Description | Quantity  | 
+|------|--------|
+| 20mmX100 aluminium extrusion |6|
+|20mmX120 aluminium extrusion|2|
+|M5 T nuts for 20mm extrusion |62|
+|M3 brass inserts |20|
+|M3X10mm contersunk screw |4|
+|M2 socket head screw |4|
+|M5X10mm socket head screw |62|
+|Aluminium hub for 6mm d-shaft|4|
+|8lb braided fishing line|1 roll|
 
-## Electronics
-All of the electronics used for this projects are off the shelf, but some components like the motor drives are overkill. A basic knowledge of soldering might be necessary to make this project.
+You can find the 3d files on this onshape link: https://cad.onshape.com/documents/390c295f6aa4808e63a0329a/w/15b9467409059843a81b2a98/e/3b631072c0b4a11c9089c144?renderMode=0&uiState=67f4629fa31b252dd461edea.
 
-|Description|Quantity|
-|-----|-----|
-|12v, 7amp DC motor|4|
-|<7amp motor drive controled with PWM|4|
+If you don't want to use onshape, all the files are in the "3d files" folder.
