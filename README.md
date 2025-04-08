@@ -5,7 +5,7 @@ Aetos is a vision-abled cable robot designed by 6 robotics engineering students 
 ## Original Contributors
 
 ![original_contributors](./doc/images/team.jpg)
-**From left to right:** Mathys Bousquet, Nathan Dumoulin, Édouard Lebel-Bernier, Nikolay Papanchez, Émile savoie et David Ferron
+**From left to right:** Mathys Bousquet, Nathan Dumoulin, Édouard Lebel-Bernier, Nikolay Papanchez, Émile Savoie and David Ferron
 
 ## Final Product
 

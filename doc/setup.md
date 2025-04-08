@@ -1,5 +1,15 @@
 # Software setup
 
+## Table of Contents
+- [Prerequisites](#prerequisites)
+- [Docker Installation](#docker-installation)
+- [VS Code Setup](#vs-code-setup)
+- [Raspberry Pi 5 Setup](#raspberry-pi-5-setup)  
+  - [Setup of the Raspberry Pi](#setup-of-the-raspberry-pi)  
+  - [Setup the Pi Camera](#setup-the-pi-camera)  
+  - [IP Setup](#ip-setup)
+- [You're now ready to use the software](#youre-now-ready-to-use-the-software)
+
 ## Prerequisites
 
 The Aetos software runs on [Ubuntu 22.04](https://releases.ubuntu.com/jammy/). To facilitate dependency management, the project runs with [docker](https://www.docker.com/). The repository contains a custom image containing all necessary requirements for the project.
