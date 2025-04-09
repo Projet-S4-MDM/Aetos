@@ -62,7 +62,7 @@ constexpr float _arenaLength = 0.95f;
 constexpr float _arenaWidth = 0.95f;
 constexpr float _arenaHeight = 0.935f;
 
-constexpr sCableLength _initialCableLength = {0.9487f, 0.9487f, 0.9487f, 0.9487f};
+constexpr sCableLength _initialCableLength = {1.037f, 1.037f, 1.037f, 1.037f};
 
 constexpr sPosition _pole1 = {0.0f, 0.0f, 0.0f};
 constexpr sPosition _pole2 = {0.0f, 0.95f, 0.0f};
@@ -94,7 +94,7 @@ private:
   sPosition _positionError = {0.0f, 0.0f, 0.0f};
   sMotorVelocity _motorVelocity;
   sCableLength _cableLength;
-  sPosition _desiredPosition = {0.475f, 0.475f, 0.67f};
+  sPosition _desiredPosition = {0.475f, 0.475f, 0.79f};
 
   void updateVelocity(const aetos_msgs::msg::Velocity &msg);
   void updateLength(const aetos_msgs::msg::EncoderValues &msg);
