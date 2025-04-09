@@ -46,7 +46,7 @@ ros2 launch aetos_auxiliary aetos.launch.py PARAMETER
 
 Aetos is controlled using a bluetooth controller.
 
-![original_contributors](/doc/images/controls.png)
+![original_contributors](../images/controls.png)
 
 ## Homing
 

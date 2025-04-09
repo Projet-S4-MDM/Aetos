@@ -18,19 +18,19 @@
 ## Wiring Overview
 
 - **Motor Power Supply:**  
-  We will be using a DC power source rated for a maximum of **6.4A**, connected via an **XT60 connector**. XT60 was chosen as it was readily available, but any connector rated for at least **6.4A** will suffice.
+  We will be using a DC power source rated for a maximum of 6.4A, connected via an XT60 connector. XT60 was chosen as it was readily available, but any connector rated for at least 6.4A will suffice.
 
 - **ESP32 Power Supply:**  
-  The ESP32 board is powered through its **USB-C port**, which also facilitates serial communication.
+  The ESP32 board is powered through its USB-C port, which also facilitates serial communication.
 
 - **Grounding:**  
-  All the **grounds (GND)** of the devices must be connected together at a single point, typically via a **terminal block**. This ensures a common reference for all components, which is crucial for proper operation and avoids ground loops or voltage differences.
+  All the grounds (GND) of the devices must be connected together at a single point via a terminal block. This ensures a common reference for all components.
 
 - **12V Power Distribution:**  
-  Devices that operate on **12V** (such as the DC motors and the Talon SRX motor controllers) should be connected to a **dedicated 12V terminal block**. This keeps the high-power components separate from the low-power ones (like the ESP32) and helps ensure proper voltage distribution to each device.
+  Devices that operate on 12V (such as the DC motors and the Talon SRX motor controllers) should be connected to a dedicated 12V terminal block. This keeps the high-power components separate from the low-power ones (like the ESP32) and helps ensure proper voltage distribution to each device.
 
 - **Emergency Stop Button Placement:**  
-  The **Emergency Stop (e-stop)** button should be placed between the **12V power source** and the **12V terminal block**. This ensures that if the e-stop is pressed, it will immediately cut off the power to the 12V components, providing an effective safety measure.
+  The Emergency Stop (e-stop) button should be placed between the 12V power source and the 12V terminal block. This ensures that if the e-stop is pressed, it will immediately cut off the power to the 12V components, providing an effective safety measure.
 
 ---
 
@@ -39,23 +39,23 @@
    Begin by securely plugging the ESP32 board into the breakout board.
 
 2. **PWM Motor Control:**  
-   Next, connect the **PWM pins** of the **Talon motor controllers** to the appropriate GPIO pins on the ESP32.
+   Next, connect the PWM pins of the Talon motor controllers to the appropriate GPIO pins on the ESP32.
 
 3. **Encoder Connections:**  
-   Afterward, wire the **encoder pins** to the corresponding GPIO pins on the ESP32.
+   Afterward, wire the encoder pins to the corresponding GPIO pins on the ESP32.
 
 4. **Connect Grounds:**  
-   All the **ground (GND)** pins from the ESP32, motor controllers, and other components must be connected to a **single terminal block** to establish a common ground.
+   All the ground (GND) pins from the ESP32, motor controllers, and other components must be connected to a single terminal block to establish a common ground.
 
 5. **Connect 12V Devices:**  
-   The devices that need **12V** power (DC motors, Talon SRX controllers, etc.) should be connected to the **12V terminal block**, ensuring they receive the correct voltage.
+   The devices that need 12V power (DC motors, Talon SRX controllers, etc.) should be connected to the 12V terminal block, ensuring they receive the correct voltage.
 
 6. **Place the Emergency Stop Button:**  
-   Position the **e-stop** button between the **12V power source** and the **12V terminal block**. This will allow it to cut power to the 12V components if activated.
+   Position the E-stop button between the 12V power source and the 12V terminal block. This will allow it to cut power to the 12V components if activated.
 
 ---
 
-![Motor Driver](images/schematic.png)
+![Motor Driver](../images/schematic.png)
 
 --- 
 
