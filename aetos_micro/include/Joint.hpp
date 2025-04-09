@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include "QuadratureEncoder.hpp"
 #include "PID.hpp"
-#include "talon_srx.hpp"
+#include "TalonSrx.hpp"
 #include "timer.hpp"
 
 class Joint

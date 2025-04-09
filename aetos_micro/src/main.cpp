@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "config.hpp"
 #include "QuadratureEncoder.hpp"
-#include "talon_srx.hpp"
+#include "TalonSrx.hpp"
 #include "Joint.hpp"
 #include "PID.hpp"
 #include "Serialnterface.hpp"

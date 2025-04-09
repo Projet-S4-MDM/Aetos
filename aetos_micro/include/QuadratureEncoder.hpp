@@ -11,7 +11,6 @@
 class QuadratureEncoder
 {
     static constexpr uint32_t COUNTS_PER_REVOLUTION = 2797 / 2;
-    // 1 Hz should be fast enough
     static constexpr unsigned long TIME_SPEED_CALC_US = 1000ul;
 
 public:
