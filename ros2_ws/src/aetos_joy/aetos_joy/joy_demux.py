@@ -41,18 +41,24 @@ class JoyDemux(Node):
     
         button_a = self.controller.get_button(0)
         button_x = self.controller.get_button(3)
-        button_b = self.controller.get_button(1)
+        button_R1 = self.controller.get_button(5)
         
         velocity_x = float(dpad_x)
         velocity_y = float(dpad_y)
         velocity_z = float(button_a - button_x)
-        homing = float(button_b)
-
+        homing = float(button_R1)
         velocity_msg = Velocity()
-        velocity_msg.velocity_x = velocity_x
-        velocity_msg.velocity_y = velocity_y
-        velocity_msg.velocity_z = velocity_z
-        velocity_msg.homing = homing
+        
+        if(self.controller.get_button(4) == 1.0):
+            velocity_msg.velocity_x = velocity_x
+            velocity_msg.velocity_y = velocity_y
+            velocity_msg.velocity_z = velocity_z
+            velocity_msg.homing = homing
+        else:
+            velocity_msg.velocity_x = 0.0
+            velocity_msg.velocity_y = 0.0
+            velocity_msg.velocity_z = 0.0
+            velocity_msg.homing = 0.0
         
         self.velocity_publisher.publish(velocity_msg)
         
