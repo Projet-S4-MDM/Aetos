@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "config.hpp"
-#include "quadratureEncoder.hpp"
+#include "QuadratureEncoder.hpp"
 #include "talon_srx.hpp"
 #include "Joint.hpp"
 #include "PID.hpp"

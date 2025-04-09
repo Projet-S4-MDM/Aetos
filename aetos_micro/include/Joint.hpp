@@ -2,7 +2,7 @@
 #define __JOINT_HPP__
 
 #include <Arduino.h>
-#include "quadratureEncoder.hpp"
+#include "QuadratureEncoder.hpp"
 #include "PID.hpp"
 #include "talon_srx.hpp"
 #include "timer.hpp"
@@ -33,9 +33,6 @@ private:
     Helpers::Timer<unsigned long, micros> _timerPidLoop =
         Helpers::Timer<unsigned long, micros>(1000000.0f / (float)PID_LOOP_FREQ_HZ);
 
-    Helpers::Timer<unsigned long, micros> _printTimer =
-        Helpers::Timer<unsigned long, micros>(1000000.0f / (float)PRINT_FREQ_HZ);
-
     float _goalSpeed = 0.0f;
 };
 
@@ -43,28 +40,12 @@ void Joint::update(void)
 {
     _encoder->update();
 
-    if (_printTimer.isDone())
-    {
-        //Serial.println(_encoder->getAngularVelocity());
-    }
-
     if (_timerPidLoop.isDone())
     {
         float cmd = 0.0f;
         float error = _goalSpeed - _encoder->getAngularVelocity();
         cmd = _pid->computeCommand(error);
         _talon->setCmd(cmd);
-
-        /*
-        Serial.print("goalSpeed : ");
-        Serial.print(_goalSpeed);
-        Serial.print(", speed : ");
-        Serial.print(_encoder->getAngularVelocity());
-        Serial.print(", error : ");
-        Serial.print(error);
-        Serial.print(", cmd : ");
-        Serial.println(cmd);
-        */
     }
 }
 
