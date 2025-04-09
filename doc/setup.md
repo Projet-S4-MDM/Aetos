@@ -98,32 +98,20 @@ sudo apt install python3-pip
 pip install opencv-python websockets numpy picamera2
 ```
 
-### IP Setup
-The Pi uses Websocket to communicate information to the main computer. To enable communication, ensure your Raspberry Pi and PC are on the same Wi-Fi network.
+### Network Setup
+The Pi uses Websocket to communicate information to the main computer. To enable communication, ensure your Raspberry Pi and PC are on the same Wi-Fi network. Once both are on the same network, import [THIS FILE](doc/files/aetos_pi.py) to your raspberry pi. The following steps ensure the communication between your computer and the Pi.
 
-4. Download the Python script:
-[Download here](https://github.com/Projet-S4-MDM/Aetos)
-
-7. Set the server IP address in the script:
+1. Set the server IP address in the script:
 Open the script in an editor:
 ```bash
-nano your_script_name.py
+nano aetos_pi.py # Replace the file name with your file name
 ```
 Change the line:
 ```bash
-SERVER_IP = "0.0.0.0"  # Replace with your PC's IP address
+SERVER_IP = "127.0.0.1"  # Replace with your PC's IP address
 ```
-6. Check your IP address in the terminal:
-#### On Linux:
-```bash
-ip a
-```
-#### On Windows:
-```bash
-ipconfig
-```
-Look for `IPv4 Address`
-7. Ensure your Raspberry Pi and PC are on the same Wi-Fi network.
+
+The Computer and Pi should now be ready for communication
 
 ## You're now ready to use the software
 Follow the instructions in the [Usage README]((doc/usage.md)) to get started.

@@ -32,6 +32,8 @@ ros2 launch aetos_auxiliary aetos.launch.py
 ```
 This will launch all necessary nodes to controle Aetos as well as the GUI. Once the GUI is launched it serves as a visualiser for the camera feed as well as a control for the input command arbitration. Note that no motor commands will be sent without the computer being connected through a serial port to the ESP32.
 
+> **Note:** The project's  `.bashrc` is equiped with a command which allows you to always build the ros2 workspace in the right folder using the command: "b" from a terminal
+
 ## Simulation
 
 Aetos is also equiped with a simulation for development purposes. If you want to to launch the code in simulation mode, run the following in a VsCode temrinal:
@@ -44,10 +46,10 @@ ros2 launch aetos_auxiliary aetos.launch.py PARAMETER
 
 ## Controls
 
-Aetos is controlled using a bluetooth controller.
+Aetos is controlled using a bluetooth controller. The following keybindings can be modified in the `joy_demux.py` file from the `aetos_joy` ros2 package
 
 ![original_contributors](/doc/images/controls.png)
 
 ## Homing
 
-## Network setup
+## Vision
