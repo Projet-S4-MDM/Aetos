@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Electrical/electrical_assembly.md",
+                "file": "Software/esp32-platformio-setup.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "electrical_assembly"
+              "title": "esp32-platformio-setup"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Electrical/electrical_assembly.md",
+                "file": "Software/esp32-platformio-setup.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for electrical_assembly"
+              "title": "Backlinks for esp32-platformio-setup"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Electrical/electrical_assembly.md",
+                "file": "Software/esp32-platformio-setup.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from electrical_assembly"
+              "title": "Outgoing links from esp32-platformio-setup"
             }
           },
           {
@@ -142,13 +142,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Electrical/electrical_assembly.md",
+                "file": "Software/esp32-platformio-setup.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of electrical_assembly"
+              "title": "Outline of esp32-platformio-setup"
             }
           }
         ]
@@ -171,11 +171,12 @@
   "active": "b361ef5f0d70ebba",
   "lastOpenFiles": [
     "Software/setup.md",
+    "Software/esp32-platformio-setup.md",
+    "Software/usage.md",
     "Electrical/electrical_assembly.md",
     "images/team.jpg",
     "images/schematic.png",
     "images/controls.png",
-    "Mechanical/mecanical_assembly.md",
-    "Software/usage.md"
+    "Mechanical/mecanical_assembly.md"
   ]
 }
