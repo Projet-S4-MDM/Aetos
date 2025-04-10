@@ -56,23 +56,13 @@ private:
 
 Arbitration::Arbitration() : Node("arbitration_node")
 {
-    // for (size_t i = 0; i < N_JOINTS; i++)
-    // {
-    //     _zeroCmd.omega1 = 0.0f;
-    //     _zeroCmd.omega2 = 0.0f;
-    //     _zeroCmd.omega3 = 0.0f;
-    //     _zeroCmd.omega4 = 0.0f;
-
-    //     _cmdAuto.omega1 = 0.0f;
-    //     _cmdAuto.omega2 = 0.0f;
-    //     _cmdAuto.omega3 = 0.0f;
-    //     _cmdAuto.omega4 = 0.0f;
-
-    //     _cmdTeleop.omega1 = 0.0f;
-    //     _cmdTeleop.omega2 = 0.0f;
-    //     _cmdTeleop.omega3 = 0.0f;
-    //     _cmdTeleop.omega4 = 0.0f;
-    // }
+    for (size_t i = 0; i < N_JOINTS; i++)
+    {
+        _zeroCmd.velocity_x = 0.0f;
+        _zeroCmd.velocity_y = 0.0f;
+        _zeroCmd.velocity_z = 0.0f;
+        _zeroCmd.homing = 0.0f;
+    }
 
     _teleopCmdSub = this->create_subscription<aetos_msgs::msg::Velocity>(
         "aetos/velocity/teleop", 10,
@@ -163,7 +153,7 @@ void Arbitration::sendCmd(void)
         _motorVelPub->publish(_cmdAuto);
         break;
     case aetos_msgs::msg::VelocityArbitration::NONE:
-        _motorVelPub->publish(_cmdTeleop);
+        _motorVelPub->publish(_zeroCmd);
         break;
     default:
         break;
