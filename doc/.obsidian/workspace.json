@@ -14,7 +14,7 @@
               "type": "markdown",
               "state": {
                 "file": "Mechanical/mecanical_assembly.md",
-                "mode": "preview",
+                "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
@@ -170,6 +170,7 @@
   },
   "active": "b361ef5f0d70ebba",
   "lastOpenFiles": [
+    "Mechanical/mecanical_assembly.md",
     "Extrusion_connector.png",
     "images/Pulley_exploded_view.png",
     "images/Payload_exploded_view.png",
@@ -180,9 +181,7 @@
     "images/Extrusion_connector.png",
     "images/Winch_exploded_view.png",
     "images/Whole_assembly.png",
-    "images/Corner_with_triangle.png",
     "Electrical/electrical_assembly.md",
-    "Mechanical/mecanical_assembly.md",
     "Mechanical/STL/Winch/Winch - motor support(4).stl",
     "Mechanical/STL/Winch/Winch - Winch.stl",
     "Mechanical/STL/Winch/Winch - Motor support(3).stl",
