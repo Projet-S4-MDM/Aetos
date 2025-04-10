@@ -137,3 +137,24 @@ code .
 This will open the entire development environment in the same devcontainer but in a separate VS Code window.
 
 ## Developping in aetos_micro
+
+## Physical components
+
+To  remake this project, a 3d printer with a bed of at least 20cmX20cm and a lasercutter able to cut plywood. PLA filament is more then enough for this application.
+All the off the shelf components are presented in the next chart
+
+| Description | Quantity  | 
+|------|--------|
+| 20mmX100 aluminium extrusion |6|
+|20mmX120 aluminium extrusion|2|
+|M5 T nuts for 20mm extrusion |62|
+|M3 brass inserts |20|
+|M3X10mm contersunk screw |4|
+|M2 socket head screw |4|
+|M5X10mm socket head screw |62|
+|Aluminium hub for 6mm d-shaft|4|
+|8lb braided fishing line|1 roll|
+
+You can find the 3d files on this onshape link: https://cad.onshape.com/documents/390c295f6aa4808e63a0329a/w/15b9467409059843a81b2a98/e/3b631072c0b4a11c9089c144?renderMode=0&uiState=67f4629fa31b252dd461edea.
+
+If you don't want to use onshape, all the files are in the "3d files" folder.
