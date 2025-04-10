@@ -39,7 +39,8 @@ struct sCableLength
   float l4;
 };
 
-constexpr float LIMIT_BUFFER = 0.05f;
+constexpr float LIMIT_BUFFER = 0.1f;
+constexpr float LIMIT_Z = 0.1f;
 
 namespace Limits
 {
@@ -47,14 +48,16 @@ namespace Limits
   constexpr float X_MIN = 0.0f + LIMIT_BUFFER;
   constexpr float Y_MAX = 1.0f - LIMIT_BUFFER;
   constexpr float Y_MIN = 0.0f + LIMIT_BUFFER;
-  constexpr float Z_MAX = 1.0f - LIMIT_BUFFER;
-  constexpr float Z_MIN = 0.0f + LIMIT_BUFFER;
+  constexpr float Z_MAX = LIMIT_Z;
+  constexpr float Z_MIN = 0.90f;
 }
 
 // SETUP
 constexpr float PI = 3.14159265359;
 
 constexpr float MAX_WHEEL_VELOCITY = 5.0f;
+
+constexpr float MAX_ACCEL = 3.0f;
 
 constexpr float _radius = 0.05;
 
@@ -68,6 +71,10 @@ constexpr sPosition _pole1 = {0.0f, 0.0f, 0.0f};
 constexpr sPosition _pole2 = {0.0f, 0.95f, 0.0f};
 constexpr sPosition _pole3 = {0.95f, 0.95f, 0.0f};
 constexpr sPosition _pole4 = {0.95f, 0.0f, 0.0f};
+
+sVelocity _currentVelocity = {0.0f, 0.0f, 0.0f};
+
+rclcpp::Time _lastVelocityUpdateTime{0, 0, RCL_ROS_TIME};
 
 class VelocityConversion : public rclcpp::Node
 {
@@ -108,12 +115,64 @@ private:
   {
     auto message = aetos_msgs::msg::MotorVelocity();
 
-    _velocity.vx = msg.velocity_x;
-    _velocity.vy = msg.velocity_y;
-    _velocity.vz = msg.velocity_z;
+    rclcpp::Time currentTime = this->now();
+    double dt = 0.01; 
+
+    if (_lastVelocityUpdateTime.nanoseconds() > 0)
+    {
+      dt = (currentTime - _lastVelocityUpdateTime).seconds();
+
+      if (dt > 0.1)
+      {
+        dt = 0.1f;
+            }
+      if (dt <= 0.0)
+      {
+        dt = 0.01f;
+      }
+    }
+
+    _lastVelocityUpdateTime = currentTime;
+
+    sVelocity targetVelocity = {msg.velocity_x, msg.velocity_y, msg.velocity_z};
+
+    float max_velocity_change = MAX_ACCEL * dt;
+
+    float vx_diff = targetVelocity.vx - _currentVelocity.vx;
+    if (std::abs(vx_diff) > max_velocity_change)
+    {
+      _currentVelocity.vx += (vx_diff > 0) ? max_velocity_change : -max_velocity_change;
+    }
+    else
+    {
+      _currentVelocity.vx = targetVelocity.vx;
+    }
+
+    float vy_diff = targetVelocity.vy - _currentVelocity.vy;
+    if (std::abs(vy_diff) > max_velocity_change)
+    {
+      _currentVelocity.vy += (vy_diff > 0) ? max_velocity_change : -max_velocity_change;
+    }
+    else
+    {
+      _currentVelocity.vy = targetVelocity.vy;
+    }
+
+    float vz_diff = targetVelocity.vz - _currentVelocity.vz;
+    if (std::abs(vz_diff) > max_velocity_change)
+    {
+      _currentVelocity.vz += (vz_diff > 0) ? max_velocity_change : -max_velocity_change;
+    }
+    else
+    {
+      _currentVelocity.vz = targetVelocity.vz;
+    }
+
+    _velocity.vx = _currentVelocity.vx;
+    _velocity.vy = _currentVelocity.vy;
+    _velocity.vz = _currentVelocity.vz;
 
     this->updateDesiredPosition();
-    // this->positionError();
     this->forwardKinematics();
     this->uavInBoundSecurityCheck();
     this->inverseKinematics();
@@ -182,17 +241,12 @@ void VelocityConversion::uavInBoundSecurityCheck()
   if ((_cameraPosition.x <= Limits::X_MIN && _velocity.vx < 0) || (_cameraPosition.x >= Limits::X_MAX && _velocity.vx > 0))
   {
     RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 2000, "Hit Limits");
-    _velocity.vx = 0;
+    _velocity.vx = 0.0f;
   }
   else if ((_cameraPosition.y <= Limits::Y_MIN && _velocity.vy < 0) || (_cameraPosition.y >= Limits::Y_MAX && _velocity.vy > 0))
   {
     RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 2000, "Hit Limits");
-    _velocity.vy = 0;
-  }
-  else if ((_cameraPosition.z <= Limits::Z_MIN && _velocity.vz < 0) || (_cameraPosition.z >= Limits::Z_MAX && _velocity.vz > 0))
-  {
-    RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 2000, "Hit Limits");
-    _velocity.vz = 0;
+    _velocity.vy = 0.0f;
   }
 };
 
