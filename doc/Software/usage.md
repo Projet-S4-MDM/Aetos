@@ -1,69 +1,110 @@
-# Usage
+# Aetos Development Environment
+
+## Table of Contents
+
+- [Opening the Devcontainer](#opening-the-devcontainer)  
+- [Development Inside the Container](#development-inside-the-container)  
+- [Running the Code](#running-the-code)  
+- [Simulation Mode](#simulation-mode)  
+- [Controls](#controls)  
+- [Homing Procedure](#homing-procedure)  
+- [Graphical Interface](#graphical-interface)  
+- [Vision System](#vision-system)  
+
+---
 
 ## Opening the Devcontainer
 
-When VS Code detects the devcontainer configuration, you'll see a notification in the bottom-right corner. Click **"Reopen in Container"** to start the devcontainer.
+When VS Code detects the devcontainer configuration, a notification will appear in the bottom-right corner. Click **"Reopen in Container"** to launch the devcontainer.
 
 Alternatively, you can:
 
-1. Press `Ctrl + Shift + P`
-2. Type "Dev Containers: Reopen in Container"
-3. Press Enter
+1. Press `Ctrl + Shift + P`  
+2. Type `"Dev Containers: Reopen in Container"`  
+3. Press Enter  
 
-> **Note:** When opening for the first time or rebuilding the whole environment, this process is expected to take time. Sit back, relax and enjoy nonsense logs poping up in your terminal
+> **Note:** Opening the container for the first time or rebuilding the environment may take a few minutes. Sit back, relax, and enjoy the nonsense logs in the terminal.
 
+---
 
 ## Development Inside the Container
 
-Once inside the container, you'll have access to all dependencies specified in the Dockerfile. Here's what you need to know for development:
+Inside the container, all dependencies specified in the `Dockerfile` are available.
 
-The dockfile has Terminator installed which is a terminal demultiplier. This facilitates development especially for a ros2 project. To access terminator, open a VSCode terminal and enter the following. 
+- **Terminator** is installed (a terminal multiplexer useful for ROS2 development). To launch it, open a VSCode terminal and run:
+  
+  ```bash
+  terminator
+  ```
 
-```bash
-terminator
-```
-The project's  `.bashrc` is equiped with a command which allows you to always build the ros2 workspace in the right folder using the command: "b" from a terminal. 
+- The `.bashrc` file includes a helper command to build the ROS2 workspace easily. Simply run:
+  
+  ```bash
+  b
+  ```
 
-## Run the code
+---
 
-To launch the application, you can simply open a VSCode terminal and type:
+## Running the Code
+
+To launch the full application (including nodes and GUI), run:
 
 ```bash
 ros2 launch aetos_auxiliary aetos.launch.py
 ```
-This will launch all necessary nodes to controle Aetos as well as the GUI. Once the GUI is launched it serves as a visualiser for the camera feed as well as a control for the input command arbitration. Note that no motor commands will be sent without the computer being connected through a serial port to the ESP32.
 
-## Simulation
+> **Note:** This will only send motor commands if the computer is connected to the ESP32 via serial port.
 
-Aetos is also equiped with a simulation for development purposes. If you want to to launch the code in simulation mode, run the following in a VsCode temrinal:
+---
+
+## Simulation Mode
+
+For development purposes, Aetos also supports a simulation mode. To launch it, use:
 
 ```bash
 ros2 launch aetos_auxiliary aetos.launch.py PARAMETER
 ```
 
-> **Note:** The default parameter can be switched to simulation for development purposes
+Replace `PARAMETER` with the appropriate value to enable simulation.
+
+---
 
 ## Controls
 
-Aetos is controlled using a bluetooth controller. The following keybindings can be modified in the `joy_demux.py` file from the `aetos_joy` ros2 package.
+Aetos is controlled using a Bluetooth controller. Keybindings can be modified in the `joy_demux.py` file located in the `aetos_joy` ROS2 package.
 
 ![Controller](../images/controls.png)
 
-## Homing
+---
 
-To avoid a error accumulation and drift, Aetos requires homing everytime it is restarted. To perform homing, simply place the payload on the location provided for this purpose (see [Mechanical Assembly](../Mechanical/mecanical_assembly.md) for more details). Once at the desired position, you can now reset the encoders using the assigned controls. 
+## Homing Procedure
 
->  **Caution:** Make sure the motor power is **disconnected** before resetting the encoders. Failing to do so may lead to unintended motion or damage.
+To prevent error accumulation and drift, Aetos requires homing every time it is restarted.
+
+1. Place the payload on the designated homing area (see [Mechanical Assembly](../Mechanical/mecanical_assembly.md)).
+2. Use the controller to reset the encoders.
+
+> **Caution:** Ensure motor power is **disconnected** before resetting encoders to avoid unintended movement or damage.
+
+---
 
 ## Graphical Interface
 
-## Emergency stop
+The GUI allows users to:
 
-## Vision
+- Toggle between control modes
+- Activate a software emergency stop (E-Stop)
+- Monitor linear velocity and payload position
 
-To enable vision, make sure all nodes have been correctly launched. If all a connection has been successfully established between the main computer and the rasperry pi, you should be able to see the camera feed appear on the GUI. You can then toggle bewtween Teleop control and autonomous control using the buttons.
+![GUI](../images/gui.png)
 
->  **Note:** Many of the current elements of vision are  modifiable in 
-172.20.10.3
+---
 
+## Vision System
 
+To enable vision:
+
+1. Ensure all relevant nodes are launched.
+2. Establish a successful connection between the main computer and the Raspberry Pi.
+3. Once connected, the camera feed will appear in the GUI.
+4. Use the GUI buttons to toggle between teleoperation and autonomous control.
