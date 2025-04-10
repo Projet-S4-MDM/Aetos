@@ -12,7 +12,7 @@ class JoyDemux(Node):
         
         os.environ["SDL_JOYSTICK_DEVICE"] = "/dev/input/js0"
 
-        self.velocity_publisher = self.create_publisher(Velocity, 'aetos/joy/velocity', 10)
+        self.velocity_publisher = self.create_publisher(Velocity, 'aetos/velocity/teleop', 10)
 
         pygame.init()
         pygame.joystick.init()
@@ -39,18 +39,27 @@ class JoyDemux(Node):
         dpad_x = self.controller.get_hat(0)[0]  
         dpad_y = self.controller.get_hat(0)[1]  
     
-        button_a = self.controller.get_button(0) 
-        button_x = self.controller.get_button(3)  
+        button_a = self.controller.get_button(0)
+        button_x = self.controller.get_button(3)
+        button_R1 = self.controller.get_button(5)
         
         velocity_x = float(dpad_x)
         velocity_y = float(dpad_y)
-        velocity_z = float(button_x - button_a) 
-
+        velocity_z = float(button_a - button_x)
+        homing = float(button_R1)
         velocity_msg = Velocity()
-        # velocity_msg.data = [velocity_x, velocity_y, velocity_z]
-        velocity_msg.velocity_x = velocity_x
-        velocity_msg.velocity_y = velocity_y
-        velocity_msg.velocity_z = velocity_z
+        
+        if(self.controller.get_button(4) == 1.0):
+            velocity_msg.velocity_x = velocity_x
+            velocity_msg.velocity_y = velocity_y
+            velocity_msg.velocity_z = velocity_z
+            velocity_msg.homing = homing
+        else:
+            velocity_msg.velocity_x = 0.0
+            velocity_msg.velocity_y = 0.0
+            velocity_msg.velocity_z = 0.0
+            velocity_msg.homing = 0.0
+        
         self.velocity_publisher.publish(velocity_msg)
         
 def main(args=None):

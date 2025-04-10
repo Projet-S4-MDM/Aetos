@@ -1,0 +1,3 @@
+aetos_msgs/EncoderArbitration target_arbitration
+---
+aetos_msgs/EncoderArbitration current_arbitration

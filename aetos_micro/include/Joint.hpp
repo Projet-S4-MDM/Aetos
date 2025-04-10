@@ -2,34 +2,36 @@
 #define __JOINT_HPP__
 
 #include <Arduino.h>
-#include "encoder.hpp"
+#include "QuadratureEncoder.hpp"
 #include "PID.hpp"
-#include "FIT0186.hpp"
+#include "TalonSrx.hpp"
 #include "timer.hpp"
 
 class Joint
 {
 public:
-    static constexpr unsigned long PID_LOOP_FREQ_US = 1000ul;
+    static constexpr unsigned long PID_LOOP_FREQ_HZ = 10000ul;
+    static constexpr unsigned long PRINT_FREQ_HZ = 100ul;
 
-    Joint(Encoder *encoder,
+    Joint(QuadratureEncoder *encoder,
           PID *pid,
-          FIT0186 *fit0186);
+          TalonSrx *talon);
 
     ~Joint(void) {};
 
     void init(void);
-    void setSpeed(float speed_);
+    void setSpeedRad(float speed_);
     void update(void);
-    long getAngle(void);
+    float getAngleRadians(void);
+    void resetEncoders(void);
 
 private:
-    Encoder *_encoder = nullptr;
+    QuadratureEncoder *_encoder = nullptr;
     PID *_pid = nullptr;
-    FIT0186 *_fit0186 = nullptr;
+    TalonSrx *_talon = nullptr;
 
     Helpers::Timer<unsigned long, micros> _timerPidLoop =
-        Helpers::Timer<unsigned long, micros>(1000000.0f / (float)PID_LOOP_FREQ_US);
+        Helpers::Timer<unsigned long, micros>(1000000.0f / (float)PID_LOOP_FREQ_HZ);
 
     float _goalSpeed = 0.0f;
 };
@@ -37,33 +39,39 @@ private:
 void Joint::update(void)
 {
     _encoder->update();
-    float cmd = 0.0f;
 
-    if(_timerPidLoop.isDone())
+    if (_timerPidLoop.isDone())
     {
-        cmd = _pid->computeCommand(_goalSpeed);
-        _fit0186->setCmd(cmd);
+        float cmd = 0.0f;
+        float error = _goalSpeed - _encoder->getAngularVelocity();
+        cmd = _pid->computeCommand(error);
+        _talon->setCmd(cmd);
     }
 }
 
-long Joint::getAngle(void)
+float Joint::getAngleRadians(void)
 {
-    return _encoder->getAngle();
+    return _encoder->getAngleRadians();
 }
 
-void Joint::setSpeed(float speed_)
+void Joint::setSpeedRad(float speed_)
 {
-    _goalSpeed = speed_;
+    _goalSpeed = -speed_;
+}
+
+void Joint::resetEncoders(void)
+{
+    _encoder->reset();
 }
 
 void Joint::init()
 {
-    _encoder->init();
+    _encoder->begin();
     _pid->init();
-    _fit0186->init();
+    _talon->init();
 }
 
-Joint::Joint(Encoder *encoder_, PID *pid_, FIT0186 *fit0186_)
-    : _encoder(encoder_), _pid(pid_), _fit0186(fit0186_) {}
+Joint::Joint(QuadratureEncoder *encoder_, PID *pid_, TalonSrx *talon_)
+    : _encoder(encoder_), _pid(pid_), _talon(talon_) {}
 
 #endif

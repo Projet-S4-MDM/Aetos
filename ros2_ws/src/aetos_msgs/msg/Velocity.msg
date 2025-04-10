@@ -1,3 +1,4 @@
-float64 velocity_x 
-float64 velocity_y 
-float64 velocity_z 
+float32 velocity_x 
+float32 velocity_y 
+float32 velocity_z
+float32 homing

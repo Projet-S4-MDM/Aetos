@@ -6,10 +6,11 @@
 
 struct sRequestedVelocity
 {
-    double motor1Velocity;
-    double motor2Velocity;
-    double motor3Velocity;
-    double motor4Velocity;
+    float motor1Velocity;
+    float motor2Velocity;
+    float motor3Velocity;
+    float motor4Velocity;
+    float homing;
 };
 
 struct sEncoderData
@@ -31,7 +32,7 @@ public:
     ~SerialCom() {};
 
     sRequestedVelocity getVelocityData();
-    void sendEncoderData(Joint joint1_, Joint joint2_, Joint joint3_, Joint joint4_);
+    void sendEncoderData();
 
 private:
     sRequestedVelocity _requestedVelocity;
@@ -52,14 +53,15 @@ sRequestedVelocity SerialCom::getVelocityData()
     return _requestedVelocity;
 }
 
-void SerialCom::sendEncoderData(Joint joint1_, Joint joint2_, Joint joint3_, Joint joint4_)
+void SerialCom::sendEncoderData()
 {
+    const float threshold = 0.001F;
+
     _encoderData = {
-        static_cast<float>(joint1_.getAngle()),
-        static_cast<float>(joint2_.getAngle()),
-        static_cast<float>(joint3_.getAngle()),
-        static_cast<float>(joint4_.getAngle()),
-    };
+        (std::abs(_joint1->getAngleRadians()) < threshold) ? 0.0F : _joint1->getAngleRadians(),
+        (std::abs(_joint2->getAngleRadians()) < threshold) ? 0.0F : _joint2->getAngleRadians(),
+        (std::abs(_joint3->getAngleRadians()) < threshold) ? 0.0F : _joint3->getAngleRadians(),
+        (std::abs(_joint4->getAngleRadians()) < threshold) ? 0.0F : _joint4->getAngleRadians()};
 
     Serial.write(reinterpret_cast<uint8_t *>(&_encoderData), sizeof(_encoderData));
 }

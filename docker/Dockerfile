@@ -47,6 +47,17 @@ RUN apt-get update && apt-get install -q -y --no-install-recommends \
     libsdl2-image-dev \
     libsdl2-mixer-dev \
     libsdl2-ttf-dev \
+    qttools5-dev-tools \
+    qttools5-dev \
+    python3-pyqt5 \
+    python3-pyqt5.qtmultimedia \
+    python3-pyqt5.qtquick \
+    qml-module-qtquick-controls \
+    qml-module-qtquick-dialogs \
+    qml-module-qtquick-layouts \
+    qml-module-qtgraphicaleffects \
+    qml-module-qtquick-window2 \
+    qml-module-qtquick2 \
     && rm -rf /var/lib/apt/lists/*
 
 # Create DBus directory and set permissions
@@ -59,6 +70,7 @@ RUN python3 -m pip install --upgrade pip \
         setuptools==58.2.0 \
         evdev \
         pybullet \
+        websockets \
         matplotlib
 
 # Set up environment for ROS2
