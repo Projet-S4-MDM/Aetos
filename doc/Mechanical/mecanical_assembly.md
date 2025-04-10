@@ -94,11 +94,12 @@ You will need to 3D print the parts in [`/doc/STL/Frame`](../doc/STL/Frame) and 
 #### Step 1
 Assemble the 6 aluminium extrusions (1000mm) using the 4 corner connectors as shown below:
 
-![[../images/Extrusion_connector.png]]
+![empty](../images/Extrusion_connector.png)
+
 
 You should now have a basic frame like this:
 
-![[../images/Open_frame.png]]
+![empty](../images/Open_frame.png)
 
 Secure the extrusions in place with the M5 set screws.
 
@@ -107,7 +108,7 @@ Install the triangle brackets using M5 x 10mm screws and loosely attached T-nuts
 
 Each corner should look like this:
 
-![[../images/Corner_with_triangle.png]]
+![empty](../images/Corner_with_triangle.png)
 
 ---
 
@@ -134,14 +135,14 @@ Insert the brass inserts into the underside of the motor casing.
 #### Step 2
 Assemble the winch following this exploded diagram:
 
-![[../images/Winch_exploded_view.png]]
+![empty](../images/Winch_exploded_view.png)
 
 #### Step 3
 Attach each winch to the frame using M5 screws and T-nuts. Align with the slots and tighten at the desired height.
 
 Final result:
 
-![[../images/Assembly_with_motors.png]]
+![empty](../images/Assembly_with_motors.png)
 
 ---
 
@@ -163,7 +164,7 @@ Final result:
 #### Step 1
 Assemble each pulley using the exploded view:
 
-![[../images/Pulley_exploded_view.png]]
+![empty](../images/Pulley_exploded_view.png)
 
 Note: Screws are driven directly into plastic; apply firm pressure if needed.
 
@@ -172,7 +173,7 @@ Mount pulleys on the frame using M5 screws and T-nuts.
 
 Final result:
 
-![[../images/Assembly_with_Pulleys.png]]
+![empty](../images/Assembly_with_Pulleys.png)
 
 ---
 
@@ -184,14 +185,14 @@ Final result:
 2. Repeat with `Top_Frame2`.  
 3. Assemble as shown below:
 
-   ![[../images/Frame_with_X.png]]
+   ![empty](../images/Frame_with_X.png)
 
 4. Insert brass inserts into `Top_Middle1`.  
 5. Attach `Top_Middle2` using M3 x 10mm screws.
 
 Final frame:
 
-![[images/Frame_finished.png]]
+   ![empty](../images/Frame_finished.png)
 
 ---
 
@@ -218,6 +219,7 @@ Print the parts from:
 
 - [`/doc/STL/Homing`](../doc/STL/Homing) 
 
+
 Laser print the parts from:
 
 - [`/doc/STEP/Homing`](../doc/STEP/Homing)
@@ -228,7 +230,7 @@ Glue the 3D printed part onto the part labeled `homing3`.
 
 Final result:
 
-![[../images/Homing.png]]
+![empty](../images/Homing.png)
 
 ---
 
@@ -256,7 +258,7 @@ Print attachment parts in TPU for better flexibility (PLA is acceptable).
 2. Slide the Pi camera into its holder and connect the cable.  
 3. Assemble the payload using the exploded view:
 
-   ![[../images/Payload_exploded_view.png]]
+![empty](../images/Payload_exploded_view.png)
 
 4. Insert the battery into the upper compartment.  
 5. Connect the Raspberry Pi to the battery and camera.
