@@ -22,6 +22,7 @@ The dockfile has Terminator installed which is a terminal demultiplier. This fac
 ```bash
 terminator
 ```
+The project's  `.bashrc` is equiped with a command which allows you to always build the ros2 workspace in the right folder using the command: "b" from a terminal. 
 
 ## Run the code
 
@@ -31,8 +32,6 @@ To launch the application, you can simply open a VSCode terminal and type:
 ros2 launch aetos_auxiliary aetos.launch.py
 ```
 This will launch all necessary nodes to controle Aetos as well as the GUI. Once the GUI is launched it serves as a visualiser for the camera feed as well as a control for the input command arbitration. Note that no motor commands will be sent without the computer being connected through a serial port to the ESP32.
-
-> **Note:** The project's  `.bashrc` is equiped with a command which allows you to always build the ros2 workspace in the right folder using the command: "b" from a terminal
 
 ## Simulation
 
@@ -46,10 +45,25 @@ ros2 launch aetos_auxiliary aetos.launch.py PARAMETER
 
 ## Controls
 
-Aetos is controlled using a bluetooth controller. The following keybindings can be modified in the `joy_demux.py` file from the `aetos_joy` ros2 package
+Aetos is controlled using a bluetooth controller. The following keybindings can be modified in the `joy_demux.py` file from the `aetos_joy` ros2 package.
 
-![original_contributors](../images/controls.png)
+![Controller](../images/controls.png)
 
 ## Homing
 
+To avoid a error accumulation and drift, Aetos requires homing everytime it is restarted. To perform homing, simply place the payload on the location provided for this purpose (see [Mechanical Assembly](../Mechanical/mecanical_assembly.md) for more details). Once at the desired position, you can now reset the encoders using the assigned controls. 
+
+>  **Caution:** Make sure the motor power is **disconnected** before resetting the encoders. Failing to do so may lead to unintended motion or damage.
+
+## Graphical Interface
+
+## Emergency stop
+
 ## Vision
+
+To enable vision, make sure all nodes have been correctly launched. If all a connection has been successfully established between the main computer and the rasperry pi, you should be able to see the camera feed appear on the GUI. You can then toggle bewtween Teleop control and autonomous control using the buttons.
+
+>  **Note:** Many of the current elements of vision are  modifiable in 
+172.20.10.3
+
+
