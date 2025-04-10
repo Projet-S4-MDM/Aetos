@@ -21,10 +21,6 @@ from aetos_msgs.msg import Velocity
 from cv_bridge import CvBridge
 import cv2
 
-
-# ============================
-# Node ROS2 avec PyQt5 Signals
-# ============================
 class DataSubscriberNode(UINode, QObject):
     video_signal = pyqtSignal(QPixmap)
 
@@ -32,7 +28,7 @@ class DataSubscriberNode(UINode, QObject):
         UINode.__init__(self, "data_subscriber")
         QObject.__init__(self)
 
-        # Souscripteur pour les vecteurs de vitesse
+        
         self.velocity_subscription = self.create_subscription(
             Velocity,
             "aetos/cam/velocity",
@@ -40,7 +36,7 @@ class DataSubscriberNode(UINode, QObject):
             10
         )
 
-        # Souscripteur pour le flux vidéo
+        
         self.video_subscription = self.create_subscription(
             Image,
             "aetos/cam/video",
@@ -52,70 +48,88 @@ class DataSubscriberNode(UINode, QObject):
 
     def velocity_callback(self, msg: Velocity):
         """ Affiche la vitesse reçue dans le terminal """
-        #self.get_logger().info(f"Vitesse reçue: vx={msg.velocity_x}, vy={msg.velocity_y}, vz={msg.velocity_z}")
+        
 
     def video_callback(self, msg: Image):
         """ Convertit et émet le flux vidéo """
         try:
-            # Convertir l'image ROS2 en OpenCV
+            
             cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
 
-            # Conversion en QPixmap pour l'interface Qt
+            
             height, width, _ = cv_image.shape
             bytes_per_line = 3 * width
             q_image = QImage(cv_image.data, width, height, bytes_per_line, QImage.Format_BGR888)
             q_pixmap = QPixmap.fromImage(q_image)
 
-            # Émission du signal PyQt5 pour l'affichage
+            
             self.video_signal.emit(q_pixmap)
 
         except Exception as e:
             self.get_logger().error(f"Erreur lors de la conversion de l'image: {e}")
 
 
-# ============================
-# Fenêtre principale Qt5
-# ============================
+
 class MainWindow(QMainWindow):
     def __init__(self, ui_node, executor):
         super(MainWindow, self).__init__()
         self.ui_node = ui_node
         self.executor = executor
 
-        # Raccourci pour quitter avec Ctrl+W
+        
         shortcut = QShortcut(QKeySequence("Ctrl+W"), self)
         shortcut.activated.connect(self.close_application)
 
-        # Chargement de l'interface Qt existante
+        
         resources_directory = self.ui_node.get_resources_directory('aetos_gui')
         uic.loadUi(resources_directory + "main_window.ui", self)
 
-        # Connexion des éléments d'interface
+        
         self.rb_manuel = self.findChild(QRadioButton, "rb_manuel")
         self.rb_automatique = self.findChild(QRadioButton, "rb_automatique")
         self.rb_simulation = self.findChild(QRadioButton, "rb_simulation")
         self.rb_real = self.findChild(QRadioButton, "rb_real")
         self.pb_arret = self.findChild(QPushButton, "pb_arret")
 
-        # ✅ Zone pour afficher le flux vidéo (QLabel)
+        
         self.video_label = QLabel(self)
-        self.video_label.setGeometry(250, 70, 640, 480)  # Position + taille
+        self.video_label.setGeometry(250, 70, 640, 480)  
         self.video_label.setAlignment(Qt.AlignCenter)
         self.video_label.setStyleSheet("border: 2px solid black;")
 
-        # Connexion des boutons aux méthodes
+        
         self.rb_manuel.toggled.connect(self.update_velocity_arbitration)
         self.rb_automatique.toggled.connect(self.update_velocity_arbitration)
         self.rb_simulation.toggled.connect(self.update_encoder_arbitration)
         self.rb_real.toggled.connect(self.update_encoder_arbitration)
         self.pb_arret.clicked.connect(self.close_application)
+        
+        self.lbl_vx = self.findChild(QLabel, "Vx")
+        self.lbl_vy = self.findChild(QLabel, "Vy")
+        self.lbl_vz = self.findChild(QLabel, "Vz")
+        
+        self.lbl_px = self.findChild(QLabel, "position_x")
+        self.lbl_py = self.findChild(QLabel, "position_y")
+        self.lbl_pz = self.findChild(QLabel, "position_z")
+        
+        self.ui_node.create_subscription(Velocity, 'aetos/control/velocity', self.velocity_callback, 10)
+        self.subscription = self.ui_node.create_subscription(EffectorPosition, 'aetos/control/position', self.effector_position_callback, 10)
 
-        # Connexion du signal PyQt5
         self.ui_node.video_signal.connect(self.update_video)
 
     def update_video(self, pixmap: QPixmap):
         """ Met à jour l'affichage vidéo """
         self.video_label.setPixmap(pixmap)
+        
+    def velocity_callback(self, msg):
+        self.lbl_vx.setText(f"{msg.velocity_x:.2f}")
+        self.lbl_vy.setText(f"{msg.velocity_y:.2f}")
+        self.lbl_vz.setText(f"{msg.velocity_z:.2f}")
+    
+    def effector_position_callback(self, msg):
+        self.lbl_px.setText(f"{msg.position_x:.2f}")
+        self.lbl_py.setText(f"{msg.position_y:.2f}")
+        self.lbl_pz.setText(f"{msg.position_z:.2f}")
 
     def update_velocity_arbitration(self):
         """ Gestion de l'arbitrage de vitesse """
@@ -184,23 +198,21 @@ class MainWindow(QMainWindow):
         sys.exit(0)
 
 
-# ============================
-# Fonction principale
-# ============================
+
 def main():
     rclpy.init()
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-    # Initialisation du node et de l'exécuteur
+    
     node = DataSubscriberNode()
     executor = MultiThreadedExecutor()
     executor.add_node(node)
 
-    # Démarrage du thread ROS2
+    
     ros_thread = Thread(target=executor.spin, daemon=True)
     ros_thread.start()
 
-    # Lancement de l'interface Qt
+    
     app = QApplication(sys.argv)
     window = MainWindow(node, executor)
 
@@ -208,8 +220,5 @@ def main():
     sys.exit(app.exec_())
 
 
-# ============================
-# Lancement principal
-# ============================
 if __name__ == '__main__':
     main()
