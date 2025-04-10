@@ -10,8 +10,11 @@
 | 4    | Talon SRX Motor Controller | 4  | $131.00 | $524.00 | [Link](https://store.ctr-electronics.com/products/talon-srx?srsltid=AfmBOoo8rhUIWV4VTK7PCz8OXvGWIPzDqzc9h7fAqZY5b_mIVFueruF1) |
 | 5    | 35A Terminal Block (6 Position, Screw) | 2  | $7.00 | $14.00 | [Link](https://www.amazon.ca/Joinfworld-Terminal-Position-Pre-Insulated-Jumper/dp/B0B24FZWPH/ref=sr_1_15?crid=2RT7TV79JCZFA&dib=eyJ2IjoiMSJ9.wmg5rmHELyxCOG_MmPmoILliJank83l0_dkljR_AExgZHCr2o6TaJb6Eqd7fkORjZBH8U1e4G0gz6rUnCKYbdQ1EvKPNgUPm6WwjEskSOWEYi7NSo0g3kb1jLZp6fBaspYVQpwHEd4IhdYgZZA17qUdaB7AM0ZX6dne2wqjXV9woahGNUn6M5Es7TQEhDkdtMrUA1CB_g4oixUV1XTwsMTDnHSJ4lz8xqeFZbjK5OgvMrZYmsc7w46NzUTKF3Lg2iBp4WpRVt81abT51s4DmryjeDUHi5EBJNrqkae5BKng.PBTaIgwcktlnopUdu-WNncpe8YzXiWmVu8FKVTx2jU0&dib_tag=se&keywords=bornier&qid=1743615661&sprefix=bornier%2Caps%2C71&sr=8-15&th=1) |
 | 6    | Emergency Stop Push Button (10A) | 1  | $17.00 | $17.00 | [Link](https://www.amazon.ca/mxuteuk-HB2-ES544-Mushroom-Emergency-Warranty/dp/B07R8PTTDX/ref=sr_1_7?crid=GBF2WH7ZH64W&dib=eyJ2IjoiMSJ9.EPcoS05P89n8QBP-en8PJrUOvRp5F-POP9hOiaaw6NWfN0Y2gSnM4PX3u9dESuQZmHutP_63T1ElpkwsMdaw6dpOiTnWyHp3drR0pg62atYQfcKoLdC28TVV1BVy3NC1AeppdHW3oGdmI5HI4cpiMi7lDf8j0QvBS_SLOwQqJlKuwWRFxeQ-VgcWoqVPWPsMeqtW5m5GPxGxSWHRwYyt3zFJvXvDGfkSRhgWilMzePyxhqRBu6XkvHnEF_BycsOPAGLlPQhWjDRXpE_0biKufjO3gaF9MyYzIzti4KuaqrU.3XpjRj57vACrNg677B2MAQZ0E3XlEpuqdDHsTuedTzA&dib_tag=se&keywords=e-stop&qid=1743615817&sprefix=e-stop%2Caps%2C101&sr=8-7) |
+| 7    | Raspberry Pi 5 | 1  | $179.99$ | $179.99$ | [Link](https://www.amazon.ca/-/fr/dp/B0CTF9GKMR?ref_=ppx_hzsearch_conn_dt_b_fed_asin_title_4) |
+| 8    | PiCam V3 | 1  | $35.00$ | $35.00$ | [Link](https://www.pishop.ca/product/raspberry-pi-camera-module-3/?searchid=0) |
+| 9    | Battery  | 1  | $34.00$ | $34.00$ | [Link](https://www.amazon.ca/Charmast-Batterie-compatible-smartphones-tablettes/dp/B09WHPDB6C?pd_rd_w=0KKqs&content-id=amzn1.sym.1d3fa88f-aa61-4d59-895c-470dda2309ea&pf_rd_p=1d3fa88f-aa61-4d59-895c-470dda2309ea&pf_rd_r=FQBXSPXPJ76FVGRBASW4&pd_rd_wg=NBDk5&pd_rd_r=84400836-1774-4492-a250-b1f5580fc9b9&ref_=sspa_dk_detail_1&sp_csd=d2lkZ2V0TmFtZT1zcF9kZXRhaWxfdGhlbWF0aWM&th=1) |
 
-**Total:** 694.00$
+**Total:** 942.99$$
 
 **Note:** We are using Talon SRX motor controllers because we had them for free. They are largely overkill for our application, as they offer advanced features like current sensing and CAN bus communication, which are not necessary for our setup. If you are building a similar system from scratch, a simpler and more cost-effective motor driver would be a better choice.
 
@@ -31,6 +34,11 @@
 
 - **Emergency Stop Button Placement:**  
   The Emergency Stop (e-stop) button should be placed between the 12V power source and the 12V terminal block. This ensures that if the e-stop is pressed, it will immediately cut off the power to the 12V components, providing an effective safety measure.
+
+- **Payload Setup**
+  The payload consists of a Raspberry Pi 5, a Pi Camera V3, and a power pack. The Raspberry Pi 5 operates at 5V and requires a minimum of 3A, which the power pack is capable of supplying. But you need to use a short cable with low resistance. 
+  - Connect the Raspberry Pi to the power pack using a USB to USB-C cable.
+  - Connect the Pi Camera V3 to the Raspberry Pi 5.
 
 ---
 
