@@ -1,4 +1,4 @@
-# Open-Source Mechanical Assembly Guide
+# Mechanical Assembly Guide
 
 This project consists of five main subsystems that must be assembled to complete the system:
 
@@ -10,7 +10,7 @@ This project consists of five main subsystems that must be assembled to complete
 
 Once assembled, your build should look like the image below:
 
-![[../images/Whole_assembly.png]]
+![](../images/Whole_assembly.png)
 
 ## Table of Contents
 

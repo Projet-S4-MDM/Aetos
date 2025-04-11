@@ -59,13 +59,7 @@ ros2 launch aetos_auxiliary aetos.launch.py
 
 ## Simulation Mode
 
-For development purposes, Aetos also supports a simulation mode. To launch it, use:
-
-```bash
-ros2 launch aetos_auxiliary aetos.launch.py PARAMETER
-```
-
-Replace `PARAMETER` with the appropriate value to enable simulation.
+For development purposes, Aetos also supports a simulation mode. To launch it, use: modify the aetos.launch.py launch file to integrate it in the launch.
 
 ---
 
